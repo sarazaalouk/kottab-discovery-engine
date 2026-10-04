@@ -1,0 +1,73 @@
+/* Reviewer page (Arabic, RTL). English episode content sits in LTR blocks. */
+
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tabs [role="tab"] {
+  appearance: none;
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+.tabs [role="tab"][aria-selected="true"] { background: var(--maroon); border-color: var(--maroon); color: var(--on-accent); }
+.count {
+  display: inline-block;
+  min-width: 1.5em;
+  padding: 0 6px;
+  margin-inline-start: 4px;
+  border-radius: 999px;
+  background: var(--wash);
+  color: var(--maroon);
+  font-size: .8rem;
+  text-align: center;
+}
+[aria-selected="true"] .count { background: var(--on-accent); }
+
+details.ep { padding: 0; gap: 0; }
+.ep-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  display: grid;
+  gap: 8px;
+}
+.ep-summary::-webkit-details-marker { display: none; }
+.ep-summary::after { content: "▾ عرض التفاصيل"; font-size: .8rem; color: var(--terracotta); }
+details[open] > .ep-summary::after { content: "▴ إخفاء"; }
+.ep-head { display: grid; gap: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: .78rem; font-weight: 600; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--wash); }
+.chip.ok, .chip.status-approved { color: var(--green); border-color: var(--green); background: var(--green-wash); }
+.chip.bad, .chip.status-rejected { color: var(--red); border-color: var(--red); background: var(--red-wash); }
+.chip.status-pending_review { color: var(--maroon); border-color: var(--terracotta); }
+.chip.status-returned, .chip.status-referred { color: var(--amber); border-color: var(--amber); background: var(--amber-wash); }
+
+.ep-body { padding: 0 16px 16px; border-top: 1px solid var(--line); padding-top: 14px; }
+.block { display: grid; gap: 8px; padding-bottom: 14px; border-bottom: 1px solid var(--line); min-width: 0; }
+.block:last-child { border-bottom: 0; padding-bottom: 0; }
+.block h3 { color: var(--maroon); font-size: .98rem; }
+
+.en { font-family: var(--font-en); text-align: left; display: grid; gap: 6px; min-width: 0; }
+.en ul, .en ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.opts li.correct { color: var(--green); font-weight: 600; }
+
+.vlist { margin: 0; padding-inline-start: 18px; display: grid; gap: 4px; font-size: .82rem; font-family: var(--font-en); overflow-wrap: anywhere; }
+.vlist.bad { color: var(--red); }
+.vlist.warn { color: var(--amber); }
+
+.rv-meaning { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; background: var(--surface); }
+.rv-meaning-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.rv-source { font-size: .92rem; background: var(--wash); border-radius: 8px; padding: 8px 10px; }
+
+.ep-body .ayah { font-size: 1.9rem; }
+.raw { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .75rem; background: var(--wash); padding: 10px; border-radius: 8px; max-height: 280px; overflow: auto; }
+
+.referrals { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.referrals .card { gap: 6px; padding: 12px 14px; }
+.mono-id { font-family: var(--font-en); direction: ltr; text-align: right; overflow-wrap: anywhere; }
+
+.actions textarea { min-height: 3em; }

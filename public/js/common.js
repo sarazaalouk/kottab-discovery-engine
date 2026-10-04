@@ -52,6 +52,7 @@ const PAGES = [
 function renderTopbar(current) {
   const header = document.createElement("header");
   header.className = "topbar";
+  header.dir = "ltr"; // the bar is English on every page, including the Arabic reviewer page
   const links = PAGES.map(
     (p) => `<a href="${p.href}"${p.href === current ? ' aria-current="page"' : ""}>${p.label}</a>`
   ).join("");

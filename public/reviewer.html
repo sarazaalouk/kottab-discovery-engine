@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>المراجع · Kottab Discovery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/episode.css">
+  <link rel="stylesheet" href="css/reviewer.css">
+</head>
+<body>
+<main>
+  <section class="card" id="locked" hidden>
+    <h1>هذه الصفحة للمراجِع فقط</h1>
+    <p>افتح بوابة الأهل أولًا من صفحة الأهل، ثم ارجع لهذه الصفحة.</p>
+    <a class="btn block" href="index.html">صفحة الأهل</a>
+  </section>
+
+  <div id="app" hidden class="stack">
+    <div class="stack">
+      <span class="eyebrow">مراجعة الحلقات</span>
+      <h1>المراجِع</h1>
+      <p class="lead">لا تظهر أي حلقة للطفل قبل اعتمادها هنا. راجع تقرير الفاحص، ثم المعاني مقابل نص المصدر، ثم بقية البنود.</p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="أقسام المراجعة">
+      <button role="tab" id="tab-pending" aria-selected="true" aria-controls="panel-pending">بانتظار المراجعة <span class="count" id="count-pending">0</span></button>
+      <button role="tab" id="tab-done" aria-selected="false" aria-controls="panel-done">حلقات أخرى <span class="count" id="count-done">0</span></button>
+      <button role="tab" id="tab-referrals" aria-selected="false" aria-controls="panel-referrals">سجل الإحالات <span class="count" id="count-referrals">0</span></button>
+    </div>
+
+    <p class="notice error" id="load-error" hidden>تعذّر تحميل البيانات. تأكد من الاتصال ثم حدّث الصفحة.</p>
+
+    <section id="panel-pending" role="tabpanel" aria-labelledby="tab-pending" class="stack"></section>
+    <section id="panel-done" role="tabpanel" aria-labelledby="tab-done" class="stack" hidden></section>
+    <section id="panel-referrals" role="tabpanel" aria-labelledby="tab-referrals" class="stack" hidden></section>
+  </div>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+  renderTopbar("reviewer.html");
+  const $ = (id) => document.getElementById(id);
+
+  const STATUS_AR = {
+    pending_review: "بانتظار المراجعة",
+    approved: "معتمدة",
+    returned: "مُرجَعة للتعديل",
+    referred: "محالة للمعلم",
+    rejected: "رفضها الفاحص",
+  };
+  const DECISION_AR = { approve: "اعتماد", return: "إرجاع للتعديل", refer: "إحالة للمعلم" };
+
+  const en = (html) => `<div class="en" dir="ltr" lang="en">${html}</div>`;
+  const fmtDate = (iso) => new Date(iso).toLocaleString("ar-EG", { dateStyle: "medium", timeStyle: "short" });
+
+  // ---------- tabs ----------
+  const TABS = ["pending", "done", "referrals"];
+  function selectTab(name) {
+    TABS.forEach((t) => {
+      $(`tab-${t}`).setAttribute("aria-selected", String(t === name));
+      $(`panel-${t}`).hidden = t !== name;
+    });
+  }
+  TABS.forEach((t) => $(`tab-${t}`).addEventListener("click", () => selectTab(t)));
+
+  // ---------- list ----------
+  function summaryHtml(e) {
+    const v = e.validation || { passed: false, errors: [], warnings: [] };
+    return `<summary class="ep-summary">
+        <span class="ep-head">
+          <b>الحلقة ${e.episode_number} · الجذر ${escapeHtml(e.root)}</b>
+          <span class="muted small">${escapeHtml(e.child.name)}، ${e.child.age} سنوات · ${fmtDate(e.created_at)}</span>
+        </span>
+        <span class="chips">
+          <span class="chip status-${e.status}">${STATUS_AR[e.status] || e.status}</span>
+          <span class="chip ${v.passed ? "ok" : "bad"}">${v.passed ? "الفاحص: ناجحة" : "الفاحص: مرفوضة"}</span>
+        </span>
+      </summary>`;
+  }
+
+  function episodeShell(e) {
+    return `<details class="ep card" data-id="${escapeHtml(e.id)}">
+        ${summaryHtml(e)}
+        <div class="ep-body stack"><p class="muted small">جارٍ التحميل…</p></div>
+      </details>`;
+  }
+
+  async function loadList() {
+    let list, referrals;
+    try {
+      [list, referrals] = await Promise.all([
+        fetch("/api/review/episodes").then((r) => { if (!r.ok) throw 0; return r.json(); }),
+        fetch("/api/review/referrals").then((r) => { if (!r.ok) throw 0; return r.json(); }),
+      ]);
+    } catch {
+      $("load-error").hidden = false;
+      return;
+    }
+    const pending = list.filter((e) => e.status === "pending_review");
+    const others = list.filter((e) => e.status !== "pending_review");
+    $("count-pending").textContent = pending.length;
+    $("count-done").textContent = others.length;
+    $("count-referrals").textContent = referrals.length;
+
+    $("panel-pending").innerHTML = pending.length
+      ? pending.map(episodeShell).join("")
+      : `<p class="notice ok">لا توجد حلقات بانتظار المراجعة.</p>`;
+    $("panel-done").innerHTML = others.length
+      ? others.map(episodeShell).join("")
+      : `<p class="notice">لا توجد حلقات أخرى بعد.</p>`;
+    $("panel-referrals").innerHTML = referralsHtml(referrals);
+
+    document.querySelectorAll("details.ep").forEach((d) =>
+      d.addEventListener("toggle", () => { if (d.open && !d.dataset.loaded) loadDetail(d); })
+    );
+  }
+
+  function referralsHtml(items) {
+    if (!items.length) return `<p class="notice ok">لا توجد إحالات.</p>`;
+    return `<ul class="referrals">${items
+      .map(
+        (r) => `<li class="card">
+          <span class="muted small">${fmtDate(r.created_at)} · ${r.source === "reviewer" ? "من المراجِع" : r.source === "child_question" ? "سؤال من الطفل" : "من المحرك"}${r.child_name ? " · " + escapeHtml(r.child_name) : ""}</span>
+          ${en(`<p><b>${escapeHtml(r.question)}</b></p><p class="muted small">${escapeHtml(r.reason || "")}</p>`)}
+          ${r.episode_id ? `<span class="muted small mono-id">${escapeHtml(r.episode_id)}</span>` : ""}
+        </li>`
+      )
+      .join("")}</ul>`;
+  }
+
+  // ---------- detail ----------
+  async function loadDetail(details) {
+    const body = details.querySelector(".ep-body");
+    let d;
+    try {
+      const res = await fetch(`/api/review/episodes/${encodeURIComponent(details.dataset.id)}`);
+      if (!res.ok) throw 0;
+      d = await res.json();
+    } catch {
+      body.innerHTML = `<p class="notice error">تعذّر تحميل الحلقة.</p>`;
+      return;
+    }
+    details.dataset.loaded = "1";
+    body.innerHTML = detailHtml(d);
+    body.querySelectorAll("[data-decision]").forEach((btn) =>
+      btn.addEventListener("click", () => decide(details, d, btn.dataset.decision))
+    );
+  }
+
+  function validatorHtml(v) {
+    const list = (items, cls) => items.length ? `<ul class="vlist ${cls}">${items.map((x) => `<li dir="ltr">${escapeHtml(x)}</li>`).join("")}</ul>` : "";
+    return `<section class="block">
+        <h3>تقرير الفاحص</h3>
+        <p class="notice ${v.passed ? "ok" : "error"}">${v.passed ? "نجحت في كل الفحوص الآلية (أ–و)." : "رفضها الفاحص، ولا يمكن اعتمادها."}</p>
+        ${v.errors.length ? `<b class="small">الأخطاء (${v.errors.length})</b>${list(v.errors, "bad")}` : ""}
+        ${v.warnings.length ? `<b class="small">تنبيهات (${v.warnings.length})</b>${list(v.warnings, "warn")}` : `<p class="small muted">لا تنبيهات.</p>`}
+      </section>`;
+  }
+
+  function meaningRow(m, cardsById) {
+    const c = cardsById.get(m.card_id);
+    return `<div class="rv-meaning">
+        <div class="rv-meaning-head">
+          <span class="source-chip">${escapeHtml(m.card_id)}</span>
+          <span class="muted small">${m.audience === "child" ? "للطفل" : "للأهل"}${c ? " · " + escapeHtml(c.source) + " · " + (c.status === "approved" ? "معتمدة" : escapeHtml(c.status)) : ""}</span>
+        </div>
+        ${en(`<p>${formatLetters(m.text)}</p>`)}
+        ${c ? `<p class="rv-source">نص المصدر: ${escapeHtml(c.meaning_ar)}</p><p class="small muted">${escapeHtml(c.location)}</p>` : `<p class="notice error">البطاقة غير موجودة.</p>`}
+      </div>`;
+  }
+
+  function ayahsHtml(quran, words) {
+    if (!quran) return "";
+    const marks = new Set(words.map((w) => `${w.ayah_ref}#${w.word_index}`));
+    return Object.entries(quran.ayahs)
+      .map(([ref, text]) => {
+        const ws = text.split(/\s+/).map((w, i) => (marks.has(`${ref}#${i + 1}`) ? `<mark>${escapeHtml(w)}</mark>` : escapeHtml(w)));
+        return `<figure class="ayah-block"><p class="ayah quran" lang="ar">${ws.join(" ")}</p><figcaption class="ayah-ref">الفاتحة ${escapeHtml(ref)}</figcaption></figure>`;
+      })
+      .join("");
+  }
+
+  function detailHtml(d) {
+    const v = d.validation;
+    if (!d.episode) {
+      return `${validatorHtml(v)}
+        ${d.raw_model_output ? `<section class="block"><h3>مخرج الموديل الخام</h3><pre class="raw" dir="ltr">${escapeHtml(d.raw_model_output)}</pre></section>` : ""}
+        ${actionsHtml(d)}`;
+    }
+    const ep = d.episode;
+    const cardsById = new Map(d.cards.map((c) => [c.id, c]));
+    const q = ep.discovery_question;
+    const pr = ep.parent_report;
+    const kids = d.child;
+    return `
+      ${validatorHtml(v)}
+
+      <section class="block">
+        <h3>ملف الطفل (اصطناعي)</h3>
+        ${en(`<p class="small">${escapeHtml(kids.name)} · age ${kids.age} · ${escapeHtml(kids.home_language)} · recites: ${escapeHtml(kids.recites)} · reading: ${escapeHtml(kids.reading_level)}</p>`)}
+      </section>
+
+      <section class="block">
+        <h3>العنوان ولحظة الاكتشاف</h3>
+        ${en(`<p><b>${escapeHtml(ep.title_en)}</b></p><p>${formatLetters(ep.discovery_moment.text_en)}</p>`)}
+      </section>
+
+      <section class="block">
+        <h3>الآيات والكلمات (نص السيرفر من الملف المعتمد)</h3>
+        ${ayahsHtml(d.quran, ep.words)}
+      </section>
+
+      <section class="block">
+        <h3>معاني الكلمات</h3>
+        ${ep.words.map((w) => `<div class="stack"><b class="small">${escapeHtml(w.ayah_ref)} · الكلمة ${w.word_index}${d.quran ? ` · <span class="quran" lang="ar">${escapeHtml(d.quran.words.find((x) => x.ayah_ref === w.ayah_ref && x.word_index === w.word_index)?.text_ar || "")}</span>` : ""}</b>${w.meanings.map((m) => meaningRow(m, cardsById)).join("")}</div>`).join("")}
+      </section>
+
+      <section class="block">
+        <h3>سؤال الاكتشاف</h3>
+        ${en(`<p><b>${formatLetters(q.question_en)}</b></p><ol class="opts">${q.options.map((o) => `<li class="${o.is_correct ? "correct" : ""}">${formatLetters(o.text_en)}${o.is_correct ? " ✓" : ""}</li>`).join("")}</ol>`)}
+        <b class="small">البطاقة التي تظهر بعد الإجابة</b>
+        ${meaningRow(q.answer_meaning, cardsById)}
+      </section>
+
+      <section class="block">
+        <h3>صورة التذكر</h3>
+        <div class="memory">${en(`<span class="memory-label">${escapeHtml(ep.memory_picture.label)}</span><p>${formatLetters(ep.memory_picture.description_en)}</p>`)}</div>
+      </section>
+
+      <section class="block">
+        <h3>مهمة المصحف والربط بالصلاة</h3>
+        ${en(`<p>${formatLetters(ep.mushaf_search_task.instruction_en)}</p><p class="small muted">${escapeHtml(ep.mushaf_search_task.ayah_refs.join(", "))}</p><p>${formatLetters(ep.salah_connection.text_en)}</p>`)}
+      </section>
+
+      <section class="block">
+        <h3>تقرير الأهل</h3>
+        ${en(`<p>${formatLetters(pr.discovered.summary_en)}</p>
+          <p class="small"><b>Strengths</b></p><ul>${pr.strengths.map((s) => `<li>${formatLetters(s)}</li>`).join("")}</ul>
+          <p class="small"><b>Next step</b></p><p>${formatLetters(pr.next_step_en)}</p>
+          <p class="small"><b>Teach your parents · ${pr.teach_your_parents.duration_minutes} minutes</b></p><ol>${pr.teach_your_parents.steps_en.map((s) => `<li>${formatLetters(s)}</li>`).join("")}</ol>`)}
+        ${[...pr.discovered.meanings, ...pr.teach_your_parents.meanings].filter((m, i, arr) => arr.findIndex((x) => x.card_id === m.card_id && x.text === m.text) === i).map((m) => meaningRow(m, cardsById)).join("")}
+      </section>
+
+      ${ep.referrals.length ? `<section class="block"><h3>إحالات من المحرك</h3>${en(`<ul>${ep.referrals.map((r) => `<li>${escapeHtml(r.question)} — ${escapeHtml(r.reason)}</li>`).join("")}</ul>`)}</section>` : ""}
+
+      ${actionsHtml(d)}`;
+  }
+
+  function actionsHtml(d) {
+    const canApprove = d.validation && d.validation.passed;
+    const reviewed = d.review
+      ? `<p class="notice ${d.review.decision === "approve" ? "ok" : "warn"}">القرار: ${DECISION_AR[d.review.decision]} · ${fmtDate(d.review.reviewed_at)}${d.review.note ? `<br>${escapeHtml(d.review.note)}` : ""}</p>`
+      : "";
+    return `<section class="block actions">
+        <h3>القرار</h3>
+        ${reviewed}
+        <label class="small" for="note-${escapeHtml(d.id)}">ملاحظة (اختيارية)</label>
+        <textarea id="note-${escapeHtml(d.id)}" rows="2" maxlength="1000"></textarea>
+        <div class="row">
+          <button class="btn" data-decision="approve" ${canApprove ? "" : "disabled"}>اعتماد</button>
+          <button class="btn secondary" data-decision="return">إرجاع للتعديل</button>
+          <button class="btn secondary" data-decision="refer">إحالة للمعلم</button>
+        </div>
+        ${canApprove ? "" : `<p class="small muted">لا يمكن اعتماد حلقة رفضها الفاحص.</p>`}
+        <p class="small" role="status" data-result></p>
+      </section>`;
+  }
+
+  async function decide(details, d, decision) {
+    const box = details.querySelector(".actions");
+    const result = box.querySelector("[data-result]");
+    box.querySelectorAll("button").forEach((b) => (b.disabled = true));
+    result.textContent = "جارٍ الحفظ…";
+    try {
+      const res = await fetch(`/api/review/episodes/${encodeURIComponent(d.id)}/decision`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ decision, note: box.querySelector("textarea").value }),
+      });
+      const out = await res.json();
+      if (!res.ok) throw new Error(out.error || "error");
+      result.textContent = `تم الحفظ: ${STATUS_AR[out.status]}.`;
+      setTimeout(loadList, 900);
+    } catch (e) {
+      result.textContent = "تعذّر حفظ القرار. حاول مرة أخرى.";
+      box.querySelectorAll("button").forEach((b) => (b.disabled = b.dataset.decision === "approve" && !(d.validation && d.validation.passed)));
+    }
+  }
+
+  // ---------- init ----------
+  if (!gate.isOpen()) {
+    $("locked").hidden = false;
+  } else {
+    $("app").hidden = false;
+    loadList();
+  }
+</script>
+</body>
+</html>

@@ -225,3 +225,6 @@ fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
 }
 .tile-letter { font-family: var(--font-ar); font-weight: 700; font-size: 1.3em; line-height: 1.6; color: var(--maroon); }
 .tile-name { font-family: var(--font-en); font-size: .7em; color: var(--muted); }
+
+/* Arabic text needs taller lines in Cairo so buttons and labels are not clipped */
+[dir="rtl"] .btn, [dir="rtl"] .tabs [role="tab"] { line-height: 1.8; padding-block: 9px; }

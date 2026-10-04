@@ -357,6 +357,71 @@ app.post("/api/ask", async (req, res) => {
 
 // ---------- reviewer ----------
 
+// Note: the reviewer pages sit behind the parent gate in the browser only. This is a demo with
+// synthetic data; a real deployment needs proper reviewer sign-in.
+
+function episodeSummary(r) {
+  return {
+    id: r.id,
+    status: r.status,
+    created_at: r.created_at,
+    episode_number: r.episode_number,
+    root: r.root,
+    child: { name: r.child.name, age: r.child.age },
+    title: r.episode ? r.episode.title_en : null,
+    validation: r.validation,
+    review: r.review || null,
+  };
+}
+
+app.get("/api/review/episodes", (req, res) => {
+  res.json(episodes.list().map(episodeSummary));
+});
+
+app.get("/api/review/episodes/:id", (req, res) => {
+  const record = episodes.get(req.params.id);
+  if (!record) return res.status(404).json({ error: "episode not found" });
+  const kbById = new Map(readJson(KB_PATH).entries.map((c) => [c.id, c]));
+  const ep = record.episode;
+  const usedIds = ep
+    ? [...new Set([
+        ...ep.words.flatMap((w) => w.meanings.map((m) => m.card_id)),
+        ep.discovery_question.answer_meaning.card_id,
+        ...ep.parent_report.discovered.meanings.map((m) => m.card_id),
+        ...ep.parent_report.teach_your_parents.meanings.map((m) => m.card_id),
+      ])].sort()
+    : [];
+  res.json({
+    ...episodeSummary(record),
+    child: record.child,
+    cards_provided: record.cards_provided,
+    episode: ep,
+    quran: record.quran_inserted_by_server,
+    raw_model_output: record.raw_model_output,
+    cards: usedIds.map((id) => kbById.get(id)).filter(Boolean).map((c) => ({
+      id: c.id,
+      status: c.status,
+      source: c.source,
+      location: c.location,
+      source_url: c.source_url,
+      meaning_ar: c.meaning_ar,
+      meaning_en: c.meaning_en,
+      meaning_en_child: c.meaning_en_child,
+    })),
+  });
+});
+
+app.get("/api/review/referrals", (req, res) => {
+  let lines = [];
+  try {
+    lines = fs.readFileSync(REFERRALS_LOG, "utf8").split("\n").filter(Boolean);
+  } catch {
+    return res.json([]);
+  }
+  const entries = lines.map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+  res.json(entries.reverse());
+});
+
 const DECISIONS = { approve: "approved", return: "returned", refer: "referred" };
 
 app.post("/api/review/episodes/:id/decision", (req, res) => {
