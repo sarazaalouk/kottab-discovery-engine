@@ -6,7 +6,7 @@
     "root": "string — Arabic root, e.g. ر-ح-م (— when none)",
     "word_ar": "string — the word or phrase the card is about",
     "surah": "number — always 1 (Al-Fatiha)",
-    "ayah": "number 0–7 (0 = isti'adha, before Al-Fatiha) or string range, e.g. \"2-7\"",
+    "ayah": "number 0–7 (0 = isti'adha, before Al-Fatiha), string range e.g. \"2-7\", or array of ayahs e.g. [1, 3] when the card applies to each listed ayah",
     "source": "string — تفسير ابن كثير (دار طيبة، تحقيق سامي سلامة) or التفسير الميسر (مجمع الملك فهد)",
     "source_url": "string — where the text can be checked online",
     "location": "string — where the meaning appears in the source",
@@ -635,7 +635,10 @@
       "root": "ر-ح-م",
       "word_ar": "الرحمن الرحيم",
       "surah": 1,
-      "ayah": 1,
+      "ayah": [
+        1,
+        3
+      ],
       "source": "تفسير ابن كثير",
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة (الفاتحة 1)، كلام ابن كثير",
@@ -656,7 +659,10 @@
       "root": "ر-ح-م",
       "word_ar": "الرحمن الرحيم",
       "surah": 1,
-      "ayah": 1,
+      "ayah": [
+        1,
+        3
+      ],
       "source": "تفسير ابن كثير",
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة، نقلًا عن أبي علي الفارسي",
@@ -677,7 +683,10 @@
       "root": "ر-ح-م",
       "word_ar": "الرحمن الرحيم",
       "surah": 1,
-      "ayah": 1,
+      "ayah": [
+        1,
+        3
+      ],
       "source": "تفسير ابن كثير",
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة، قول ابن عباس كما نقله ابن كثير",
@@ -698,7 +707,10 @@
       "root": "ر-ح-م",
       "word_ar": "الرحم",
       "surah": 1,
-      "ayah": 1,
+      "ayah": [
+        1,
+        3
+      ],
       "source": "تفسير ابن كثير",
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة، نقلًا عن القرطبي، رواه الترمذي عن عبد الرحمن بن عوف",
@@ -719,7 +731,10 @@
       "root": "ر-ح-م",
       "word_ar": "الرحمن",
       "surah": 1,
-      "ayah": 1,
+      "ayah": [
+        1,
+        3
+      ],
       "source": "تفسير ابن كثير",
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة (كلام ابن كثير)",
@@ -740,7 +755,10 @@
       "root": "ر-ح-م",
       "word_ar": "الرحيم",
       "surah": 1,
-      "ayah": 1,
+      "ayah": [
+        1,
+        3
+      ],
       "source": "تفسير ابن كثير",
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة (كلام ابن كثير)",
@@ -761,7 +779,10 @@
       "root": "ر-ح-م",
       "word_ar": "الرحمن الرحيم",
       "surah": 1,
-      "ayah": 1,
+      "ayah": [
+        1,
+        3
+      ],
       "source": "تفسير ابن كثير",
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة، نقلًا عن عطاء الخراساني",
@@ -782,7 +803,10 @@
       "root": "ر-ح-م",
       "word_ar": "الله الرحمن الرحيم",
       "surah": 1,
-      "ayah": 1,
+      "ayah": [
+        1,
+        3
+      ],
       "source": "تفسير ابن كثير",
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة (كلام ابن كثير)",
@@ -803,7 +827,10 @@
       "root": "ر-ف-ق",
       "word_ar": "الرحمن الرحيم",
       "surah": 1,
-      "ayah": 1,
+      "ayah": [
+        1,
+        3
+      ],
       "source": "تفسير ابن كثير",
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة، صحيح مسلم",
@@ -824,7 +851,10 @@
       "root": "س-أ-ل",
       "word_ar": "الرحمن الرحيم",
       "surah": 1,
-      "ayah": 1,
+      "ayah": [
+        1,
+        3
+      ],
       "source": "تفسير ابن كثير",
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة، قول ابن المبارك وبيتان نسبهما ابن كثير إلى \"بعض الشعراء\"",
