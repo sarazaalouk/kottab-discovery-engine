@@ -1,2 +1,7 @@
 .env
 node_modules/
+
+# Generated episodes and referral log stay local; only samples are committed
+data/episodes/*
+!data/episodes/sample-*.json
+data/referrals.jsonl

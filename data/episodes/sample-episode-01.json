@@ -1,0 +1,283 @@
+{
+  "id": "sample-episode-01",
+  "sample_note": "Synthetic sample (child: Adam). Generated on 2026-10-04 with the first version of prompts/episode_system.md, before Sara's review of Episode 1. Used as the fixture for npm test.",
+  "status": "pending_review",
+  "created_at": "2026-10-04T09:39:26.616Z",
+  "model": "claude-sonnet-5-5",
+  "root": "ر-ح-م",
+  "episode_number": 1,
+  "child": {
+    "name": "Adam",
+    "age": 8,
+    "home_language": "English",
+    "recites": "Al-Fatiha (memorised)",
+    "reading_level": "Reads some Arabic letters"
+  },
+  "cards_provided": [
+    "kb-030",
+    "kb-031",
+    "kb-032",
+    "kb-033",
+    "kb-034",
+    "kb-035",
+    "kb-036",
+    "kb-037"
+  ],
+  "validation": {
+    "passed": true,
+    "errors": [],
+    "warnings": []
+  },
+  "episode": {
+    "episode_number": 1,
+    "title_en": "Two Names, One Root",
+    "discovery_moment": {
+      "text_en": "Adam, you already know Ar-Rahman (a name of Allah) and Ar-Raheem (another name of Allah) from Al-Fatiha. Listen to how alike they sound. Today you will look for what hides inside these two names, like a detective.",
+      "ayah_refs": [
+        "1:1",
+        "1:3"
+      ]
+    },
+    "words": [
+      {
+        "ayah_ref": "1:1",
+        "word_index": 3,
+        "meanings": [
+          {
+            "card_id": "kb-030",
+            "audience": "child",
+            "text": "Ar-Rahman and Ar-Raheem both come from rahmah (mercy), and Ar-Rahman means even more mercy."
+          },
+          {
+            "card_id": "kb-034",
+            "audience": "child",
+            "text": "Only Allah is called Ar-Rahman (the Most Merciful); no one else has this name."
+          }
+        ]
+      },
+      {
+        "ayah_ref": "1:1",
+        "word_index": 4,
+        "meanings": [
+          {
+            "card_id": "kb-030",
+            "audience": "child",
+            "text": "Ar-Rahman and Ar-Raheem both come from rahmah (mercy), and Ar-Rahman means even more mercy."
+          },
+          {
+            "card_id": "kb-035",
+            "audience": "child",
+            "text": "Allah also used the word Raheem (merciful) to describe others."
+          }
+        ]
+      },
+      {
+        "ayah_ref": "1:3",
+        "word_index": 1,
+        "meanings": [
+          {
+            "card_id": "kb-031",
+            "audience": "child",
+            "text": "Ar-Rahman (the Most Merciful) means every kind of mercy; Ar-Raheem (the Especially Merciful) is mercy for the believers."
+          }
+        ]
+      },
+      {
+        "ayah_ref": "1:3",
+        "word_index": 2,
+        "meanings": [
+          {
+            "card_id": "kb-031",
+            "audience": "child",
+            "text": "Ar-Rahman (the Most Merciful) means every kind of mercy; Ar-Raheem (the Especially Merciful) is mercy for the believers."
+          }
+        ]
+      }
+    ],
+    "discovery_question": {
+      "question_en": "Adam, family ties have a special name. Where does that name come from?",
+      "options": [
+        {
+          "text_en": "From Allah's name Ar-Rahman",
+          "is_correct": true
+        },
+        {
+          "text_en": "From the name of a faraway city",
+          "is_correct": false
+        },
+        {
+          "text_en": "From the name of a mountain",
+          "is_correct": false
+        }
+      ],
+      "answer_meaning": {
+        "card_id": "kb-033",
+        "audience": "child",
+        "text": "Allah said: I am Ar-Rahman (the Most Merciful), and I gave family ties a name from My name."
+      }
+    },
+    "memory_picture": {
+      "label": "memory picture, not a tafsir",
+      "description_en": "Picture one tree with one trunk and two branches. Each branch is one name, and both branches grow from the same trunk. Use this picture to remember the two names are linked."
+    },
+    "mushaf_search_task": {
+      "instruction_en": "Open your Mushaf (the Quran book) to Surah (chapter) Al-Fatiha. Point to Ar-Rahman and Ar-Raheem in the first ayah. Then find them again in the third ayah. Look for the Arabic letters you know, and say how many times you found each name.",
+      "ayah_refs": [
+        "1:1",
+        "1:3"
+      ]
+    },
+    "salah_connection": {
+      "text_en": "Tonight in Salah (prayer), listen for the two names that sound so alike. Think of your tree with two branches when you say them.",
+      "ayah_refs": [
+        "1:1",
+        "1:3"
+      ]
+    },
+    "parent_report": {
+      "discovered": {
+        "summary_en": "Adam explored the names Ar-Rahman and Ar-Raheem, found them in his Mushaf, and met a family word linked to them. The meanings from the approved cards are listed below.",
+        "meanings": [
+          {
+            "card_id": "kb-030",
+            "audience": "parent",
+            "text": "Both names come from the word rahmah (mercy), in a form that shows abundance of mercy; and Ar-Rahman expresses even more mercy than Ar-Raheem."
+          },
+          {
+            "card_id": "kb-031",
+            "audience": "parent",
+            "text": "Ar-Rahman is a general name covering every kind of mercy, and it belongs to Allah alone; Ar-Raheem is His mercy toward the believers."
+          },
+          {
+            "card_id": "kb-033",
+            "audience": "parent",
+            "text": "Allah the Exalted said: \"I am Ar-Rahman (the Most Merciful). I created the womb and family ties (ar-rahim) and gave them a name taken from My name. Whoever joins them, I will join him; and whoever cuts them, I will cut him off.\""
+          }
+        ]
+      },
+      "strengths": [
+        "Adam has memorised Al-Fatiha, so the words in this episode were already familiar to him.",
+        "Adam reads some Arabic letters, which helped him search for the names in his Mushaf.",
+        "Adam practised noticing and comparing words that sound alike."
+      ],
+      "next_step_en": "Tonight, ask Adam to point out the two names when he recites Al-Fatiha, and to tell you which one comes first.",
+      "teach_your_parents": {
+        "duration_minutes": 3,
+        "steps_en": [
+          "Ask Adam to show you the two names in his Mushaf, in the first and third ayah.",
+          "Ask him to draw or describe his tree with two branches and say what it helps him remember.",
+          "Ask him to tell you where the special name for family ties comes from.",
+          "Say the two names together once, slowly, and listen for how alike they sound."
+        ],
+        "meanings": [
+          {
+            "card_id": "kb-030",
+            "audience": "parent",
+            "text": "Both names come from the word rahmah (mercy), in a form that shows abundance of mercy; and Ar-Rahman expresses even more mercy than Ar-Raheem."
+          },
+          {
+            "card_id": "kb-033",
+            "audience": "parent",
+            "text": "Allah the Exalted said: \"I am Ar-Rahman (the Most Merciful). I created the womb and family ties (ar-rahim) and gave them a name taken from My name. Whoever joins them, I will join him; and whoever cuts them, I will cut him off.\""
+          }
+        ]
+      }
+    },
+    "referrals": []
+  },
+  "quran_inserted_by_server": {
+    "ayahs": {
+      "1:1": "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ",
+      "1:3": "ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ"
+    },
+    "words": [
+      {
+        "ayah_ref": "1:1",
+        "word_index": 3,
+        "meanings": [
+          {
+            "card_id": "kb-030",
+            "audience": "child",
+            "text": "Ar-Rahman and Ar-Raheem both come from rahmah (mercy), and Ar-Rahman means even more mercy."
+          },
+          {
+            "card_id": "kb-034",
+            "audience": "child",
+            "text": "Only Allah is called Ar-Rahman (the Most Merciful); no one else has this name."
+          }
+        ],
+        "text_ar": "ٱلرَّحْمَـٰنِ"
+      },
+      {
+        "ayah_ref": "1:1",
+        "word_index": 4,
+        "meanings": [
+          {
+            "card_id": "kb-030",
+            "audience": "child",
+            "text": "Ar-Rahman and Ar-Raheem both come from rahmah (mercy), and Ar-Rahman means even more mercy."
+          },
+          {
+            "card_id": "kb-035",
+            "audience": "child",
+            "text": "Allah also used the word Raheem (merciful) to describe others."
+          }
+        ],
+        "text_ar": "ٱلرَّحِيمِ"
+      },
+      {
+        "ayah_ref": "1:3",
+        "word_index": 1,
+        "meanings": [
+          {
+            "card_id": "kb-031",
+            "audience": "child",
+            "text": "Ar-Rahman (the Most Merciful) means every kind of mercy; Ar-Raheem (the Especially Merciful) is mercy for the believers."
+          }
+        ],
+        "text_ar": "ٱلرَّحْمَـٰنِ"
+      },
+      {
+        "ayah_ref": "1:3",
+        "word_index": 2,
+        "meanings": [
+          {
+            "card_id": "kb-031",
+            "audience": "child",
+            "text": "Ar-Rahman (the Most Merciful) means every kind of mercy; Ar-Raheem (the Especially Merciful) is mercy for the believers."
+          }
+        ],
+        "text_ar": "ٱلرَّحِيمِ"
+      }
+    ]
+  },
+  "usage": {
+    "input_tokens": 7814,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "iterations": [
+      {
+        "input_tokens": 7814,
+        "output_tokens": 4458,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "type": "message",
+        "model": null
+      }
+    ],
+    "output_tokens": 4458,
+    "output_tokens_details": {
+      "thinking_tokens": 2514
+    },
+    "service_tier": "standard",
+    "inference_geo": "global"
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "$comment": "Fixed output schema for one discovery episode. Sent to the model as output_config.format and re-checked by validator.js. Counts (4-6 words, exactly 3 options, 3 minutes) are enforced by the validator because structured outputs do not support array-length constraints.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "episode_number",
+    "title_en",
+    "discovery_moment",
+    "words",
+    "discovery_question",
+    "memory_picture",
+    "mushaf_search_task",
+    "salah_connection",
+    "parent_report",
+    "referrals"
+  ],
+  "properties": {
+    "episode_number": { "type": "integer" },
+    "title_en": { "type": "string" },
+    "discovery_moment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text_en", "ayah_refs"],
+      "properties": {
+        "text_en": { "type": "string" },
+        "ayah_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "words": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ayah_ref", "word_index", "meanings"],
+        "properties": {
+          "ayah_ref": { "type": "string" },
+          "word_index": { "type": "integer" },
+          "meanings": { "type": "array", "items": { "$ref": "#/$defs/meaning" } }
+        }
+      }
+    },
+    "discovery_question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question_en", "options", "answer_meaning"],
+      "properties": {
+        "question_en": { "type": "string" },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["text_en", "is_correct"],
+            "properties": {
+              "text_en": { "type": "string" },
+              "is_correct": { "type": "boolean" }
+            }
+          }
+        },
+        "answer_meaning": { "$ref": "#/$defs/meaning" }
+      }
+    },
+    "memory_picture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "description_en"],
+      "properties": {
+        "label": { "type": "string", "const": "memory picture, not a tafsir" },
+        "description_en": { "type": "string" }
+      }
+    },
+    "mushaf_search_task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["instruction_en", "ayah_refs"],
+      "properties": {
+        "instruction_en": { "type": "string" },
+        "ayah_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "salah_connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text_en", "ayah_refs"],
+      "properties": {
+        "text_en": { "type": "string" },
+        "ayah_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "parent_report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["discovered", "strengths", "next_step_en", "teach_your_parents"],
+      "properties": {
+        "discovered": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["summary_en", "meanings"],
+          "properties": {
+            "summary_en": { "type": "string" },
+            "meanings": { "type": "array", "items": { "$ref": "#/$defs/meaning" } }
+          }
+        },
+        "strengths": { "type": "array", "items": { "type": "string" } },
+        "next_step_en": { "type": "string" },
+        "teach_your_parents": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["duration_minutes", "steps_en", "meanings"],
+          "properties": {
+            "duration_minutes": { "type": "integer" },
+            "steps_en": { "type": "array", "items": { "type": "string" } },
+            "meanings": { "type": "array", "items": { "$ref": "#/$defs/meaning" } }
+          }
+        }
+      }
+    },
+    "referrals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question", "reason"],
+        "properties": {
+          "question": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "meaning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["card_id", "audience", "text"],
+      "properties": {
+        "card_id": { "type": "string" },
+        "audience": { "type": "string", "enum": ["child", "parent"] },
+        "text": { "type": "string" }
+      }
+    }
+  }
+}
