@@ -14,7 +14,9 @@
     "meaning_en": "string — simple English for a non-Arabic-speaking parent",
     "meaning_en_status": "string — translation_for_review | approved",
     "pedagogy_note": "string — teaching note for how the card is used",
-    "status": "string — draft (entered, not reviewed) | approved (reviewed by Sara, matches the source) | rejected"
+    "status": "string — draft (entered, not reviewed) | approved (reviewed by Sara, matches the source) | rejected",
+    "approved_by": "string — who approved the card (only on approved cards)",
+    "approved_on": "string — approval date YYYY-MM-DD (only on approved cards)"
   },
   "entries": [
     {
@@ -33,10 +35,12 @@
       "source_url": "https://quran.com/1 (تفسير ابن كثير)",
       "location": "مقدمة سورة الفاتحة (فضل الفاتحة)، حديث صحيح مسلم عن أبي هريرة",
       "meaning_ar": "قال الله عز وجل : قسمت الصلاة بيني وبين عبدي نصفين ، ولعبدي ما سأل فإذا قال العبد : ( الحمد لله رب العالمين ) [ الفاتحة : 2 ] ، قال الله : حمدني عبدي ، وإذا قال : ( الرحمن الرحيم [ الفاتحة : 3 ] ، قال الله : أثنى علي عبدي ، فإذا قال : ( مالك يوم الدين ) [ الفاتحة : 4 ] ، قال مجدني عبدي - وقال مرة : فوض إلي عبدي - فإذا قال : ( إياك نعبد وإياك نستعين ) [ الفاتحة : 5 ] ، قال : هذا بيني وبين عبدي ، ولعبدي ما سأل ، فإذا قال : ( اهدنا الصراط المستقيم صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين ) [ الفاتحة : 6 ، 7 ] ، قال هذا لعبدي ولعبدي ما سأل .",
-      "meaning_en": "Allah, the Mighty and Majestic, said: \"I have divided the prayer between Me and My servant into two halves, and My servant will have what he asks for.\" When the servant says \"All praise is for Allah, Lord of all the worlds,\" Allah says: \"My servant has praised Me.\" When he says \"The Most Merciful, the Especially Merciful,\" Allah says: \"My servant has extolled Me.\" When he says \"Master of the Day of Judgment,\" He says: \"My servant has glorified Me\" (and once He said: \"My servant has entrusted his affairs to Me\"). When he says \"You alone we worship and You alone we ask for help,\" He says: \"This is between Me and My servant, and My servant will have what he asks for.\" When he says \"Guide us to the straight path, the path of those You have blessed, not of those who earned anger, nor of those who went astray,\" He says: \"This is for My servant, and My servant will have what he asks for.\"",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "Allah, the Mighty and Majestic, said: \"I have divided the prayer between Me and My servant into two halves, and My servant will have what he asks for.\" When the servant says \"All praise is for Allah, Lord of all the worlds,\" Allah says: \"My servant has praised Me.\" When he says \"Ar-Rahman, Ar-Raheem (the Most Merciful, the Especially Merciful),\" Allah says: \"My servant has honoured Me.\" When he says \"Master of the Day of Judgment,\" He says: \"My servant has glorified Me\" (and once He said: \"My servant has placed his trust in Me\"). When he says \"You alone we worship and You alone we ask for help,\" He says: \"This is between Me and My servant, and My servant will have what he asks for.\" When he says \"Guide us to the straight path, the path of those You have blessed, not of those who earned anger, nor of those who went astray,\" He says: \"This is for My servant, and My servant will have what he asks for.\"",
+      "meaning_en_status": "approved",
       "pedagogy_note": "الحوار الذي يبنى عليه الموسم كله: الله يرد على الطفل آية آية في الصلاة. كل حلقة تأخذ منه سطرها.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-002",
@@ -55,9 +59,11 @@
       "location": "مقدمة سورة الفاتحة (فضل الفاتحة)، حديث صحيح البخاري عن أبي سعيد بن المعلى",
       "meaning_ar": "لأعلمنك أعظم سورة في القرآن قبل أن تخرج من المسجد ... الحمد لله رب العالمين هي : السبع المثاني والقرآن العظيم الذي أوتيته .",
       "meaning_en": "\"I will teach you the greatest surah in the Quran before you leave the mosque ... 'All praise is for Allah, Lord of all the worlds' — it is the Seven Oft-Repeated Verses and the Great Quran that I was given.\"",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en_status": "approved",
       "pedagogy_note": "مقتطفان من حديث واحد (الفاصل ... يدل على حذف وسط الحديث). الطفل يقول أعظم سورة في القرآن كل يوم.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-003",
@@ -75,10 +81,12 @@
       "source_url": "https://quran.com/1 (تفسير ابن كثير)",
       "location": "مقدمة سورة الفاتحة (كلام ابن كثير)",
       "meaning_ar": "وصح تسميتها بالسبع المثاني ، قالوا : لأنها تثنى في الصلاة ، فتقرأ في كل ركعة .",
-      "meaning_en": "It is rightly called \"the Seven Oft-Repeated Verses\" (al-Sab' al-Mathani). Scholars said this is because it is repeated in the prayer: it is recited in every unit (rak'ah).",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "It is rightly called \"the Seven Oft-Repeated Verses\" (al-Sab' al-Mathani). Scholars said this is because it is repeated in the prayer: it is recited in every rak'ah (unit of Salah).",
+      "meaning_en_status": "approved",
       "pedagogy_note": "اكتشاف بالعدّ: الطفل يحسب كم مرة يقول الفاتحة في اليوم.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-004",
@@ -97,9 +105,11 @@
       "location": "تفسير البسملة، سنن أبي داود بإسناد صحيح عن ابن عباس",
       "meaning_ar": "أن رسول الله صلى الله عليه وسلم كان لا يعرف فصل السورة حتى ينزل عليه بسم الله الرحمن الرحيم",
       "meaning_en": "The Messenger of Allah (peace be upon him) did not know where one surah ended and the next began until \"In the name of Allah, the Most Merciful, the Especially Merciful\" was revealed to him.",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en_status": "approved",
       "pedagogy_note": "مهمة بحث في المصحف: ابحث عن بسم الله في أول كل سورة، واكتشف السورة الوحيدة بدونها (براءة).",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-005",
@@ -117,10 +127,12 @@
       "source_url": "https://quran.com/1 (تفسير ابن كثير)",
       "location": "تفسير البسملة، صحيح البخاري عن أنس",
       "meaning_ar": "كانت قراءته مدا ، ثم قرأ \" بسم الله الرحمن الرحيم \" ، يمد \" بسم الله \" ، ويمد \" الرحمن \" ، ويمد \" الرحيم",
-      "meaning_en": "His recitation was drawn out. He recited \"In the name of Allah, the Most Merciful, the Especially Merciful,\" lengthening \"In the name of Allah,\" lengthening \"the Most Merciful,\" and lengthening \"the Especially Merciful.\"",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "He used to recite with slow, stretched sounds (madd). He recited \"In the name of Allah, the Most Merciful, the Especially Merciful,\" lengthening \"In the name of Allah,\" lengthening \"the Most Merciful,\" and lengthening \"the Especially Merciful.\"",
+      "meaning_en_status": "approved",
       "pedagogy_note": "ربط المعنى بالصوت والمد الذي يتدرب عليه الطفل في التجويد.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-006",
@@ -138,10 +150,12 @@
       "source_url": "https://quran.com/1 (تفسير ابن كثير)",
       "location": "تفسير البسملة، مسند الإمام أحمد",
       "meaning_ar": "لا تقل تعس الشيطان . فإنك إذا قلت : تعس الشيطان تعاظم ، وقال : بقوتي صرعته ، وإذا قلت : باسم الله ، تصاغر حتى يصير مثل الذباب .",
-      "meaning_en": "Do not say \"May Satan perish,\" because if you say that, he swells up and says, \"I knocked him down by my own power.\" But if you say \"In the name of Allah,\" he shrinks until he becomes like a fly.",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "Do not say \"May Shaytan perish,\" because if you say that, Shaytan swells up and says, \"I knocked him down by my own power.\" But if you say \"In the name of Allah,\" he shrinks until he becomes like a fly.",
+      "meaning_en_status": "approved",
       "pedagogy_note": "صورة تذكر حقيقية من الحديث نفسه لا من خيالنا: الشيطان يصغر حتى يصير مثل الذباب.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-007",
@@ -643,10 +657,12 @@
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة (الفاتحة 1)، كلام ابن كثير",
       "meaning_ar": "اسمان مشتقان من الرحمة على وجه المبالغة ، ورحمن أشد مبالغة من رحيم",
-      "meaning_en": "Two names taken from \"rahmah\" (mercy), in a form that means \"very much\"; and \"al-Rahman\" is stronger in meaning than \"al-Rahim.\"",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "Both names come from the word rahmah (mercy), in a form that shows abundance of mercy; and Ar-Rahman expresses even more mercy than Ar-Raheem.",
+      "meaning_en_status": "approved",
       "pedagogy_note": "الجملة الأم للحلقة الأولى: الاسمان من جذر واحد \"رحمة\".",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-031",
@@ -667,10 +683,12 @@
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة، نقلًا عن أبي علي الفارسي",
       "meaning_ar": "الرحمن : اسم عام في جميع أنواع الرحمة يختص به الله تعالى ، والرحيم إنما هو من جهة المؤمنين",
-      "meaning_en": "Al-Rahman is a general name covering every kind of mercy, and it belongs to Allah alone; al-Rahim is His mercy toward the believers.",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "Ar-Rahman is a general name covering every kind of mercy, and it belongs to Allah alone; Ar-Raheem is His mercy toward the believers.",
+      "meaning_en_status": "approved",
       "pedagogy_note": "الفرق بين الاسمين في سطر واحد: رحمة لكل شيء، ورحمة خاصة بالمؤمنين.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-032",
@@ -692,9 +710,11 @@
       "location": "تفسير البسملة، قول ابن عباس كما نقله ابن كثير",
       "meaning_ar": "وقال ابن عباس : هما اسمان رقيقان ، أحدهما أرق من الآخر ، أي أكثر رحمة",
       "meaning_en": "Ibn Abbas said: They are two gentle, tender names, one more tender than the other — that is, with more mercy.",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en_status": "approved",
       "pedagogy_note": "\"اسمان رقيقان\" كلمة يحسها الطفل ويحفظها.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-033",
@@ -715,10 +735,12 @@
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة، نقلًا عن القرطبي، رواه الترمذي عن عبد الرحمن بن عوف",
       "meaning_ar": "قال الله تعالى : أنا الرحمن خلقت الرحم وشققت لها اسمًا من اسمي ، فمن وصلها وصلته ومن قطعها قطعته",
-      "meaning_en": "Allah the Exalted said: \"I am al-Rahman (the Most Merciful). I created family ties (al-rahim) and gave them a name taken from My name. Whoever keeps them connected, I will keep connected to him; whoever cuts them off, I will cut him off.\"",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "Allah the Exalted said: \"I am Ar-Rahman (the Most Merciful). I created the womb and family ties (ar-rahim) and gave them a name taken from My name. Whoever joins them, I will join him; and whoever cuts them, I will cut him off.\"",
+      "meaning_en_status": "approved",
       "pedagogy_note": "أقوى اكتشاف جذر في الموسم: \"الرحم\" (العائلة والقرابة) اسمها مشقوق من اسم الرحمن.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-034",
@@ -739,10 +761,12 @@
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة (كلام ابن كثير)",
       "meaning_ar": "واسمه تعالى الرحمن خاص به لم يُسم به غيره",
-      "meaning_en": "His name \"al-Rahman\" belongs to Him alone; no one else has been named with it.",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "His name \"Ar-Rahman\" belongs to Him alone; no one else has been named with it.",
+      "meaning_en_status": "approved",
       "pedagogy_note": "لعبة الأسماء: لماذا يوجد \"عبد الرحمن\" ولا يوجد أحد اسمه \"رحمن\"؟ (مع البطاقة 35)",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-035",
@@ -763,10 +787,12 @@
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة (كلام ابن كثير)",
       "meaning_ar": "وأما الرحيم فإنه تعالى وصف به غيره",
-      "meaning_en": "As for \"al-Rahim,\" He the Exalted has described others with it too.",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "As for \"Ar-Raheem,\" He the Exalted has described others with it too.",
+      "meaning_en_status": "approved",
       "pedagogy_note": "\"رحيم\" وُصف بها النبي ﷺ، فتصلح اسمًا لإنسان بخلاف \"الرحمن\". (مع البطاقة 34)",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-036",
@@ -787,10 +813,12 @@
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة، نقلًا عن عطاء الخراساني",
       "meaning_ar": "أنه لما تسمى غيره تعالى بالرحمن ، جيء بلفظ الرحيم ليقطع التوهم بذلك ، فإنه لا يوصف بالرحمن الرحيم إلا الله تعالى",
-      "meaning_en": "When others called themselves \"al-Rahman,\" the word \"al-Rahim\" was added to remove any confusion, because no one is described as \"al-Rahman al-Rahim\" together except Allah the Exalted.",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "When others called themselves \"Ar-Rahman,\" the word \"Ar-Raheem\" was added to remove any confusion, because no one is described as \"Ar-Rahman Ar-Raheem\" together except Allah the Exalted.",
+      "meaning_en_status": "approved",
       "pedagogy_note": "إجابة سؤال \"لماذا اسمان بمعنى واحد؟\".",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-037",
@@ -811,10 +839,12 @@
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة (كلام ابن كثير)",
       "meaning_ar": "فلهذا بدأ باسم الله ، ووصفه بالرحمن ؛ لأنه أخص وأعرف من الرحيم ؛ لأن التسمية أولا إنما تكون بأشرف الأسماء ، فلهذا ابتدأ بالأخص فالأخص .",
-      "meaning_en": "That is why it begins with the name \"Allah,\" and then describes Him as \"al-Rahman,\" because it is more specific and better known than \"al-Rahim.\" Naming begins with the most honorable names, so it starts with the most specific, then the next most specific.",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "That is why it begins with the name \"Allah,\" and then describes Him as \"Ar-Rahman,\" because it is more specific and better known than \"Ar-Raheem.\" Naming begins with the most honorable names, so it starts with the most specific, then the next most specific.",
+      "meaning_en_status": "approved",
       "pedagogy_note": "ترتيب الأسماء في الآية ليس صدفة.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-038",
@@ -836,9 +866,11 @@
       "location": "تفسير البسملة، صحيح مسلم",
       "meaning_ar": "إن الله رفيق يحب الرفق في الأمر كله وإنه يعطي على الرفق ما لا يعطي على العنف",
       "meaning_en": "Allah is gentle and loves gentleness in every matter, and He gives for gentleness what He does not give for harshness.",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en_status": "approved",
       "pedagogy_note": "الرحمة تتحول لسلوك: الرفق مع الأخ ومع القطة ومع النفس. مهمة \"علّم والديك\".",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-039",
@@ -859,10 +891,12 @@
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة، قول ابن المبارك وبيتان نسبهما ابن كثير إلى \"بعض الشعراء\"",
       "meaning_ar": "وقال ابن المبارك : الرحمن إذا سئل أعطى ، والرحيم إذا لم يسأل يغضب ... لا تطلبن بني آدم حاجة *** وسل الذي أبوابه لا تغلق / الله يغضب إن تركت سؤاله *** وبني آدم حين يسأل يغضب",
-      "meaning_en": "Ibn al-Mubarak said: Al-Rahman is the One Who gives when asked, and al-Rahim is the One Who is displeased when not asked ... (A poet said:) \"Do not ask the children of Adam for what you need; ask the One Whose doors are never closed. Allah is displeased if you stop asking Him, while the children of Adam are annoyed when they are asked.\"",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "Ibn al-Mubarak said: Ar-Rahman is the One Who gives when asked, and Ar-Raheem is the One Who is angered when He is not asked ... (A poet said:) \"Do not ask the children of Adam for what you need; ask the One Whose doors are never closed. Allah is angered if you stop asking Him, while the children of Adam are annoyed when they are asked.\"",
+      "meaning_en_status": "approved",
       "pedagogy_note": "الطفل الذي يستحي أن يطلب يعرف أن الله يحب أن يُسأل وبابه لا يُغلق.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-040",
@@ -880,10 +914,12 @@
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة (كلام ابن كثير)",
       "meaning_ar": "{ الله } عَلَمٌ على الرب تبارك وتعالى ، يقال : إنه الاسم الأعظم ؛ لأنه يوصف بجميع الصفات ... وهو اسم لم يسم به غيره تبارك وتعالى",
-      "meaning_en": "\"Allah\" is the proper name of the Lord, Blessed and Exalted. It is said to be the Greatest Name, because all the attributes are described through it ... and it is a name no one else has ever been called by, Blessed and Exalted is He.",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "\"Allah\" is the proper name of the Lord, Blessed and Exalted. It is said to be the Greatest Name, because every attribute is ascribed to it ... and it is a name no one else has ever been called by, Blessed and Exalted is He.",
+      "meaning_en_status": "approved",
       "pedagogy_note": "الاسم الأعظم، ولم يُسمَّ به غيره.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-041",
@@ -901,10 +937,12 @@
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة، الصحيحان عن أبي هريرة",
       "meaning_ar": "إن لله تسعة وتسعين اسما ، مائة إلا واحدًا من أحصاها دخل الجنة",
-      "meaning_en": "Allah has ninety-nine names — one hundred minus one. Whoever learns and keeps them will enter Paradise.",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "Allah has ninety-nine names — one hundred minus one. Whoever learns them by heart will enter Paradise.",
+      "meaning_en_status": "approved",
       "pedagogy_note": "تسعة وتسعون اسمًا.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-042",
@@ -922,10 +960,12 @@
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة، صحيح مسلم (قاله النبي ﷺ لربيبه عمر بن أبي سلمة)",
       "meaning_ar": "قل : باسم الله ، وكل بيمينك ، وكل مما يليك",
-      "meaning_en": "Say \"Bismillah\" (In the name of Allah), eat with your right hand, and eat from what is in front of you.",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "Say \"Bismillah\" (In the name of Allah), eat with your right hand, and eat from what is nearest to you.",
+      "meaning_en_status": "approved",
       "pedagogy_note": "حديث قاله النبي ﷺ لطفل في سن أطفالنا.",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-043",
@@ -943,10 +983,12 @@
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
       "location": "تفسير البسملة (كلام ابن كثير، ورواية النسائي التي ساقها)",
       "meaning_ar": "فهذا من تأثير بركة بسم الله ؛ ولهذا تستحب في أوّل كل عمل وقول ... لا تقل هكذا ، فإنه يتعاظم حتى يكون كالبيت ، ولكن قل : بسم الله ، فإنه يصغر حتى يكون كالذبابة",
-      "meaning_en": "This is from the effect of the blessing of \"Bismillah,\" and that is why it is recommended at the beginning of every action and word ... \"Do not say that, for he swells until he becomes like a house; but say 'Bismillah,' for he shrinks until he becomes like a fly.\"",
-      "meaning_en_status": "translation_for_review",
+      "meaning_en": "This is from the effect of the blessing of \"Bismillah,\" and that is why it is recommended at the beginning of every action and word ... \"Do not say that, for Shaytan swells until he becomes like a house; but say 'Bismillah,' for he shrinks until he becomes like a fly.\"",
+      "meaning_en_status": "approved",
       "pedagogy_note": "تكملة البطاقة 6: \"قدر البيت\" مقابل \"قدر الذبابة\".",
-      "status": "draft"
+      "status": "approved",
+      "approved_by": "Sara Zaalouk",
+      "approved_on": "2026-10-04"
     },
     {
       "id": "kb-044",
