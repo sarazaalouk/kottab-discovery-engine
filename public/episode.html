@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>My episode · Kottab Discovery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/episode.css">
+</head>
+<body>
+<main>
+  <!-- Start -->
+  <section class="card" id="start" hidden aria-labelledby="start-title">
+    <span class="eyebrow">Episode 1</span>
+    <h1 id="start-title">Ready to discover?</h1>
+    <p id="start-text">Your episode is made just for you. A Kottab teacher checks it before you see it.</p>
+    <p class="notice warn" id="no-profile" hidden>A parent needs to set up your profile first. <a href="index.html">Go to the parent page</a>.</p>
+    <button class="btn block" id="make">Make my episode</button>
+  </section>
+
+  <!-- Loading -->
+  <section class="card" id="loading" hidden aria-live="polite" aria-labelledby="loading-title">
+    <h2 id="loading-title">Making your episode…</h2>
+    <ol class="steps" id="steps">
+      <li data-step="0">Reading your letter games</li>
+      <li data-step="1">Choosing today's root</li>
+      <li data-step="2">Checking every meaning against the source</li>
+    </ol>
+  </section>
+
+  <!-- Waiting for review / rejected / returned -->
+  <section class="card" id="waiting" hidden aria-labelledby="waiting-title">
+    <span class="eyebrow">Almost there</span>
+    <h2 id="waiting-title">Your teacher is checking your episode</h2>
+    <p>Every episode is checked by a Kottab teacher before you see it. Come back soon!</p>
+    <button class="btn secondary block" id="check">Check again</button>
+    <p class="parent-cue small" id="waiting-cue"></p>
+    <button class="btn secondary block" id="new-episode" hidden>Grown-up: make a new episode</button>
+  </section>
+
+  <!-- Error -->
+  <section class="card" id="error" hidden role="alert" aria-labelledby="error-title">
+    <h2 id="error-title">We couldn't load your episode</h2>
+    <p id="error-text"></p>
+    <button class="btn secondary block" id="retry">Try again</button>
+  </section>
+
+  <!-- Episode -->
+  <article id="episode" hidden class="stack episode">
+    <header class="stack">
+      <span class="eyebrow" id="ep-eyebrow"></span>
+      <h1 id="ep-title"></h1>
+      <p id="ep-moment"></p>
+    </header>
+
+    <section class="card" aria-label="Ayahs">
+      <div id="ayahs" class="stack"></div>
+      <p class="small muted">Quran text: verified Uthmani text, Hafs.</p>
+    </section>
+
+    <section class="card" aria-labelledby="q-title">
+      <span class="eyebrow">Discovery question</span>
+      <h2 id="q-title"></h2>
+      <div class="options" id="options" role="group" aria-labelledby="q-title"></div>
+    </section>
+
+    <section id="reveal" hidden class="stack" aria-live="polite">
+      <section class="stack" aria-labelledby="m-title">
+        <h2 id="m-title">What you discovered</h2>
+        <div id="meanings" class="stack"></div>
+      </section>
+
+      <section class="memory" aria-labelledby="mp-title">
+        <span class="memory-label" id="mp-title"></span>
+        <p id="mp-text"></p>
+      </section>
+
+      <section class="card" aria-labelledby="mushaf-title">
+        <span class="eyebrow">With your Mushaf</span>
+        <h2 id="mushaf-title">Your Mushaf mission</h2>
+        <p id="mushaf-text"></p>
+      </section>
+
+      <section class="card" aria-labelledby="salah-title">
+        <span class="eyebrow">Tonight</span>
+        <h2 id="salah-title">In your Salah</h2>
+        <p id="salah-text"></p>
+      </section>
+
+      <a class="btn secondary block" href="report.html">Show the report to a grown-up</a>
+    </section>
+
+    <section class="card" aria-labelledby="ask-title">
+      <h2 id="ask-title">Ask a question</h2>
+      <form id="ask-form" class="stack" novalidate>
+        <label class="small muted" for="ask-input">Wondering about something in this episode? Ask here.</label>
+        <textarea id="ask-input" rows="2" maxlength="300"></textarea>
+        <button class="btn" type="submit" id="ask-btn">Ask</button>
+      </form>
+      <div id="ask-answer" aria-live="polite"></div>
+    </section>
+  </article>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+  renderTopbar("episode.html");
+  const $ = (id) => document.getElementById(id);
+  const SEASON_ROOTS = { 1: "ر-ح-م" };
+  const EPISODE_NUMBER = 1;
+  const SECTIONS = ["start", "loading", "waiting", "error", "episode"];
+
+  function show(id) {
+    SECTIONS.forEach((s) => ($(s).hidden = s !== id));
+  }
+
+  // ---------- generate ----------
+  // Steps 1 and 2 are illustrative and move on a timer.
+  // Step 3 (checking meanings) is only marked done when the server's reply has arrived.
+  let stepTimers = [];
+  function setStep(i, state) {
+    $("steps").children[i].dataset.state = state;
+  }
+  function runSteps() {
+    [...$("steps").children].forEach((li) => li.removeAttribute("data-state"));
+    setStep(0, "active");
+    stepTimers = [
+      setTimeout(() => { setStep(0, "done"); setStep(1, "active"); }, 1500),
+      setTimeout(() => { setStep(1, "done"); setStep(2, "active"); }, 3000),
+    ];
+  }
+  function stopSteps() {
+    stepTimers.forEach(clearTimeout);
+  }
+
+  function showError(text) {
+    stopSteps();
+    $("error-text").textContent = text;
+    show("error");
+  }
+
+  async function makeEpisode() {
+    const profile = store.get(KEYS.profile);
+    if (!profile) return;
+    const diag = store.get(KEYS.diagnosis);
+    const body = {
+      child: {
+        name: profile.name,
+        age: profile.age,
+        home_language: profile.home_language,
+        recites: profile.recites_list.join(", "),
+        reading_level: (diag && diag.reading_level) || profile.parent_reading_level,
+      },
+      root: SEASON_ROOTS[EPISODE_NUMBER],
+      episode_number: EPISODE_NUMBER,
+    };
+    show("loading");
+    runSteps();
+    let res;
+    try {
+      res = await fetch("/api/generate-episode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+    } catch {
+      return showError("We couldn't reach the server, so nothing was sent. Please check the connection and try again.");
+    }
+    if (!res.ok) return showError("Something went wrong while making the episode. Please try again in a moment.");
+    const { id } = await res.json();
+    stopSteps();
+    [0, 1, 2].forEach((i) => setStep(i, "done"));
+    await new Promise((r) => setTimeout(r, 600));
+    store.set(KEYS.episodeId, id);
+    loadEpisode(id);
+  }
+
+  // ---------- load / status ----------
+  async function loadEpisode(id) {
+    let res;
+    try {
+      res = await fetch(`/api/episodes/${encodeURIComponent(id)}`);
+    } catch {
+      return showError("We couldn't reach the server, so nothing was sent. Please check the connection and try again.");
+    }
+    if (res.status === 404) {
+      store.remove(KEYS.episodeId);
+      return init();
+    }
+    if (!res.ok) return showError("We couldn't load the episode. Please try again.");
+    const data = await res.json();
+    if (data.status === "approved") return renderEpisode(data);
+
+    // pending_review, rejected, returned, referred: the child sees the same calm message.
+    $("waiting-cue").innerHTML = gate.isOpen()
+      ? `Grown-up: this episode is <b>${escapeHtml(data.status.replace("_", " "))}</b>. You can open it on the <a href="reviewer.html">Reviewer page</a>.`
+      : "Grown-up: a teacher reviews each episode before it opens.";
+    $("new-episode").hidden = !gate.isOpen();
+    show("waiting");
+  }
+
+  // ---------- render ----------
+  function renderAyahs(ayahs, highlight) {
+    const marks = new Set(highlight.map((h) => `${h.ayah_ref}#${h.word_index}`));
+    $("ayahs").innerHTML = Object.entries(ayahs)
+      .map(([ref, text]) => {
+        const words = text.split(/\s+/).map((w, i) =>
+          marks.has(`${ref}#${i + 1}`) ? `<mark>${escapeHtml(w)}</mark>` : escapeHtml(w)
+        );
+        return `<figure class="ayah-block">
+            <p class="ayah quran" lang="ar" dir="rtl">${words.join(" ")}</p>
+            <figcaption class="ayah-ref">Al-Fatiha ${escapeHtml(ref)}</figcaption>
+          </figure>`;
+      })
+      .join("");
+  }
+
+  function renderMeaning(m) {
+    return `<div class="meaning">
+        <p>${escapeHtml(m.text)}</p>
+        <span class="source-chip">${escapeHtml(m.card_id)}${m.source ? " · " + escapeHtml(m.source) : ""}</span>
+      </div>`;
+  }
+
+  function renderEpisode(d) {
+    $("ep-eyebrow").textContent = `Episode ${d.episode_number}`;
+    $("ep-title").textContent = d.title;
+    $("ep-moment").textContent = d.discovery_moment.text_en;
+    renderAyahs(d.ayahs, d.highlight);
+
+    $("q-title").textContent = d.question.text;
+    $("options").innerHTML = d.question.options
+      .map((o, i) => `<button class="option" data-i="${i}">${formatLetters(o)}</button>`)
+      .join("");
+    $("options").querySelectorAll(".option").forEach((btn) =>
+      btn.addEventListener("click", () => answer(btn, d))
+    );
+
+    $("meanings").innerHTML = d.meanings.map(renderMeaning).join("");
+    $("mp-title").textContent = d.memory_picture.label;
+    $("mp-text").innerHTML = formatLetters(d.memory_picture.description_en);
+    $("mushaf-text").innerHTML = formatLetters(d.mushaf_search_task.instruction_en);
+    $("salah-text").innerHTML = formatLetters(d.salah_connection.text_en);
+    $("ep-moment").innerHTML = formatLetters(d.discovery_moment.text_en);
+    $("q-title").innerHTML = formatLetters(d.question.text);
+    $("reveal").hidden = true;
+    show("episode");
+  }
+
+  function answer(btn, d) {
+    const buttons = [...$("options").querySelectorAll(".option")];
+    buttons.forEach((b) => (b.disabled = true));
+    btn.classList.add("picked");
+    buttons[d.question.correct_index].classList.add("correct");
+    $("reveal").hidden = false;
+    $("reveal").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // ---------- ask ----------
+  $("ask-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const question = $("ask-input").value.trim();
+    if (!question) return;
+    $("ask-btn").disabled = true;
+    $("ask-answer").innerHTML = `<p class="muted small">Thinking about where your question goes…</p>`;
+    try {
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ episode_id: store.get(KEYS.episodeId), question }),
+      });
+      if (!res.ok) throw new Error("ask");
+      const a = await res.json();
+      $("ask-answer").innerHTML =
+        a.type === "card"
+          ? renderMeaning(a)
+          : `<p class="notice">${escapeHtml(a.text)}</p>`;
+      $("ask-input").value = "";
+    } catch {
+      $("ask-answer").innerHTML = `<p class="notice error">We couldn't send your question. Please try again.</p>`;
+    }
+    $("ask-btn").disabled = false;
+  });
+
+  // ---------- init ----------
+  function init() {
+    const id = store.get(KEYS.episodeId);
+    if (id) return loadEpisode(id);
+    $("no-profile").hidden = Boolean(store.get(KEYS.profile));
+    $("make").disabled = !store.get(KEYS.profile);
+    show("start");
+  }
+
+  $("make").addEventListener("click", makeEpisode);
+  $("retry").addEventListener("click", init);
+  $("check").addEventListener("click", init);
+  $("new-episode").addEventListener("click", () => {
+    store.remove(KEYS.episodeId);
+    init();
+  });
+  init();
+</script>
+</body>
+</html>

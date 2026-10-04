@@ -69,3 +69,29 @@ function renderTopbar(current) {
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
+
+// Root letters written as "ر ح م (r, h, m)" become tiles [ر / r] [ح / h] [م / m],
+// laid out right to left in Arabic order. Other Arabic letters just get the Arabic font.
+function letterTiles(letters, names) {
+  return `<span class="root-tiles" dir="rtl" lang="ar">${letters
+    .map((l, i) => `<span class="tile"><span class="tile-letter">${l}</span><span class="tile-name" lang="en">${escapeHtml(names[i])}</span></span>`)
+    .join("")}</span>`;
+}
+
+function formatLetters(text) {
+  const LETTERS_WITH_NAMES = /([؀-ۿ](?:[\s\-][؀-ۿ])*)\s*\(([^)]*)\)/g;
+  let out = "";
+  let last = 0;
+  for (const m of text.matchAll(LETTERS_WITH_NAMES)) {
+    const letters = m[1].split(/[\s\-]+/);
+    const names = m[2].split(",").map((s) => s.trim());
+    if (letters.length !== names.length) continue;
+    out += plainLetters(text.slice(last, m.index)) + letterTiles(letters, names);
+    last = m.index + m[0].length;
+  }
+  return out + plainLetters(text.slice(last));
+}
+
+function plainLetters(text) {
+  return escapeHtml(text).replace(/([؀-ۿ](?:\s[؀-ۿ])*)/g, '<span class="ar-letters" lang="ar">$1</span>');
+}

@@ -43,19 +43,21 @@
   const $ = (id) => document.getElementById(id);
 
   // ---- Game content (fixed; no model involved) ----
+  // Every letter shown in games 1 and 2 is a letter used in the words of Al-Fatiha,
+  // so the result feeds straight into the episodes.
   // Game 1: the parent says a letter sound, the child picks the letter.
   const HEAR = [
-    { answer: "ر", options: ["ز", "ر", "د"], say: "ra (ر)" },
-    { answer: "ح", options: ["ح", "خ", "ج"], say: "Ha, from the throat (ح)" },
-    { answer: "م", options: ["ن", "ل", "م"], say: "meem (م)" },
-    { answer: "ب", options: ["ت", "ث", "ب"], say: "ba (ب)" },
+    { answer: "ر", options: ["د", "ر", "ل"], say: "ra (ر)" },
+    { answer: "ح", options: ["ح", "ه", "ع"], say: "Ha, from the throat (ح)" },
+    { answer: "م", options: ["ن", "ب", "م"], say: "meem (م)" },
+    { answer: "س", options: ["ص", "س", "ي"], say: "seen (س)" },
   ];
   // Game 2: match a letter to its shape when it is joined in a word.
   const SHAPE = [
-    { letter: "ر", answer: "ـر", options: ["ـد", "ـر", "ـو"] },
+    { letter: "ر", answer: "ـر", options: ["ـد", "ـر", "ـن"] },
     { letter: "ح", answer: "حـ", options: ["حـ", "عـ", "هـ"] },
-    { letter: "م", answer: "ـمـ", options: ["ـنـ", "ـفـ", "ـمـ"] },
-    { letter: "ن", answer: "ـن", options: ["ـل", "ـن", "ـق"] },
+    { letter: "م", answer: "ـمـ", options: ["ـنـ", "ـيـ", "ـمـ"] },
+    { letter: "ك", answer: "ـك", options: ["ـل", "ـك", "ـن"] },
   ];
   // Game 3: the child reads a word from Al-Fatiha; the parent confirms.
   // Words are taken from the verified Quran file by reference: [ayah, word number].

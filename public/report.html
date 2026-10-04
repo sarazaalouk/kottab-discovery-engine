@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Parent report · Kottab Discovery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/episode.css">
+  <style>
+    .report-list { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+    .approved-line { display: flex; gap: 8px; align-items: center; font-weight: 600; color: var(--green); }
+    .approved-line::before { content: "✓"; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: var(--on-accent); font-size: .8rem; flex: none; }
+    .sources { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+    .sources li { display: grid; gap: 2px; padding-bottom: 10px; border-bottom: 1px solid var(--line); min-width: 0; }
+    .sources li:last-child { border-bottom: 0; padding-bottom: 0; }
+    .sources .loc { font-family: var(--font-ar); direction: rtl; text-align: left; unicode-bidi: plaintext; font-size: .88rem; color: var(--muted); }
+    .sources a { font-size: .82rem; overflow-wrap: anywhere; }
+    .timer { font-size: .8rem; font-weight: 600; color: var(--terracotta); }
+  </style>
+</head>
+<body>
+<main>
+  <section class="card" id="empty" hidden aria-labelledby="empty-title">
+    <h1 id="empty-title">No report yet</h1>
+    <p id="empty-text"></p>
+    <a class="btn secondary block" href="episode.html">Go to the episode</a>
+  </section>
+
+  <section class="card" id="error" hidden role="alert">
+    <h2>We couldn't load the report</h2>
+    <p>Please check the connection and try again.</p>
+  </section>
+
+  <article id="report" hidden class="stack">
+    <header class="stack">
+      <span class="eyebrow" id="r-eyebrow"></span>
+      <h1 id="r-title"></h1>
+      <p class="approved-line" id="approved" hidden>Reviewed and approved by a Kottab teacher</p>
+    </header>
+
+    <section class="card" aria-labelledby="disc-title">
+      <h2 id="disc-title">What this episode invites your child to discover</h2>
+      <p id="r-summary"></p>
+      <div id="r-meanings" class="stack"></div>
+    </section>
+
+    <section class="card" aria-labelledby="str-title">
+      <h2 id="str-title">Strengths</h2>
+      <ul class="report-list" id="r-strengths"></ul>
+    </section>
+
+    <section class="card" aria-labelledby="next-title">
+      <h2 id="next-title">Next step</h2>
+      <p id="r-next"></p>
+    </section>
+
+    <section class="card" aria-labelledby="teach-title">
+      <span class="timer" id="r-minutes"></span>
+      <h2 id="teach-title">Let your child teach you</h2>
+      <ol class="report-list" id="r-steps"></ol>
+      <div id="r-teach-meanings" class="stack"></div>
+    </section>
+
+    <section class="card" aria-labelledby="src-title">
+      <h2 id="src-title">Sources</h2>
+      <p class="small muted" id="r-quran-source"></p>
+      <ul class="sources" id="r-sources"></ul>
+    </section>
+  </article>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+  renderTopbar("report.html");
+  const $ = (id) => document.getElementById(id);
+
+  function meaningHtml(m) {
+    return `<div class="meaning"><p>${escapeHtml(m.text)}</p><span class="source-chip">${escapeHtml(m.card_id)}</span></div>`;
+  }
+
+  async function init() {
+    const id = store.get(KEYS.episodeId);
+    if (!id) {
+      $("empty-text").textContent = "Make an episode first. The report appears here once a Kottab teacher has approved it.";
+      $("empty").hidden = false;
+      return;
+    }
+    let data;
+    try {
+      const res = await fetch(`/api/episodes/${encodeURIComponent(id)}/report`);
+      if (!res.ok) throw new Error("report");
+      data = await res.json();
+    } catch {
+      $("error").hidden = false;
+      return;
+    }
+    if (data.status !== "approved") {
+      $("empty-text").textContent = "This report will appear after a Kottab teacher approves the episode.";
+      $("empty").hidden = false;
+      return;
+    }
+
+    const r = data.report;
+    $("r-eyebrow").textContent = `Parent report · Episode ${data.episode_number}`;
+    $("r-title").textContent = `${data.child_name}: ${data.title}`;
+    $("approved").hidden = !(data.reviewed && data.reviewed.decision === "approve");
+    $("r-summary").innerHTML = formatLetters(r.discovered.summary_en);
+    $("r-meanings").innerHTML = r.discovered.meanings.map(meaningHtml).join("");
+    $("r-strengths").innerHTML = r.strengths.map((s) => `<li>${formatLetters(s)}</li>`).join("");
+    $("r-next").innerHTML = formatLetters(r.next_step_en);
+    $("r-minutes").textContent = `${r.teach_your_parents.duration_minutes} minutes`;
+    $("r-steps").innerHTML = r.teach_your_parents.steps_en.map((s) => `<li>${formatLetters(s)}</li>`).join("");
+    $("r-teach-meanings").innerHTML = r.teach_your_parents.meanings.map(meaningHtml).join("");
+    $("r-quran-source").textContent = `Quran text: ${data.quran_source}.`;
+    $("r-sources").innerHTML = data.sources
+      .map(
+        (s) => `<li>
+          <b>${escapeHtml(s.card_id)} · ${escapeHtml(s.source)}</b>
+          <span class="loc" lang="ar">${escapeHtml(s.location)}</span>
+          ${s.source_url && s.source_url.startsWith("https://") ? `<a href="${escapeHtml(s.source_url.split(" ")[0])}" target="_blank" rel="noopener">${escapeHtml(s.source_url.split(" ")[0])}</a>` : ""}
+        </li>`
+      )
+      .join("");
+    $("report").hidden = false;
+  }
+
+  init();
+</script>
+</body>
+</html>
