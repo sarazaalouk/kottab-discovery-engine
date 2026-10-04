@@ -1,0 +1,262 @@
+<title>Kottab Episode 1 Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column, RTL Arabic narrative; the child and parent screens sit inside it as LTR "device" panels. */
+:root {
+  --maroon: #73151B;
+  --terracotta: #B96759;
+  --bg: #FFFFFF;
+  --ink: #2A1A1B;
+  --muted: #6E5A5B;
+  --line: #EADDDB;
+  --wash: #FAF4F3;
+  --ok: #2F6B4F;
+  --bad: #9B2A22;
+  --panel: #FFFFFF;
+  --on-accent: #FFFFFF;
+  --font-ar: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --font-quran: "Amiri Quran", "Amiri", "Traditional Arabic", serif;
+  --font-child: "Atkinson Hyperlegible", "Segoe UI", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --maroon: #E7A2A6; --terracotta: #D9907F; --bg: #1A1213; --ink: #F3E9E8; --muted: #BFA9A8;
+    --line: #3A2A2B; --wash: #231819; --ok: #7CC4A0; --bad: #F08A80; --panel: #201617; --on-accent: #1A1213; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --maroon: #E7A2A6; --terracotta: #D9907F; --bg: #1A1213; --ink: #F3E9E8; --muted: #BFA9A8;
+  --line: #3A2A2B; --wash: #231819; --ok: #7CC4A0; --bad: #F08A80; --panel: #201617; --on-accent: #1A1213; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-ar); font-size: 16px; line-height: 1.75; }
+.page { max-width: 820px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; display: grid; gap: 48px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.35; }
+h1 { font-size: 1.9rem; color: var(--maroon); font-weight: 700; }
+h2 { font-size: 1.3rem; color: var(--maroon); font-weight: 700; }
+h3 { font-size: 1rem; font-weight: 700; }
+p { margin: 0; max-width: 65ch; }
+.eyebrow { font-size: .8rem; color: var(--terracotta); font-weight: 500; letter-spacing: .02em; }
+header { display: grid; gap: 10px; border-bottom: 2px solid var(--maroon); padding-bottom: 20px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: .9rem; }
+section { display: grid; gap: 16px; }
+.lead { color: var(--muted); }
+
+/* status strip */
+.status { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.stat { background: var(--wash); border-radius: 6px; padding: 14px 16px; display: grid; gap: 2px; }
+.stat b { font-size: 1.35rem; color: var(--maroon); font-variant-numeric: tabular-nums; }
+.stat span { font-size: .85rem; color: var(--muted); }
+
+/* pipeline */
+.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; list-style: none; padding: 0; margin: 0; counter-reset: step; }
+.flow li { flex: 1 1 130px; min-width: 0; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; font-size: .88rem; display: grid; gap: 2px; }
+.flow li b { color: var(--maroon); font-size: .9rem; }
+.flow li.gate { border-color: var(--terracotta); background: var(--wash); }
+
+/* device panels (LTR, English, child/parent) */
+.device { direction: ltr; text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.device-bar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 18px; background: var(--maroon); color: var(--on-accent); font-family: var(--font-child); font-size: .85rem; }
+.device-body { padding: 22px 20px; display: grid; gap: 18px; font-family: var(--font-child); font-size: 1.05rem; line-height: 1.6; }
+.ayah { direction: rtl; text-align: center; font-family: var(--font-quran); font-size: 1.9rem; line-height: 2.2; color: var(--ink); padding: 8px 0; border-block: 1px solid var(--line); }
+.ayah mark { background: none; color: var(--maroon); border-bottom: 2px solid var(--terracotta); }
+.ref { font-family: var(--font-mono); font-size: .75rem; color: var(--muted); direction: ltr; display: inline-block; margin-inline-start: 8px; vertical-align: middle; }
+.question { font-weight: 700; font-size: 1.15rem; }
+.options { display: grid; gap: 10px; list-style: none; padding: 0; margin: 0; }
+.options li { border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+.options li.correct { border-color: var(--ok); }
+.options .ar { font-family: var(--font-quran); font-size: 1.3rem; }
+.tag { font-family: var(--font-ar); font-size: .75rem; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.tag.ok { color: var(--ok); border: 1px solid var(--ok); }
+.reveal { background: var(--wash); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; }
+.reveal small, .card-id { font-family: var(--font-mono); font-size: .75rem; color: var(--muted); }
+.note-ar { direction: rtl; text-align: right; font-family: var(--font-ar); font-size: .85rem; color: var(--muted); }
+
+/* parent report */
+.report-block { display: grid; gap: 6px; }
+.report-block h3 { font-family: var(--font-child); color: var(--maroon); font-size: .95rem; text-transform: uppercase; letter-spacing: .06em; }
+.report-block ul, .report-block ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.quote { border-left: 3px solid var(--terracotta); padding: 4px 0 4px 12px; font-size: .97rem; }
+
+/* tests table */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 620px; }
+th, td { padding: 9px 12px; text-align: right; vertical-align: top; border-bottom: 1px solid var(--line); }
+th { background: var(--wash); color: var(--maroon); font-weight: 700; font-size: .82rem; }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; color: var(--muted); width: 2.5rem; }
+td code, .mono { font-family: var(--font-mono); font-size: .78rem; direction: ltr; unicode-bidi: isolate; }
+.verdict { font-weight: 700; white-space: nowrap; }
+.verdict.pass { color: var(--ok); }
+.verdict.reject { color: var(--bad); }
+
+.human { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.human li { padding: 10px 14px; border-inline-start: 3px solid var(--terracotta); background: var(--wash); border-radius: 0 6px 6px 0; }
+.iter { display: grid; gap: 10px; padding: 0; margin: 0; list-style: none; }
+.iter li { display: grid; grid-template-columns: 4.5rem 1fr; gap: 12px; align-items: baseline; }
+.iter li b { color: var(--terracotta); font-size: .85rem; }
+footer { color: var(--muted); font-size: .85rem; border-top: 1px solid var(--line); padding-top: 16px; }
+@media (max-width: 480px) { h1 { font-size: 1.5rem; } .ayah { font-size: 1.5rem; } .iter li { grid-template-columns: 1fr; gap: 0; } }
+</style>
+
+<div class="page" dir="rtl" lang="ar">
+
+<header>
+  <span class="eyebrow">جلسة إرشاد · ٤ أكتوبر 2026</span>
+  <h1>محرك كُتّاب للاكتشاف: مراجعة الحلقة الأولى</h1>
+  <div class="meta">
+    <span>Sara Zaalouk — Kottab Institute</span>
+    <span>تحدي الذكاء الاصطناعي في خدمة المحتوى الإسلامي 2026 · المسار 3</span>
+  </div>
+  <p class="lead">حلقة اكتشاف لطفل 6–10 سنوات لغته الأولى إنجليزي، حول جذر واحد من سورة الفاتحة. الموديل لا يكتب آية ولا يؤلّف معنى: النص القرآني من ملف معتمد، والمعاني من بطاقات تفسير معتمدة، وفاحص آلي يرفض أي حلقة تخالف ذلك قبل أن تصل للمراجِعة.</p>
+</header>
+
+<section aria-labelledby="where">
+  <h2 id="where">وين وصلنا</h2>
+  <div class="status">
+    <div class="stat"><b>7 / 7</b><span>آيات الفاتحة، روجعت حرفًا حرفًا على المصحف</span></div>
+    <div class="stat"><b>69</b><span>بطاقة معرفة (ابن كثير + الميسر)، النص العربي منقول حرفيًا</span></div>
+    <div class="stat"><b>20</b><span>بطاقة معتمدة للحلقة الأولى، بترجمة للأهل وجملة للطفل</span></div>
+    <div class="stat"><b>12 / 12</b><span>حالة اختبار للفاحص تتصرف كما هو متوقع</span></div>
+  </div>
+</section>
+
+<section aria-labelledby="pipeline">
+  <h2 id="pipeline">مسار الحلقة</h2>
+  <ol class="flow">
+    <li><b>البطاقات</b>المعتمدة فقط، حسب الجذر أو رقم الحلقة (حد 20)</li>
+    <li><b>الموديل</b><span><bdi class="mono">claude-sonnet-5-5</bdi>، يشير للآيات بالرقم فقط</span></li>
+    <li class="gate"><b>الفاحص الآلي</b><span>أي مخالفة تعني <bdi class="mono">rejected</bdi> مع السبب</span></li>
+    <li><b>السيرفر</b>يضع نص الآيات من الملف المعتمد</li>
+    <li class="gate"><b>مراجعة سارة</b><span><bdi class="mono">pending_review</bdi> حتى الاعتماد</span></li>
+    <li><b>الطفل</b>بعد الاعتماد فقط</li>
+  </ol>
+</section>
+
+<section aria-labelledby="question">
+  <span class="eyebrow">شاشة الطفل · Adam (طفل اصطناعي)، 8 سنوات · الجذر ر-ح-م</span>
+  <h2 id="question">سؤال الاكتشاف</h2>
+  <p class="lead">يتجاوب بالنظر في كلمات الآية نفسها، لا من معلومة في بطاقة. البطاقة تظهر بعد الإجابة كـ"كشف".</p>
+
+  <div class="device" role="figure" aria-label="Child screen: discovery question">
+    <div class="device-bar"><span>Episode 1 · Two Names, One Root</span><span>Discovery question</span></div>
+    <div class="device-body">
+      <div class="ayah" lang="ar">بِسْمِ ٱللَّهِ <mark>ٱلرَّحْمَـٰنِ</mark> <mark>ٱلرَّحِيمِ</mark><span class="ref">1:1</span></div>
+      <p class="question">Adam, look at Ar-Rahman and Ar-Raheem in the ayah. Do not count Al- at the start. Which letters can you see in both names?</p>
+      <ul class="options">
+        <li><span>They share no letters after Al-</span></li>
+        <li><span>They share only <span class="ar" lang="ar">ر</span> (r)</span></li>
+        <li class="correct"><span>They share <span class="ar" lang="ar">ر ح م</span> (r, h, m)</span><span class="tag ok">الإجابة الصحيحة</span></li>
+      </ul>
+      <div class="reveal">
+        <small>Revealed after answering · kb-030</small>
+        <span>Ar-Rahman and Ar-Raheem both come from rahmah (mercy), and Ar-Rahman means even more mercy.</span>
+      </div>
+      <p class="note-ar">نص الآية والكلمات المظلّلة وضعها السيرفر من <span class="mono">quran_fatiha.json</span>. الموديل كتب "1:1، الكلمة 3 و4" فقط، والحروف ر ح م منفصلة (الاستثناء الوحيد المسموح).</p>
+    </div>
+  </div>
+
+  <h3>كيف تطوّر السؤال في ثلاث مراجعات</h3>
+  <ul class="iter">
+    <li><b>النسخة 1</b><span>سأل عن معلومة من بطاقة (من أين جاء اسم الرحم؟) بإجابات غلط ضعيفة (مدينة بعيدة، جبل).</span></li>
+    <li><b>النسخة 2</b><span>صار السؤال عن الحروف المشتركة، لكن "أول حرف فقط" كانت صحيحة جزئيًا لأن الكلمتين تبدآن بـ"ال".</span></li>
+    <li><b>النسخة 3</b><span>"ال" أداة تعريف تُستبعد صراحة، والإجابتان الغلط غلط فعلًا، والحروف تظهر بالعربي مع اسمها اللاتيني.</span></li>
+  </ul>
+</section>
+
+<section aria-labelledby="report">
+  <span class="eyebrow">تقرير ولي الأمر · يُكتب قبل الجلسة بصيغة توقّع</span>
+  <h2 id="report">تقرير الأهل</h2>
+  <p class="lead">لا شيء مكتوب كأن الطفل أنجزه، ونقاط القوة من بيانات ملف الطفل فقط. المعنى منقول حرفيًا من ترجمة الأهل المعتمدة.</p>
+
+  <div class="device" role="figure" aria-label="Parent report">
+    <div class="device-bar"><span>Parent report · Adam</span><span>Episode 1</span></div>
+    <div class="device-body">
+      <div class="report-block">
+        <h3>This episode</h3>
+        <p>This episode invites Adam to look closely at Ar-Rahman and Ar-Raheem in Al-Fatiha and to look for the root letters they share. Adam will then be shown the meaning that connects the two names.</p>
+        <p class="quote">Both names come from the word rahmah (mercy), in a form that shows abundance of mercy; and Ar-Rahman expresses even more mercy than Ar-Raheem. <span class="card-id">kb-030</span></p>
+      </div>
+      <div class="report-block">
+        <h3>Strengths</h3>
+        <ul>
+          <li>At 8 years old, Adam is ready to notice patterns in letters and sounds.</li>
+          <li>Adam has memorised Al-Fatiha, so the words in this episode are already familiar to him.</li>
+          <li>Adam reads some Arabic letters, so he can look for the letters <span class="ar" lang="ar" style="font-family:var(--font-quran)">ر ح م</span> (r, h, m) in his Mushaf.</li>
+        </ul>
+      </div>
+      <div class="report-block">
+        <h3>Next step</h3>
+        <p>After the session, listen to Adam recite the first and third ayahs of Al-Fatiha. Ask him to point out the two names in his Mushaf.</p>
+      </div>
+      <div class="report-block">
+        <h3>Teach your parents · 3 minutes</h3>
+        <ol>
+          <li>Ask Adam to open his Mushaf to Al-Fatiha and sit beside you.</li>
+          <li>Ask him to point to Ar-Rahman and Ar-Raheem in the first ayah.</li>
+          <li>Ask him to show you the letters <span lang="ar" style="font-family:var(--font-quran)">ر ح م</span> (r, h, m) that both names share.</li>
+          <li>Ask him to tell you what he found out about the two names.</li>
+          <li>Say the first and third ayahs together slowly.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="tests">
+  <span class="eyebrow">خطة اختبار الموثوقية · <span class="mono">npm test</span></span>
+  <h2 id="tests">جدول اختبارات الفاحص</h2>
+  <p class="lead">كل حالة تأخذ حلقة نموذجية وتكسر قاعدة واحدة عمدًا، وتتأكد أن الفاحص يرفضها بالسبب الصحيح. آخر تشغيل: ٤ أكتوبر 2026، الحالات الـ12 كلها كما هو متوقع.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>القاعدة</th><th>ما تم كسره</th><th>النتيجة</th><th>السبب الذي أعطاه الفاحص</th></tr></thead>
+      <tbody>
+        <tr><td class="num">0</td><td>—</td><td>لا شيء (الحلقة كما وُلّدت)</td><td class="verdict pass">تمر</td><td>—</td></tr>
+        <tr><td class="num">1</td><td>(أ) كل معنى له card_id</td><td>حذف card_id</td><td class="verdict reject">مرفوضة</td><td><code>[a] meaning has no card_id</code></td></tr>
+        <tr><td class="num">2</td><td>(ب) البطاقة موجودة</td><td>card_id = kb-999</td><td class="verdict reject">مرفوضة</td><td><code>[b] card_id kb-999 does not exist</code></td></tr>
+        <tr><td class="num">3</td><td>(ب) البطاقة معتمدة</td><td>card_id = kb-050 (مسودة)</td><td class="verdict reject">مرفوضة</td><td><code>[b] card kb-050 is not approved</code></td></tr>
+        <tr><td class="num">4</td><td>(ج) النص مطابق حرفيًا</td><td>إعادة صياغة المعنى</td><td class="verdict reject">مرفوضة</td><td><code>[c] text does not exactly match card kb-031</code></td></tr>
+        <tr><td class="num">5</td><td>(د) الآية موجودة في الملف</td><td>إضافة الآية 1:9</td><td class="verdict reject">مرفوضة</td><td><code>[d] "1:9" is not an ayah in quran_fatiha.json</code></td></tr>
+        <tr><td class="num">6</td><td>(د) الموديل لا يكتب آية</td><td>إضافة "الرحمن الرحيم" لنص حر</td><td class="verdict reject">مرفوضة</td><td><code>[d] Arabic text that resembles ayah text</code></td></tr>
+        <tr><td class="num">7</td><td>(هـ) صورة التذكر مُعلَّمة</td><td>تغيير العلامة إلى "memory picture"</td><td class="verdict reject">مرفوضة</td><td><code>[schema] must be "memory picture, not a tafsir"</code></td></tr>
+        <tr><td class="num">8</td><td>(و) مطابقة المخطط</td><td>حقل إضافي extra</td><td class="verdict reject">مرفوضة</td><td><code>[schema] $.extra: not allowed</code></td></tr>
+        <tr><td class="num">9</td><td>(و) المخرج JSON</td><td>مخرج غير صالح</td><td class="verdict reject">مرفوضة</td><td><code>[schema] output is not valid JSON</code></td></tr>
+        <tr><td class="num">10</td><td>(د) حروف الجذر منفصلة مسموحة</td><td>إضافة "ر ح م (r, h, m)" للسؤال</td><td class="verdict pass">تمر</td><td>—</td></tr>
+        <tr><td class="num">11</td><td>(د) لا كلمات عربية من الموديل</td><td>إضافة "رحم" (حروف متصلة)</td><td class="verdict reject">مرفوضة</td><td><code>[d] Arabic text written by the model</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>ما لا يفحصه الكود (يبقى للمراجعة البشرية)</h3>
+  <ul class="human">
+    <li>النص الحر (لحظة الاكتشاف، السؤال، المهام، التقرير) لا يذكر معاني أو تفسيرًا من خارج البطاقات.</li>
+    <li>سؤال الاكتشاف يتجاوب بالنظر في الآية، والإجابات الغلط من نفس النوع وغلط فعلًا.</li>
+    <li>تقرير الأهل بصيغة دعوة، لا كأن الطفل أنجز شيئًا.</li>
+    <li>صورة التذكر وسيلة تذكّر، لا شرح للمعنى.</li>
+  </ul>
+</section>
+
+<section>
+  <p class="eyebrow">ما بعد الجلسة</p>
+  <h2>الخطوات القادمة حتى التسليم</h2>
+  <ol class="flow" style="counter-reset:none">
+    <li><b>٤ أكتوبر (اليوم)</b><span>الشاشات الخمس على تصميم Figma: الأهل، التشخيص، الحلقة، تقرير الأهل، المراجع (عربي)</span></li>
+    <li><b>٥ أكتوبر</b><span>ربط الشاشات بالمحرك، ورفع نسخة أولى على Render مع التأكد من بقائها متاحة طوال فترة التحكيم</span></li>
+    <li><b>٦ أكتوبر صباحًا</b><span>تجربة مع طفلين أو ثلاثة من أسر كُتّاب (بلا تخزين بيانات)، وتسجيل الملاحظات كنتائج أولية</span></li>
+    <li><b>٦ أكتوبر مساءً</b><span>الفيديو (دقيقتان)، العرض بقالب التحدي، توثيق المصادر والتشغيل، ثم التسليم قبل 11:59 بتوقيت الرياض</span></li>
+  </ol>
+  <h3>أسئلة للمرشدتين</h3>
+  <ul class="human">
+    <li>الخطة المجانية في Render تُنيّم السيرفر بعد الخمول. ما الطريقة المضمونة لبقاء الرابط شغالًا من ٧ إلى ٢٢ أكتوبر؟</li>
+    <li>هل هناك معيار في التحكيم يبدو المشروع ضعيفًا فيه الآن؟</li>
+  </ul>
+</section>
+
+<footer>
+  كل البيانات اصطناعية. نص القرآن: quran.com — Uthmani text, Hafs، راجعته Sara Zaalouk في ٤ أكتوبر 2026. المستودع خاص على GitHub.
+</footer>
+
+</div>
