@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Parents · Kottab Discovery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<main>
+  <div class="stack">
+    <span class="eyebrow">For parents</span>
+    <h1>Set up your child's journey through Al-Fatiha</h1>
+    <p class="lead">Ten short discovery episodes. Each one explores one Arabic root in the words your child already says in Salah (prayer).</p>
+  </div>
+
+  <!-- Parent gate -->
+  <section class="card" id="gate" aria-labelledby="gate-title">
+    <h2 id="gate-title">Parents only</h2>
+    <p class="muted small">Please answer this to continue. It keeps children on their own pages.</p>
+    <form id="gate-form" class="stack" novalidate>
+      <div class="field">
+        <label for="gate-answer" id="gate-question">What is …?</label>
+        <input id="gate-answer" type="number" inputmode="numeric" autocomplete="off" required>
+      </div>
+      <p class="notice error" id="gate-error" hidden>That's not quite right. Try again.</p>
+      <button class="btn block" type="submit">Continue</button>
+    </form>
+  </section>
+
+  <!-- Profile (shown after the gate) -->
+  <section class="card" id="profile" aria-labelledby="profile-title" hidden>
+    <div class="stack">
+      <h2 id="profile-title">Your child</h2>
+      <p class="notice"><b>Demo data only.</b> Please use a made-up name. What you enter here is synthetic and is not saved outside this device.</p>
+    </div>
+
+    <form id="profile-form" class="stack" novalidate>
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" type="text" maxlength="40" autocomplete="off" placeholder="e.g. Adam" required>
+      </div>
+
+      <div class="field">
+        <label for="age">Age</label>
+        <select id="age" required>
+          <option value="">Choose…</option>
+          <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="language">First language</label>
+        <input id="language" type="text" maxlength="40" value="English" required>
+      </div>
+
+      <fieldset class="field" id="recites-field">
+        <legend>Surahs your child knows by heart</legend>
+        <div class="checks">
+          <label class="check"><input type="checkbox" name="recites" value="Al-Fatiha" id="r-fatiha">Al-Fatiha</label>
+          <label class="check"><input type="checkbox" name="recites" value="Al-Ikhlas" id="r-ikhlas">Al-Ikhlas</label>
+          <label class="check"><input type="checkbox" name="recites" value="Al-Falaq" id="r-falaq">Al-Falaq</label>
+          <label class="check"><input type="checkbox" name="recites" value="An-Nas" id="r-nas">An-Nas</label>
+          <label class="check"><input type="checkbox" name="recites" value="Al-Kawthar" id="r-kawthar">Al-Kawthar</label>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="reading">Reading Arabic letters</label>
+        <select id="reading" required>
+          <option value="">Choose…</option>
+          <option>Does not know the letters yet</option>
+          <option>Knows some letters</option>
+          <option>Knows most letters</option>
+          <option>Reads short words</option>
+        </select>
+        <span class="hint">Your best guess is fine. The letter games will help check it.</span>
+      </div>
+
+      <p class="notice error" id="profile-error" hidden></p>
+
+      <div class="row">
+        <button class="btn" type="submit">Save</button>
+        <button class="btn secondary" type="button" id="sample">Use a sample child</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Next steps (shown after saving) -->
+  <section class="card" id="next" hidden aria-labelledby="next-title">
+    <h2 id="next-title">Next</h2>
+    <p id="saved-line" class="notice ok"></p>
+    <div id="diag-result" class="stack" hidden>
+      <h3>Letter games result <span class="muted small">(parents only)</span></h3>
+      <p id="diag-text"></p>
+    </div>
+    <div class="stack">
+      <a class="btn block" href="diagnosis.html">Start the letter games</a>
+      <a class="btn secondary block" href="episode.html">Go to the episode</a>
+    </div>
+  </section>
+
+  <section class="card" id="reviewer-link" hidden aria-labelledby="rev-title">
+    <h2 id="rev-title">Teacher review</h2>
+    <p class="muted small">Every episode is checked by a Kottab teacher before your child sees it. The review page is in Arabic.</p>
+    <a class="btn secondary block" href="reviewer.html">Open the reviewer page</a>
+  </section>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+  renderTopbar("index.html");
+
+  const $ = (id) => document.getElementById(id);
+
+  // ----- gate -----
+  const a = 11 + Math.floor(Math.random() * 20);
+  const b = 11 + Math.floor(Math.random() * 20);
+  $("gate-question").textContent = `What is ${a} + ${b}?`;
+
+  function showParentArea() {
+    $("gate").hidden = true;
+    $("profile").hidden = false;
+    $("reviewer-link").hidden = false;
+    loadProfile();
+  }
+
+  $("gate-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (Number($("gate-answer").value) === a + b) {
+      gate.open();
+      document.querySelector(".topbar").remove();
+      renderTopbar("index.html");
+      showParentArea();
+    } else {
+      $("gate-error").hidden = false;
+      $("gate-answer").select();
+    }
+  });
+
+  // ----- profile -----
+  function fillForm(p) {
+    $("name").value = p.name || "";
+    $("age").value = p.age ? String(p.age) : "";
+    $("language").value = p.home_language || "English";
+    document.querySelectorAll('input[name="recites"]').forEach((cb) => {
+      cb.checked = (p.recites_list || []).includes(cb.value);
+    });
+    $("reading").value = p.parent_reading_level || "";
+  }
+
+  function loadProfile() {
+    const p = store.get(KEYS.profile);
+    if (p) {
+      fillForm(p);
+      showNext(p);
+    }
+  }
+
+  function showNext(p) {
+    $("next").hidden = false;
+    $("saved-line").textContent = `Saved on this device for ${p.name}, age ${p.age}.`;
+    const d = store.get(KEYS.diagnosis);
+    if (d) {
+      $("diag-result").hidden = false;
+      $("diag-text").textContent = `${d.level_label}. Heard ${d.scores.hear}/4 letters, matched ${d.scores.shape}/4 shapes, read ${d.scores.read}/4 words.`;
+    }
+  }
+
+  $("sample").addEventListener("click", () => {
+    fillForm({
+      name: "Adam",
+      age: 8,
+      home_language: "English",
+      recites_list: ["Al-Fatiha"],
+      parent_reading_level: "Knows some letters",
+    });
+  });
+
+  $("profile-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const recites = [...document.querySelectorAll('input[name="recites"]:checked')].map((cb) => cb.value);
+    const p = {
+      name: $("name").value.trim(),
+      age: Number($("age").value),
+      home_language: $("language").value.trim(),
+      recites_list: recites,
+      parent_reading_level: $("reading").value,
+    };
+    const problems = [];
+    if (!p.name) problems.push("a name");
+    if (!p.age) problems.push("an age");
+    if (!p.home_language) problems.push("a first language");
+    if (!recites.length) problems.push("at least one surah");
+    if (!p.parent_reading_level) problems.push("a reading level");
+    if (problems.length) {
+      $("profile-error").textContent = `Please add ${problems.join(", ")}.`;
+      $("profile-error").hidden = false;
+      return;
+    }
+    $("profile-error").hidden = true;
+    const previous = store.get(KEYS.profile);
+    if (previous && previous.name !== p.name) {
+      // A different child: clear the old child's games and episode on this device.
+      store.remove(KEYS.diagnosis);
+      store.remove(KEYS.episodeId);
+    }
+    if (!store.set(KEYS.profile, p)) {
+      $("profile-error").textContent = "This browser is blocking storage, so the profile can't be kept. Try a normal (not private) window.";
+      $("profile-error").hidden = false;
+      return;
+    }
+    showNext(p);
+    $("next").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  if (gate.isOpen()) showParentArea();
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Letter games · Kottab Discovery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<main>
+  <section class="card" id="intro" aria-labelledby="intro-title">
+    <span class="eyebrow">Letter games</span>
+    <h1 id="intro-title">Three little games</h1>
+    <p id="intro-text">Take your time. There is no clock. Just do your best, and a grown-up can sit with you.</p>
+    <p class="notice warn" id="no-profile" hidden>A parent needs to set up your profile first. <a href="index.html">Go to the parent page</a>.</p>
+    <button class="btn block" id="start">Start</button>
+  </section>
+
+  <section class="card" id="game" hidden aria-live="polite">
+    <span class="eyebrow" id="game-label"></span>
+    <h2 id="game-title"></h2>
+    <div class="progress-dots" id="dots" aria-hidden="true"></div>
+    <div id="game-body" class="stack"></div>
+  </section>
+
+  <section class="card" id="done" hidden aria-labelledby="done-title">
+    <span class="eyebrow">All done</span>
+    <h2 id="done-title">You tried all three games!</h2>
+    <p>Thank you. Now ask a grown-up to look at the next step with you.</p>
+    <div class="stack">
+      <a class="btn block" href="episode.html">Go to my episode</a>
+      <a class="btn secondary block" href="index.html">Parent page</a>
+    </div>
+  </section>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+  renderTopbar("diagnosis.html");
+  const $ = (id) => document.getElementById(id);
+
+  // ---- Game content (fixed; no model involved) ----
+  // Game 1: the parent says a letter sound, the child picks the letter.
+  const HEAR = [
+    { answer: "ر", options: ["ز", "ر", "د"], say: "ra (ر)" },
+    { answer: "ح", options: ["ح", "خ", "ج"], say: "Ha, from the throat (ح)" },
+    { answer: "م", options: ["ن", "ل", "م"], say: "meem (م)" },
+    { answer: "ب", options: ["ت", "ث", "ب"], say: "ba (ب)" },
+  ];
+  // Game 2: match a letter to its shape when it is joined in a word.
+  const SHAPE = [
+    { letter: "ر", answer: "ـر", options: ["ـد", "ـر", "ـو"] },
+    { letter: "ح", answer: "حـ", options: ["حـ", "عـ", "هـ"] },
+    { letter: "م", answer: "ـمـ", options: ["ـنـ", "ـفـ", "ـمـ"] },
+    { letter: "ن", answer: "ـن", options: ["ـل", "ـن", "ـق"] },
+  ];
+  // Game 3: the child reads a word from Al-Fatiha; the parent confirms.
+  // Words are taken from the verified Quran file by reference: [ayah, word number].
+  const READ_REFS = [[1, 1], [1, 2], [2, 3], [4, 2]];
+
+  // ---- Level from fixed rules ----
+  function levelFrom(scores) {
+    const letters = scores.hear + scores.shape;
+    if (scores.read >= 3 && letters >= 4) return "Reads short words";
+    if (letters >= 6) return "Knows most letters";
+    if (letters >= 3) return "Knows some letters";
+    return "Does not know the letters yet";
+  }
+
+  const scores = { hear: 0, shape: 0, read: 0 };
+  let readWords = [];
+
+  function dots(total, done) {
+    $("dots").innerHTML = Array.from({ length: total }, (_, i) => `<span class="${i < done ? "done" : ""}"></span>`).join("");
+  }
+
+  function showGame(label, title) {
+    $("intro").hidden = true;
+    $("game").hidden = false;
+    $("game-label").textContent = label;
+    $("game-title").textContent = title;
+  }
+
+  // Shows one multiple-choice round; resolves with the picked option.
+  function choiceRound(promptHtml, options) {
+    return new Promise((resolve) => {
+      $("game-body").innerHTML = `${promptHtml}
+        <div class="choices">${options
+          .map((o, i) => `<button class="choice" data-i="${i}" aria-label="Letter ${o}"><span class="letter" lang="ar">${o}</span></button>`)
+          .join("")}</div>`;
+      $("game-body").querySelectorAll(".choice").forEach((btn) =>
+        btn.addEventListener("click", () => {
+          btn.classList.add("picked");
+          $("game-body").querySelectorAll(".choice").forEach((b) => (b.disabled = true));
+          setTimeout(() => resolve(options[Number(btn.dataset.i)]), 350);
+        })
+      );
+    });
+  }
+
+  async function gameHear() {
+    showGame("Game 1 of 3", "Which letter do you hear?");
+    for (let i = 0; i < HEAR.length; i++) {
+      dots(HEAR.length, i);
+      const r = HEAR[i];
+      const picked = await choiceRound(
+        `<p>Listen to your grown-up, then tap the letter.</p>
+         <details class="parent-cue"><summary>Grown-up: tap to see what to say</summary>Say the sound <b>${r.say}</b> clearly, twice.</details>`,
+        r.options
+      );
+      if (picked === r.answer) scores.hear++;
+    }
+  }
+
+  async function gameShape() {
+    showGame("Game 2 of 3", "Find the same letter");
+    for (let i = 0; i < SHAPE.length; i++) {
+      dots(SHAPE.length, i);
+      const r = SHAPE[i];
+      const picked = await choiceRound(
+        `<div class="big-letter" lang="ar">${r.letter}</div>
+         <p class="center">This letter looks a little different when it joins a word. Which one is it?</p>`,
+        r.options
+      );
+      if (picked === r.answer) scores.shape++;
+    }
+  }
+
+  function gameRead() {
+    showGame("Game 3 of 3", "Read a word from Al-Fatiha");
+    return new Promise((resolve) => {
+      let i = 0;
+      const next = () => {
+        dots(readWords.length, i);
+        if (i >= readWords.length) return resolve();
+        $("game-body").innerHTML = `
+          <p>Read this word out loud to your grown-up.</p>
+          <div class="big-word quran" lang="ar">${escapeHtml(readWords[i].text)}</div>
+          <p class="parent-cue">Grown-up: did they read it?</p>
+          <div class="row">
+            <button class="btn" id="yes">Read it</button>
+            <button class="btn secondary" id="no">Not yet</button>
+          </div>`;
+        $("yes").onclick = () => { scores.read++; i++; next(); };
+        $("no").onclick = () => { i++; next(); };
+      };
+      next();
+    });
+  }
+
+  async function loadReadWords() {
+    const res = await fetch("/api/quran");
+    if (!res.ok) throw new Error("quran");
+    const quran = await res.json();
+    readWords = READ_REFS.map(([ayah, word]) => ({
+      ref: `1:${ayah}`,
+      text: quran.ayahs.find((a) => a.ayah === ayah).text_ar.split(/\s+/)[word - 1],
+    }));
+  }
+
+  $("start").addEventListener("click", async () => {
+    $("start").disabled = true;
+    try {
+      await loadReadWords();
+    } catch {
+      $("start").disabled = false;
+      $("intro-text").textContent = "We couldn't load the games. Please check the connection and try again.";
+      return;
+    }
+    await gameHear();
+    await gameShape();
+    await gameRead();
+    const level = levelFrom(scores);
+    store.set(KEYS.diagnosis, { scores: { ...scores }, level_label: level, reading_level: level, done_at: new Date().toISOString() });
+    $("game").hidden = true;
+    $("done").hidden = false;
+  });
+
+  if (!store.get(KEYS.profile)) $("no-profile").hidden = false;
+</script>
+</body>
+</html>

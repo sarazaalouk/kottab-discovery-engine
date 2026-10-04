@@ -57,6 +57,12 @@ app.get("/health", (req, res) => {
   });
 });
 
+// The verified Al-Fatiha text, read-only (used by the letter games).
+app.get("/api/quran", (req, res) => {
+  const quran = readJson(QURAN_PATH);
+  res.json({ surah: quran.surah, source: quran.source, ayahs: quran.ayahs });
+});
+
 // Generate one episode. The result is saved for human review and is never shown to a child from here.
 app.post("/api/generate-episode", async (req, res) => {
   const { child, root, episode_number: episodeNumber } = req.body || {};
