@@ -1,0 +1,24 @@
+{
+  "name": "kottab-discovery-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kottab Discovery Engine — Islamic AI Challenge 2026, Track 3",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sarazaalouk/kottab-discovery-engine.git"
+  },
+  "author": "Sara Zaalouk — Kottab Institute",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema": {
+    "id": "string — unique source id, e.g. IK-001",
+    "root": "string — Arabic root, e.g. ر ح م",
+    "word_ar": "string — the word as it appears in the ayah",
+    "surah": "number — always 1 (Al-Fatiha)",
+    "ayah": "number — 1 to 7",
+    "source": "string — book/edition of Tafsir Ibn Kathir",
+    "location": "string — volume/page where the meaning appears",
+    "meaning_ar": "string — meaning quoted exactly from the source",
+    "meaning_en": "string — English meaning for the child/parent",
+    "status": "string — draft (entered, not reviewed) | approved (reviewed by Sara, matches the source) | rejected"
+  },
+  "entries": []
+}
