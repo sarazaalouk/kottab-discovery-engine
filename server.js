@@ -12,7 +12,7 @@ const { validateEpisode, normalizeArabic } = require("./validator");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const MODEL = "claude-sonnet-5-5"; // one documented model, no fallback
-const MAX_CARDS = 14;
+const MAX_CARDS = 20;
 
 const DATA_DIR = path.join(__dirname, "data");
 const QURAN_PATH = path.join(DATA_DIR, "quran_fatiha.json");

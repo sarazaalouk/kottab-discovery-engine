@@ -20,10 +20,12 @@ Each test takes the sample episode (`data/episodes/sample-episode-01.json`), bre
 | 7 | (e) memory picture is labelled | Label changed to "memory picture" | Rejected: `[schema] must be "memory picture, not a tafsir"` |
 | 8 | (f) JSON matches the schema | Extra field `extra` added | Rejected: `[schema] $.extra: not allowed` |
 | 9 | (f) output is JSON | Output is `{not json` | Rejected: `[schema] output is not valid JSON` |
+| 10 | (d) single root letters are allowed | "ر ح م (r, h, m)" added to the question | Passes |
+| 11 | (d) no Arabic words from the model | "رحم" (letters joined) added to the question | Rejected: `[d] Arabic text written by the model` |
 
 ## Last run
 
-2026-10-04: all 10 cases (0–9) behaved as expected.
+2026-10-04: all 12 cases (0–11) behaved as expected.
 
 ## Not covered by the validator (human review)
 

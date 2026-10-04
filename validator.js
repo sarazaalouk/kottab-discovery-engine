@@ -156,10 +156,13 @@ function validateEpisode(rawText, ctx) {
 
   // (د) Arabic text written by the model: any Arabic outside exact meaning_ar copies is rejected,
   // and text that resembles the Quran is called out explicitly.
+  // Exception: single, separate root letters (e.g. "ر ح م (r, h, m)") are allowed.
   const fatihaWords = new Set(ctx.quran.ayahs.flatMap((a) => normalizeArabic(a.text_ar).split(" ")));
   walkStrings(out, "$", (s, path) => {
     if (!ARABIC_RE.test(s)) return;
     if (exactArabicMeanings.has(path.replace(/^\$\./, ""))) return;
+    const arabicRuns = normalizeArabic(s).match(/[ء-ي]+/g) || [];
+    if (arabicRuns.length && arabicRuns.every((run) => run.length === 1)) return;
     const words = normalizeArabic(s).split(" ").filter(Boolean);
     const quranic = words.filter((w) => fatihaWords.has(w)).length;
     if (quranic >= 1) fail("d", `${path}: Arabic text that resembles ayah text (${quranic} Al-Fatiha word(s)) written by the model`);

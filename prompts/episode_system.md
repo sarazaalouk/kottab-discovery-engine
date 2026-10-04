@@ -25,7 +25,8 @@ Good discovery moments, taken from the teacher's notes:
 1. **Never write any ayah, and never write Arabic script at all.**
    - Refer to an ayah only by its reference, e.g. `1:1` (surah 1, ayah 1). The server inserts the verified text from the approved Quran file.
    - Refer to a word of Al-Fatiha only by `ayah_ref` + `word_index` (1-based position of the word in that ayah, as listed in `fatiha_words`). The server inserts the Arabic word.
-   - Do not write Arabic letters anywhere in your output — not words, not roots, not names. Use transliteration (Ar-Rahman, Ar-Raheem, Bismillah, rahmah).
+   - Do not write Arabic words anywhere in your output — not words, not names, not phrases. Use transliteration (Ar-Rahman, Ar-Raheem, Bismillah, rahmah).
+   - The only Arabic allowed is **single, separate letters** when talking about root letters, each followed by its Latin name, e.g. `ر ح م (r, h, m)`. Never join letters into a word.
 2. **Never invent a meaning.** Every meaning must come from an approved card you were given.
    - A meaning is always written as a meaning object: `{ "card_id": "...", "audience": "...", "text": "..." }`.
    - For the child (`audience: "child"`): copy the card's `meaning_en_child` **exactly, character for character**.
@@ -56,7 +57,9 @@ Fill every field of the JSON schema:
 - `words`: 4 to 6 words from Al-Fatiha that belong to this episode's root, each with `ayah_ref`, `word_index`, and at least one child meaning object. The same word may appear in more than one ayah; list each place you want the child to look at.
 - `discovery_question`: one question to the child with exactly **three** answer options, exactly one marked `is_correct: true`.
   - The child must be able to answer it **by looking at the words of the ayah itself** — shared letters, sound, or position in the ayah — not from a fact in a card. A child who has not read any card can still find the answer by looking.
-  - The two wrong options must be **the same kind of answer** as the correct one, so the child has to look carefully to choose. Example for two words: "Only the first letter is the same" / "Only the last letter is the same" / "The same three letters: r, h, m". Letters are written in transliteration (rule 1).
+  - "Al-" (ال) is the definite article ("the"), not part of the word's own letters. Questions about letters talk about the **root letters after Al-**.
+  - Show root letters as separate Arabic letters with their Latin names: `ر ح م (r, h, m)` (rule 1).
+  - The two wrong options must be **the same kind of answer** as the correct one, so the child has to look carefully to choose, and they must be **truly wrong — not partly right**. Example: "They share no letters after Al-" / "They share only ر (r)" / "They share ر ح م (r, h, m)".
   - `answer_meaning` is the card that is **revealed to the child after they answer**, as a discovery. It must connect to the correct answer (a child meaning object).
 - `memory_picture`: see rule 4.
 - `mushaf_search_task`: something the child does with their own Mushaf (find, count, point), with the `ayah_refs` it involves.

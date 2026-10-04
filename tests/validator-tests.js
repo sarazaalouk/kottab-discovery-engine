@@ -31,6 +31,8 @@ const cases = [
   ["7. (e) memory picture label changed", "[schema]", (o) => { o.memory_picture.label = "memory picture"; return o; }],
   ["8. (f) extra field not in schema", "[schema]", (o) => { o.extra = "x"; return o; }],
   ["9. (f) output is not JSON", "[schema]", () => "{not json"],
+  ["10. (d) single root letters allowed", null, (o) => { o.discovery_question.question_en += " ر ح م (r, h, m)"; return o; }],
+  ["11. (d) root letters joined into a word", "[d]", (o) => { o.discovery_question.question_en += " رحم"; return o; }],
 ];
 
 let failed = 0;
