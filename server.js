@@ -9,6 +9,7 @@ const express = require("express");
 const Anthropic = require("@anthropic-ai/sdk");
 const { validateEpisode, normalizeArabic } = require("./validator");
 const episodes = require("./lib/episodes");
+const { generateLimit, askLimit } = require("./lib/limits");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -60,7 +61,8 @@ function validateChildProfile(p, trial) {
   return null;
 }
 
-app.use(express.json());
+app.set("trust proxy", 1); // Render puts one proxy in front of the app; needed for per-visitor limits
+app.use(express.json({ limit: "20kb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
 // Health check (used by Render). Never returns the key itself.
@@ -78,7 +80,7 @@ app.get("/api/quran", (req, res) => {
 });
 
 // Generate one episode. The result is saved for human review and is never shown to a child from here.
-app.post("/api/generate-episode", async (req, res) => {
+app.post("/api/generate-episode", generateLimit, async (req, res) => {
   const { child, root, episode_number: episodeNumber } = req.body || {};
   const trial = req.body && req.body.trial === true;
 
@@ -330,7 +332,7 @@ function logReferral(entry) {
 const REFERRAL_REPLY =
   "That's a great question! It's one for your teacher, so we've passed it on. You can also ask a grown-up at home.";
 
-app.post("/api/ask", async (req, res) => {
+app.post("/api/ask", askLimit, async (req, res) => {
   const { episode_id: episodeId, question } = req.body || {};
   if (typeof question !== "string" || !question.trim() || question.length > 300) {
     return res.status(400).json({ error: "question must be 1 to 300 characters" });

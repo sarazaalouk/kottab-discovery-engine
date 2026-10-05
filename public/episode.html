@@ -178,6 +178,7 @@
     } catch {
       return showError("We couldn't reach the server, so nothing was sent. Please check the connection and try again.");
     }
+    if (res.status === 429) return showError("Lots of episodes are being made right now. Please ask a grown-up to try again a little later.");
     if (!res.ok) return showError("Something went wrong while making the episode. Please try again in a moment.");
     const { id } = await res.json();
     stopSteps();
@@ -282,6 +283,11 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ episode_id: store.get(KEYS.episodeId), question }),
       });
+      if (res.status === 429) {
+        $("ask-answer").innerHTML = `<p class="notice">Lots of questions right now! Please ask your teacher or a grown-up, or try again later.</p>`;
+        $("ask-btn").disabled = false;
+        return;
+      }
       if (!res.ok) throw new Error("ask");
       const a = await res.json();
       $("ask-answer").innerHTML =

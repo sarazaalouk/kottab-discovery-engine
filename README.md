@@ -17,3 +17,5 @@ Note: these files are currently stored outside this repository and will be added
 - [Sources](docs/sources.md) — Quran text, Al-Tafsir Al-Muyassar, Tafsir Ibn Kathir (edition and pages), hadith grading, English terminology; aligned with the challenge reference pack "المرجعية والحزمة العلمية".
 - [Content levels](docs/content-levels.md) — how the product works in levels أ and ب and refers ج and د to a teacher, with the ayah 7 example.
 - [Validator test plan](docs/validator-tests.md) — run with `npm test`.
+- [Trial mode](docs/trial-mode.md) — sessions with real children: in memory only, nothing stored.
+- [Deploying on Render](docs/deploy.md) — what is ready in the code and the steps in Render.

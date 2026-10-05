@@ -1,0 +1,26 @@
+# Render Blueprint for Kottab Discovery Engine.
+# The API key is NOT in this file: Render asks for it when the Blueprint is created (sync: false).
+services:
+  - type: web
+    name: kottab-discovery-engine
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: master
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: NODE_VERSION
+        value: "22"
+      - key: GENERATIONS_PER_IP_PER_HOUR
+        value: "6"
+      - key: GENERATIONS_PER_DAY
+        value: "80"
+      - key: QUESTIONS_PER_IP_PER_HOUR
+        value: "30"
+      - key: QUESTIONS_PER_DAY
+        value: "400"
