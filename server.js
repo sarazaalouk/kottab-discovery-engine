@@ -12,6 +12,7 @@ const episodes = require("./lib/episodes");
 const { generateLimit, askLimit } = require("./lib/limits");
 const { initialStatus, autoReview, teacherApproved, applyDecision } = require("./lib/publish");
 const noor = require("./lib/noor");
+const { requireReviewerPin, pinConfigured } = require("./lib/reviewer-pin");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -76,6 +77,7 @@ app.get("/health", (req, res) => {
   res.json({
     status: "ok",
     apiKeyConfigured: Boolean(process.env.ANTHROPIC_API_KEY),
+    reviewerPinConfigured: pinConfigured(),
   });
 });
 
@@ -425,8 +427,8 @@ app.post("/api/ask", askLimit, async (req, res) => {
 
 // ---------- reviewer ----------
 
-// Note: the reviewer pages sit behind the parent gate in the browser only. This is a demo with
-// synthetic data; a real deployment needs proper reviewer sign-in.
+// The reviewer API is protected by REVIEWER_PIN (lib/reviewer-pin.js). One shared PIN suits this demo
+// with synthetic data; a real deployment needs personal reviewer accounts.
 
 function episodeSummary(r) {
   return {
@@ -444,6 +446,9 @@ function episodeSummary(r) {
     review: r.review || null,
   };
 }
+
+// Every reviewer route needs the reviewer PIN (REVIEWER_PIN), when it is set.
+app.use("/api/review", requireReviewerPin);
 
 app.get("/api/review/episodes", (req, res) => {
   res.json(episodes.list().map(episodeSummary));
@@ -518,4 +523,5 @@ app.post("/api/review/episodes/:id/decision", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Kottab Discovery Engine running on http://localhost:${PORT}`);
+  if (!pinConfigured()) console.log("REVIEWER_PIN is not set: the reviewer API is open (fine locally, set it on Render).");
 });

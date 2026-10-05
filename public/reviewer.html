@@ -15,10 +15,17 @@
 </head>
 <body>
 <main>
-  <section class="card" id="locked" hidden>
-    <h1>هذه الصفحة للمراجِع فقط</h1>
-    <p>افتح بوابة الأهل أولًا من صفحة الأهل، ثم ارجع لهذه الصفحة.</p>
-    <a class="btn block" href="index.html">صفحة الأهل</a>
+  <section class="card" id="locked" hidden aria-labelledby="pin-title">
+    <h1 id="pin-title">هذه الصفحة للمراجِع فقط</h1>
+    <p>أدخل رقم PIN الخاص بالمراجِع. الرقم مذكور في ملف التسليم.</p>
+    <form id="pin-form" class="stack" novalidate>
+      <div class="field">
+        <label for="pin-input">رقم PIN</label>
+        <input id="pin-input" type="password" inputmode="numeric" autocomplete="off" maxlength="40" dir="ltr">
+      </div>
+      <p class="notice error" id="pin-error" hidden></p>
+      <button class="btn block" type="submit">دخول</button>
+    </form>
   </section>
 
   <div id="app" hidden class="stack">
@@ -107,13 +114,16 @@
     let list, referrals;
     try {
       [list, referrals] = await Promise.all([
-        fetch("/api/review/episodes").then((r) => { if (!r.ok) throw 0; return r.json(); }),
-        fetch("/api/review/referrals").then((r) => { if (!r.ok) throw 0; return r.json(); }),
+        reviewerFetch("/api/review/episodes").then((r) => { if (!r.ok) throw r; return r.json(); }),
+        reviewerFetch("/api/review/referrals").then((r) => { if (!r.ok) throw r; return r.json(); }),
       ]);
-    } catch {
+    } catch (e) {
+      if (e && (e.status === 401 || e.status === 429)) return askForPin(e.status === 429 ? "محاولات خاطئة كثيرة. حاول بعد قليل." : "");
       $("load-error").hidden = false;
       return;
     }
+    $("locked").hidden = true;
+    $("app").hidden = false;
     const pending = list.filter((e) => e.status === "pending_review");
     const others = list.filter((e) => e.status !== "pending_review");
     $("count-pending").textContent = pending.length;
@@ -151,7 +161,7 @@
     const body = details.querySelector(".ep-body");
     let d;
     try {
-      const res = await fetch(`/api/review/episodes/${encodeURIComponent(details.dataset.id)}`);
+      const res = await reviewerFetch(`/api/review/episodes/${encodeURIComponent(details.dataset.id)}`);
       if (!res.ok) throw 0;
       d = await res.json();
     } catch {
@@ -321,7 +331,7 @@
     box.querySelectorAll("button").forEach((b) => (b.disabled = true));
     result.textContent = "جارٍ الحفظ…";
     try {
-      const res = await fetch(`/api/review/episodes/${encodeURIComponent(d.id)}/decision`, {
+      const res = await reviewerFetch(`/api/review/episodes/${encodeURIComponent(d.id)}/decision`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ decision, note: box.querySelector("textarea").value }),
@@ -336,13 +346,35 @@
     }
   }
 
-  // ---------- init ----------
-  if (!gate.isOpen()) {
-    $("locked").hidden = false;
-  } else {
-    $("app").hidden = false;
-    loadList();
+  // ---------- reviewer PIN ----------
+  // The PIN is kept for this tab only and sent with every reviewer request.
+  const PIN_KEY = "kottab.reviewerPin";
+  function savedPin() {
+    try { return sessionStorage.getItem(PIN_KEY) || ""; } catch { return ""; }
   }
+  function reviewerFetch(url, opts = {}) {
+    return fetch(url, { ...opts, headers: { ...(opts.headers || {}), "X-Reviewer-PIN": savedPin() } });
+  }
+  function askForPin(message) {
+    $("app").hidden = true;
+    $("locked").hidden = false;
+    $("pin-error").textContent = message;
+    $("pin-error").hidden = !message;
+    $("pin-input").focus();
+  }
+  $("pin-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try { sessionStorage.setItem(PIN_KEY, $("pin-input").value.trim()); } catch { /* storage unavailable */ }
+    const res = await reviewerFetch("/api/review/referrals");
+    if (res.ok) {
+      $("pin-input").value = "";
+      return loadList();
+    }
+    askForPin(res.status === 429 ? "محاولات خاطئة كثيرة. حاول بعد قليل." : "رقم PIN غير صحيح.");
+  });
+
+  // ---------- init ----------
+  loadList();
 </script>
 </body>
 </html>

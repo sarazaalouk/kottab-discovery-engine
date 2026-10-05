@@ -14,6 +14,9 @@ services:
     envVars:
       - key: ANTHROPIC_API_KEY
         sync: false
+      # Reviewer page PIN; given to the judges in the submission file, never in the repository.
+      - key: REVIEWER_PIN
+        sync: false
       - key: NODE_VERSION
         value: "22"
       - key: GENERATIONS_PER_IP_PER_HOUR
