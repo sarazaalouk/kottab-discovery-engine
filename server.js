@@ -10,6 +10,7 @@ const Anthropic = require("@anthropic-ai/sdk");
 const { validateEpisode, normalizeArabic } = require("./validator");
 const episodes = require("./lib/episodes");
 const { generateLimit, askLimit } = require("./lib/limits");
+const { initialStatus, autoReview, teacherApproved, applyDecision } = require("./lib/publish");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -199,9 +200,11 @@ app.post("/api/generate-episode", generateLimit, async (req, res) => {
     };
   }
 
+  const status = initialStatus(validation.passed, referrals.length);
   const record = {
     id,
-    status: validation.passed ? "pending_review" : "rejected",
+    status,
+    review: status === "approved" ? autoReview() : null,
     created_at: createdAt,
     model: response.model,
     root,
@@ -221,7 +224,7 @@ app.post("/api/generate-episode", generateLimit, async (req, res) => {
 
   referrals.forEach((r) => logReferral({ episode_id: id, child_name: request.child.name, ...r, source: "engine" }));
 
-  // The caller only learns the id and status; content is served after review.
+  // The caller only learns the id and status; content is served only while the episode is approved.
   res.json({ id: record.id, status: record.status });
 });
 
@@ -277,6 +280,7 @@ app.get("/api/episodes/:id", (req, res) => {
   res.json({
     id: record.id,
     status: record.status,
+    teacher_reviewed: teacherApproved(record),
     episode_number: record.episode_number,
     title: ep.title_en,
     discovery_moment: ep.discovery_moment,
@@ -317,6 +321,7 @@ app.get("/api/episodes/:id/report", (req, res) => {
     sources: usedIds.map((id) => kbById.get(id)).filter(Boolean).map(cardSource),
     quran_source: readJson(QURAN_PATH).source,
     reviewed: record.review || null,
+    teacher_reviewed: teacherApproved(record),
   });
 });
 
@@ -460,19 +465,13 @@ app.post("/api/trial/end", (req, res) => {
   res.json({ erased });
 });
 
-const DECISIONS = { approve: "approved", return: "returned", refer: "referred" };
-
 app.post("/api/review/episodes/:id/decision", (req, res) => {
   const record = episodes.get(req.params.id);
   if (!record) return res.status(404).json({ error: "episode not found" });
   const { decision, note } = req.body || {};
-  if (!DECISIONS[decision]) return res.status(400).json({ error: "decision must be approve, return, or refer" });
-  if (decision === "approve" && !(record.validation && record.validation.passed)) {
-    return res.status(400).json({ error: "an episode rejected by the validator cannot be approved" });
-  }
-  const cleanNote = typeof note === "string" ? note.slice(0, 1000) : "";
-  record.status = DECISIONS[decision];
-  record.review = { decision, note: cleanNote, reviewed_by: "Kottab teacher", reviewed_at: new Date().toISOString() };
+  const error = applyDecision(record, decision, note);
+  if (error) return res.status(400).json({ error });
+  const cleanNote = record.review.note;
   episodes.save(record);
   if (decision === "refer") {
     logReferral({ episode_id: record.id, child_name: record.child.name, question: `Episode ${record.episode_number} referred by reviewer`, reason: cleanNote || "referred by reviewer", source: "reviewer" });

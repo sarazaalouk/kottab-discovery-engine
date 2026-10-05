@@ -25,8 +25,10 @@
 - مستويات المحتوى (أ، ب، ج، د) وكيف يتعامل معها المنتج في `docs/content-levels.md`.
 
 ## الشفافية (بند ملزم في مرجع التحدي)
-- صفحة الحلقة وصفحة التقرير فيهم سطر ثابت: "This episode was prepared with an AI assistant from teacher-approved cards and reviewed by a Kottab teacher."
-- صفحة المراجع: "الحلقات تُولَّد بمساعدة الذكاء الاصطناعي من بطاقات معتمدة وتُراجَع بشريًا قبل عرضها."
+- صفحة الحلقة وصفحة التقرير فيهم سطر شفافية يقول ما حدث فعلًا:
+  - بعد مراجعة المعلم: "This episode was prepared with an AI assistant from teacher-approved cards and reviewed by a Kottab teacher."
+  - قبل مراجعة المعلم (منشورة تلقائيًا): "This episode was prepared with an AI assistant from teacher-approved cards, checked automatically against the sources, and is reviewed by a Kottab teacher after it is shown."
+- صفحة المراجع: "الحلقات تُولَّد بمساعدة الذكاء الاصطناعي من بطاقات معتمدة، وتُفحَص آليًا قبل عرضها، ويراجعها معلم بعد العرض ويمكنه سحبها، والحلقات التي فيها إحالات تنتظر المعلم."
 
 ## الفاحص الآلي (بعد كل توليد)
 يرفض الحلقة ولا تصل للطفل لو وُجد أي من:
@@ -69,8 +71,13 @@
 - حروف ألعاب التشخيص (الأولى والتانية) من حروف كلمات الفاتحة فقط.
 - خطة اختبار الفاحص في `docs/validator-tests.md` وتتشغل بـ `npm test`. أي حالة جديدة تتضاف للاتنين.
 
-## بوابة المراجعة البشرية
-- لا حلقة تصل للطفل قبل اعتماد المراجع.
+## بوابة المراجعة (فحص آلي قبل العرض، مراجعة بشرية بعد العرض)
+- قرار 5 أكتوبر 2026 (يحل محل "لا حلقة تصل للطفل قبل اعتماد المراجع"):
+  - الحلقة التي تنجح في الفاحص الآلي **ولا تحتوي على إحالات** تُنشر للطفل فورًا (`approved`، و`review.decision = "auto_approved"` من الفاحص).
+  - المعلم يراجعها بعد العرض: يؤكّدها، أو يسحبها (`withdraw`) بملاحظة إلزامية فتصبح `returned` ويرى الطفل "Your teacher is updating this episode."
+  - الحلقة التي فيها إحالة تنتظر المعلم (`pending_review`) ولا تُعرض قبل اعتماده.
+  - الحلقة التي يرفضها الفاحص (`rejected`) لا تُعرض أبدًا ولا يمكن اعتمادها.
+- المنطق في `lib/publish.js` واختباراته في `tests/publish-tests.js`.
 - قيم `status` في قاعدة المعرفة: `draft` (مدخَل ولم يُراجَع)، `approved` (راجعته Sara بنفسها ومطابق للمصدر)، `rejected` (مرفوض). المعتمد فقط هو `approved`.
 
 ## ترقيم الآيات

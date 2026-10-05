@@ -12,6 +12,10 @@ The following work existed before the start of the challenge:
 
 Note: these files are currently stored outside this repository and will be added to the `baseline` folder.
 
+## How an episode reaches the child
+
+Every episode is checked automatically before it is shown: meanings must match teacher-approved cards word for word, and the model may not write any Quran text. An episode that passes and has no questions for the teacher is shown to the child at once; a Kottab teacher reviews it afterwards and can withdraw it. An episode with a referral waits for the teacher. An episode that fails the check is never shown.
+
 ## Documentation
 
 - [Sources](docs/sources.md) — Quran text, Al-Tafsir Al-Muyassar, Tafsir Ibn Kathir (edition and pages), hadith grading, English terminology; aligned with the challenge reference pack "المرجعية والحزمة العلمية".

@@ -12,7 +12,7 @@ The challenge reference pack, **"المرجعية والحزمة العلمية"
 ## How each level is enforced
 
 - **أ — Quran text.** The model may only refer to ayahs by number (e.g. `1:1`) and words by position. Any Arabic word it writes rejects the episode (validator rule د). The verified text is inserted by the server after validation.
-- **ب — Meanings.** Every meaning must carry a `card_id`, the card must be approved, and the text must match the card exactly (validator rules أ, ب, ج). A teacher reviews every episode before a child sees it.
+- **ب — Meanings.** Every meaning must carry a `card_id`, the card must be approved, and the text must match the card exactly (validator rules أ, ب, ج). These checks run before the child sees anything. An episode that passes them and has no referral is shown at once, and a teacher reviews it afterwards and can withdraw it; an episode with a referral waits for the teacher.
 - **ج — Audience.** Cards have an `audience` field. A card without `child` in it can never appear on a child screen: the validator rejects the episode (test case 12 in `docs/validator-tests.md`).
 - **ج and د — Questions.** The "Ask a question" box does not answer from the model. The model only decides whether one approved card answers the question; if not, or if it is unsure, the child sees a polite referral and the question is logged for the teacher.
 

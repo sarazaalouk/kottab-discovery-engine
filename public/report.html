@@ -39,6 +39,7 @@
       <span class="eyebrow" id="r-eyebrow"></span>
       <h1 id="r-title"></h1>
       <p class="approved-line" id="approved" hidden>Reviewed and approved by a Kottab teacher</p>
+      <p class="notice small" id="auto-published" hidden>Checked automatically against the sources. A Kottab teacher reviews it after it is shown and can withdraw it.</p>
     </header>
 
     <section class="card" aria-labelledby="disc-title">
@@ -70,7 +71,7 @@
       <ul class="sources" id="r-sources"></ul>
     </section>
 
-    <p class="transparency">This episode was prepared with an AI assistant from teacher-approved cards and reviewed by a Kottab teacher.</p>
+    <p class="transparency" id="transparency"></p>
   </article>
 </main>
 
@@ -108,7 +109,9 @@
     const r = data.report;
     $("r-eyebrow").textContent = `Parent report · Episode ${data.episode_number}`;
     $("r-title").textContent = `${data.child_name}: ${data.title}`;
-    $("approved").hidden = !(data.reviewed && data.reviewed.decision === "approve");
+    $("approved").hidden = !data.teacher_reviewed;
+    $("auto-published").hidden = Boolean(data.teacher_reviewed);
+    $("transparency").textContent = transparencyLine(data.teacher_reviewed);
     $("r-summary").innerHTML = formatLetters(r.discovered.summary_en);
     $("r-meanings").innerHTML = r.discovered.meanings.map(meaningHtml).join("");
     $("r-strengths").innerHTML = r.strengths.map((s) => `<li>${formatLetters(s)}</li>`).join("");

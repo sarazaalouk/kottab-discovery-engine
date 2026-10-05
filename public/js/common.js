@@ -141,3 +141,11 @@ function formatLetters(text) {
 function plainLetters(text) {
   return escapeHtml(text).replace(/([؀-ۿ](?:\s[؀-ۿ])*)/g, '<span class="ar-letters" lang="ar">$1</span>');
 }
+
+// AI-transparency line (challenge reference pack). It states what actually happened:
+// a teacher has reviewed it, or it was checked automatically and a teacher reviews it after it is shown.
+function transparencyLine(teacherReviewed) {
+  return teacherReviewed
+    ? "This episode was prepared with an AI assistant from teacher-approved cards and reviewed by a Kottab teacher."
+    : "This episode was prepared with an AI assistant from teacher-approved cards, checked automatically against the sources, and is reviewed by a Kottab teacher after it is shown.";
+}

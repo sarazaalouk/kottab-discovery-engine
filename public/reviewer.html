@@ -23,8 +23,8 @@
     <div class="stack">
       <span class="eyebrow">مراجعة الحلقات</span>
       <h1>المراجِع</h1>
-      <p class="lead">لا تظهر أي حلقة للطفل قبل اعتمادها هنا. راجع تقرير الفاحص، ثم المعاني مقابل نص المصدر، ثم بقية البنود.</p>
-      <p class="transparency">الحلقات تُولَّد بمساعدة الذكاء الاصطناعي من بطاقات معتمدة وتُراجَع بشريًا قبل عرضها.</p>
+      <p class="lead">الحلقة التي تنجح في الفاحص الآلي ولا تحتوي على إحالات تُنشر للطفل فورًا، وتراجعها هنا بعد النشر ويمكنك سحبها. الحلقات التي فيها إحالات تنتظرك في "بانتظار المراجعة". راجع تقرير الفاحص، ثم المعاني مقابل نص المصدر، ثم بقية البنود.</p>
+      <p class="transparency">الحلقات تُولَّد بمساعدة الذكاء الاصطناعي من بطاقات معتمدة، وتُفحَص آليًا قبل عرضها، ويراجعها معلم بعد العرض ويمكنه سحبها، والحلقات التي فيها إحالات تنتظر المعلم.</p>
     </div>
 
     <div class="tabs" role="tablist" aria-label="أقسام المراجعة">
@@ -53,7 +53,8 @@
     referred: "محالة للمعلم",
     rejected: "رفضها الفاحص",
   };
-  const DECISION_AR = { approve: "اعتماد", return: "إرجاع للتعديل", refer: "إحالة للمعلم" };
+  const DECISION_AR = { approve: "اعتماد", return: "إرجاع للتعديل", refer: "إحالة للمعلم", withdraw: "سحب الحلقة", auto_approved: "نُشرت تلقائيًا" };
+  const isAuto = (e) => e.status === "approved" && e.review && e.review.decision === "auto_approved";
 
   const en = (html) => `<div class="en" dir="ltr" lang="en">${html}</div>`;
   const fmtDate = (iso) => new Date(iso).toLocaleString("ar-EG", { dateStyle: "medium", timeStyle: "short" });
@@ -77,7 +78,7 @@
           <span class="muted small">${escapeHtml(e.child.name)}، ${e.child.age} سنوات · ${fmtDate(e.created_at)}</span>
         </span>
         <span class="chips">
-          <span class="chip status-${e.status}">${STATUS_AR[e.status] || e.status}</span>${e.trial ? `<span class="chip trial">جلسة تجربة · في الذاكرة فقط</span>` : ""}
+          <span class="chip status-${e.status}">${STATUS_AR[e.status] || e.status}</span>${isAuto(e) ? `<span class="chip auto">نُشرت تلقائيًا · لم تُراجَع بعد</span>` : ""}${e.trial ? `<span class="chip trial">جلسة تجربة · في الذاكرة فقط</span>` : ""}
           <span class="chip ${v.passed ? "ok" : "bad"}">${v.passed ? "الفاحص: ناجحة" : "الفاحص: مرفوضة"}</span>
         </span>
       </summary>`;
@@ -269,20 +270,27 @@
 
   function actionsHtml(d) {
     const canApprove = d.validation && d.validation.passed;
-    const reviewed = d.review
-      ? `<p class="notice ${d.review.decision === "approve" ? "ok" : "warn"}">القرار: ${DECISION_AR[d.review.decision]} · ${fmtDate(d.review.reviewed_at)}${d.review.note ? `<br>${escapeHtml(d.review.note)}` : ""}</p>`
+    const published = d.status === "approved";
+    const r = d.review;
+    const reviewed = r
+      ? r.decision === "auto_approved"
+        ? `<p class="notice">نُشرت تلقائيًا بعد نجاحها في الفاحص وعدم وجود إحالات · ${fmtDate(r.at)}. الطفل يراها الآن.</p>`
+        : `<p class="notice ${r.decision === "approve" ? "ok" : "warn"}">القرار: ${DECISION_AR[r.decision]} · ${fmtDate(r.reviewed_at)}${r.note ? `<br>${escapeHtml(r.note)}` : ""}</p>`
       : "";
+    // A published episode can be confirmed after review, or withdrawn (with a note).
+    const buttons = published
+      ? `${isAuto(d) ? `<button class="btn" data-decision="approve">تأكيد بعد المراجعة</button>` : ""}
+         <button class="btn secondary danger" data-decision="withdraw">سحب الحلقة</button>`
+      : `<button class="btn" data-decision="approve" ${canApprove ? "" : "disabled"}>اعتماد</button>
+         <button class="btn secondary" data-decision="return">إرجاع للتعديل</button>
+         <button class="btn secondary" data-decision="refer">إحالة للمعلم</button>`;
     return `<section class="block actions">
         <h3>القرار</h3>
         ${reviewed}
-        <label class="small" for="note-${escapeHtml(d.id)}">ملاحظة (اختيارية)</label>
+        <label class="small" for="note-${escapeHtml(d.id)}">${published ? "ملاحظة (إلزامية عند السحب)" : "ملاحظة (اختيارية)"}</label>
         <textarea id="note-${escapeHtml(d.id)}" rows="2" maxlength="1000"></textarea>
-        <div class="row">
-          <button class="btn" data-decision="approve" ${canApprove ? "" : "disabled"}>اعتماد</button>
-          <button class="btn secondary" data-decision="return">إرجاع للتعديل</button>
-          <button class="btn secondary" data-decision="refer">إحالة للمعلم</button>
-        </div>
-        ${canApprove ? "" : `<p class="small muted">لا يمكن اعتماد حلقة رفضها الفاحص.</p>`}
+        <div class="row">${buttons}</div>
+        ${canApprove || published ? "" : `<p class="small muted">لا يمكن اعتماد حلقة رفضها الفاحص.</p>`}
         <p class="small" role="status" data-result></p>
       </section>`;
   }
@@ -290,6 +298,11 @@
   async function decide(details, d, decision) {
     const box = details.querySelector(".actions");
     const result = box.querySelector("[data-result]");
+    if (decision === "withdraw" && !box.querySelector("textarea").value.trim()) {
+      result.textContent = "اكتب ملاحظة تشرح سبب السحب أولًا.";
+      box.querySelector("textarea").focus();
+      return;
+    }
     box.querySelectorAll("button").forEach((b) => (b.disabled = true));
     result.textContent = "جارٍ الحفظ…";
     try {

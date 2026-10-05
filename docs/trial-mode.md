@@ -14,7 +14,7 @@ Rule (CLAUDE.md, privacy): in any trial with a real child, the parent agrees fir
 | Browser storage | `localStorage` | `sessionStorage` only (this tab), cleared when the session ends |
 | Episode on the server | File in `data/episodes/` | Memory only, never written to disk |
 | Referrals (child questions) | `data/referrals.jsonl` | Memory only, attached to the trial episode |
-| Teacher review | Required before the child sees the episode | Same; trial episodes are marked "جلسة تجربة" on the reviewer page |
+| Teacher review | Automatic check before the child sees the episode; teacher reviews after it is shown and can withdraw it; episodes with a referral wait for the teacher | Same; trial episodes are marked "جلسة تجربة" on the reviewer page |
 | End | — | "End session" in the amber bar on every page erases the episode and its referrals on the server, then everything in the tab |
 | Safety net | — | The server forgets trial episodes after 3 hours, or when it restarts |
 

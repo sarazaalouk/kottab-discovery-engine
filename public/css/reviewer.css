@@ -78,3 +78,5 @@ details[open] > .ep-summary::after { content: "▴ إخفاء"; }
 .hadith .missing { color: var(--muted); font-style: italic; }
 
 .chip.trial { color: var(--amber); border-color: var(--amber); background: var(--amber-wash); }
+.chip.auto { color: var(--green); border-color: var(--green); background: var(--surface); }
+.btn.danger { color: var(--red); border-color: var(--red); }

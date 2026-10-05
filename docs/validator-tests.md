@@ -35,3 +35,20 @@ These rules cannot be checked by code and stay with the reviewer:
 - The discovery question can be answered by looking at the ayah, and the wrong options are the same kind of answer.
 - The parent report is written as an invitation, not as something the child already did.
 - The memory picture is a memory aid, not an explanation.
+
+## Publishing (after the validator)
+
+Script: `tests/publish-tests.js` (also run by `npm test`). Rule in `lib/publish.js`.
+
+| # | Situation | Expected result |
+|---|---|---|
+| P1 | Sample episode passes the validator, no referrals | `approved` (published at once, `auto_approved` by the validator) |
+| P2 | Passes the validator, has a referral | `pending_review` (waits for the teacher) |
+| P3 | Fails the validator | `rejected` (never shown) |
+| P4 | Auto-published episode | Not yet counted as teacher-reviewed |
+| P5 | Teacher withdraws without a note | Refused: a note is required |
+| P6 | Teacher withdraws with a note | `returned`; the auto-approval is kept in `review_history` |
+| P7 | Withdraw an episode that is not published | Refused |
+| P8 | Teacher confirms an auto-published episode | Counted as teacher-reviewed |
+
+Last run: 2026-10-05, all 8 cases behaved as expected.

@@ -16,7 +16,7 @@
   <section class="card" id="start" hidden aria-labelledby="start-title">
     <span class="eyebrow">Episode 1</span>
     <h1 id="start-title">Ready to discover?</h1>
-    <p id="start-text">Your episode is made just for you. A Kottab teacher checks it before you see it.</p>
+    <p id="start-text">Your episode is made just for you. Every meaning in it comes from cards a Kottab teacher has approved.</p>
     <p class="notice warn" id="no-profile" hidden>A parent needs to set up your profile first. <a href="index.html">Go to the parent page</a>.</p>
     <button class="btn block" id="make">Make my episode</button>
   </section>
@@ -35,7 +35,7 @@
   <section class="card" id="waiting" hidden aria-labelledby="waiting-title">
     <span class="eyebrow">Almost there</span>
     <h2 id="waiting-title">Your teacher is checking your episode</h2>
-    <p>Every episode is checked by a Kottab teacher before you see it. Come back soon!</p>
+    <p id="waiting-text">Your teacher wants to look at this one first. Come back soon!</p>
     <button class="btn secondary block" id="check">Check again</button>
     <p class="parent-cue small" id="waiting-cue"></p>
     <button class="btn secondary block" id="new-episode" hidden>Grown-up: make a new episode</button>
@@ -103,7 +103,7 @@
       <div id="ask-answer" aria-live="polite"></div>
     </section>
 
-    <p class="transparency">This episode was prepared with an AI assistant from teacher-approved cards and reviewed by a Kottab teacher.</p>
+    <p class="transparency" id="transparency"></p>
   </article>
 </main>
 
@@ -205,10 +205,18 @@
     const data = await res.json();
     if (data.status === "approved") return renderEpisode(data);
 
-    // pending_review, rejected, returned, referred: the child sees the same calm message.
+    // returned (withdrawn or sent back): the teacher is updating it.
+    // pending_review (has a referral), rejected, referred: the teacher is checking it.
+    if (data.status === "returned") {
+      $("waiting-title").textContent = "Your teacher is updating this episode";
+      $("waiting-text").textContent = "It will be ready again soon. Thank you for waiting!";
+    } else {
+      $("waiting-title").textContent = "Your teacher is checking your episode";
+      $("waiting-text").textContent = "Your teacher wants to look at this one first. Come back soon!";
+    }
     $("waiting-cue").innerHTML = gate.isOpen()
       ? `Grown-up: this episode is <b>${escapeHtml(data.status.replace("_", " "))}</b>. You can open it on the <a href="reviewer.html">Reviewer page</a>.`
-      : "Grown-up: a teacher reviews each episode before it opens.";
+      : "Grown-up: episodes that need a teacher's answer wait for the teacher before they open.";
     $("new-episode").hidden = !gate.isOpen();
     show("waiting");
   }
@@ -257,6 +265,7 @@
     $("salah-text").innerHTML = formatLetters(d.salah_connection.text_en);
     $("ep-moment").innerHTML = formatLetters(d.discovery_moment.text_en);
     $("q-title").innerHTML = formatLetters(d.question.text);
+    $("transparency").textContent = transparencyLine(d.teacher_reviewed);
     $("reveal").hidden = true;
     show("episode");
   }
