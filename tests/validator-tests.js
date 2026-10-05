@@ -33,6 +33,14 @@ const cases = [
   ["9. (f) output is not JSON", "[schema]", () => "{not json"],
   ["10. (d) single root letters allowed", null, (o) => { o.discovery_question.question_en += " ر ح م (r, h, m)"; return o; }],
   ["11. (d) root letters joined into a word", "[d]", (o) => { o.discovery_question.question_en += " رحم"; return o; }],
+  // A teacher/parent-only card shown to the child. The card is approved here (in this test only) so the
+  // audience rule is the one that rejects it.
+  ["12. (b) teacher/parent-only card on a child screen", "[b]", (o) => {
+    const card = ctx.kb.entries.find((c) => c.id === "kb-020");
+    card.status = "approved";
+    o.words[0].meanings[0] = { card_id: "kb-020", audience: "child", text: card.meaning_en };
+    return o;
+  }],
 ];
 
 let failed = 0;

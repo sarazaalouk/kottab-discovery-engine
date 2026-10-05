@@ -131,6 +131,12 @@ function validateEpisode(rawText, ctx) {
       continue;
     }
     if (m.text === card.meaning_ar) exactArabicMeanings.add(`${where}.text`);
+    // Meanings in the child's screens (word meanings, the revealed answer card) must come from cards
+    // whose audience includes the child. Teacher/parent-only cards (content level ج) never reach the child.
+    const childFacing = where.startsWith("words[") || where.startsWith("discovery_question");
+    if (childFacing && !(Array.isArray(card.audience) && card.audience.includes("child"))) {
+      fail("b", `${where}: card ${m.card_id} is not for children (audience: ${(card.audience || []).join(", ")})`);
+    }
     if (m.audience === "child" && m.text !== card.meaning_en_child) warnings.push(`${where}: child meaning is not the card's meaning_en_child`);
     if (m.audience === "parent" && m.text !== card.meaning_en) warnings.push(`${where}: parent meaning is not the card's meaning_en`);
   }

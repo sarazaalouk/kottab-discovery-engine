@@ -24,6 +24,7 @@
       <span class="eyebrow">مراجعة الحلقات</span>
       <h1>المراجِع</h1>
       <p class="lead">لا تظهر أي حلقة للطفل قبل اعتمادها هنا. راجع تقرير الفاحص، ثم المعاني مقابل نص المصدر، ثم بقية البنود.</p>
+      <p class="transparency">الحلقات تُولَّد بمساعدة الذكاء الاصطناعي من بطاقات معتمدة وتُراجَع بشريًا قبل عرضها.</p>
     </div>
 
     <div class="tabs" role="tablist" aria-label="أقسام المراجعة">
@@ -169,8 +170,24 @@
           <span class="muted small">${m.audience === "child" ? "للطفل" : "للأهل"}${c ? " · " + escapeHtml(c.source) + " · " + (c.status === "approved" ? "معتمدة" : escapeHtml(c.status)) : ""}</span>
         </div>
         ${en(`<p>${formatLetters(m.text)}</p>`)}
-        ${c ? `<p class="rv-source">نص المصدر: ${escapeHtml(c.meaning_ar)}</p><p class="small muted">${escapeHtml(c.location)}</p>` : `<p class="notice error">البطاقة غير موجودة.</p>`}
+        ${c ? `<p class="rv-source">نص المصدر: ${escapeHtml(c.meaning_ar)}</p>
+          <p class="small muted">${escapeHtml(c.location)}${c.page_ref ? ` · ${escapeHtml(c.page_ref)}` : ""}</p>
+          ${hadithHtml(c)}` : `<p class="notice error">البطاقة غير موجودة.</p>`}
       </div>`;
+  }
+
+  // Cards that quote a hadith: grade, grading source, reference (filled in by Sara).
+  function hadithHtml(c) {
+    if (!("hadith_grade" in c)) return "";
+    const val = (v) => (v ? escapeHtml(v) : `<span class="missing">لم يُعبَّأ بعد</span>`);
+    const url = c.grade_source_url && c.grade_source_url.startsWith("https://")
+      ? `<a href="${escapeHtml(c.grade_source_url)}" target="_blank" rel="noopener">${escapeHtml(c.grade_source_url)}</a>`
+      : val(c.grade_source_url);
+    return `<dl class="hadith">
+        <dt>حكم الحديث</dt><dd>${val(c.hadith_grade)}</dd>
+        <dt>مصدر الحكم (الدرر السنية)</dt><dd>${url}</dd>
+        <dt>التخريج</dt><dd>${val(c.hadith_ref)}</dd>
+      </dl>`;
   }
 
   function ayahsHtml(quran, words) {

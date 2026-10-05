@@ -215,7 +215,17 @@ app.post("/api/generate-episode", async (req, res) => {
 
 // ---------- serving episodes (only approved content leaves the server) ----------
 
-const SOURCE_SHORT = { "تفسير ابن كثير": "Tafsir Ibn Kathir", "التفسير الميسر": "Al-Tafsir Al-Muyassar" };
+const SOURCE_SHORT = {
+  "تفسير ابن كثير": "Tafsir Ibn Kathir",
+  "التفسير الميسر، مجمع الملك فهد لطباعة المصحف الشريف": "Al-Tafsir Al-Muyassar (King Fahd Complex)",
+};
+
+// Edition, page and hadith grading fields, when the card has them.
+function cardRefs(card) {
+  const out = {};
+  for (const k of ["edition", "page_ref", "hadith_grade", "grade_source_url", "hadith_ref"]) if (k in card) out[k] = card[k];
+  return out;
+}
 
 function cardSource(card) {
   return {
@@ -224,6 +234,7 @@ function cardSource(card) {
     source_ar: card.source,
     location: card.location,
     source_url: card.source_url,
+    ...cardRefs(card),
   };
 }
 
@@ -404,6 +415,7 @@ app.get("/api/review/episodes/:id", (req, res) => {
       source: c.source,
       location: c.location,
       source_url: c.source_url,
+      ...cardRefs(c),
       meaning_ar: c.meaning_ar,
       meaning_en: c.meaning_en,
       meaning_en_child: c.meaning_en_child,

@@ -228,3 +228,6 @@ fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
 
 /* Arabic text needs taller lines in Cairo so buttons and labels are not clipped */
 [dir="rtl"] .btn, [dir="rtl"] .tabs [role="tab"] { line-height: 1.8; padding-block: 9px; }
+
+/* Fixed AI-transparency line (required by the challenge reference pack) */
+.transparency { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }

@@ -22,10 +22,11 @@ Each test takes the sample episode (`data/episodes/sample-episode-01.json`), bre
 | 9 | (f) output is JSON | Output is `{not json` | Rejected: `[schema] output is not valid JSON` |
 | 10 | (d) single root letters are allowed | "ر ح م (r, h, m)" added to the question | Passes |
 | 11 | (d) no Arabic words from the model | "رحم" (letters joined) added to the question | Rejected: `[d] Arabic text written by the model` |
+| 12 | (b) child screens use child cards only | Teacher/parent-only card kb-020 (approved for this test) put in a word meaning | Rejected: `[b] card kb-020 is not for children` |
 
 ## Last run
 
-2026-10-04: all 12 cases (0–11) behaved as expected.
+2026-10-05: all 13 cases (0–12) behaved as expected.
 
 ## Not covered by the validator (human review)
 

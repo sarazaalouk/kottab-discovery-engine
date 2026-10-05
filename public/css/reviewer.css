@@ -71,3 +71,8 @@ details[open] > .ep-summary::after { content: "▴ إخفاء"; }
 .mono-id { font-family: var(--font-en); direction: ltr; text-align: right; overflow-wrap: anywhere; }
 
 .actions textarea { min-height: 3em; }
+
+.hadith { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: .85rem; background: var(--amber-wash); border-radius: 8px; padding: 8px 10px; }
+.hadith dt { font-weight: 600; color: var(--amber); }
+.hadith dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.hadith .missing { color: var(--muted); font-style: italic; }

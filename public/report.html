@@ -69,6 +69,8 @@
       <p class="small muted" id="r-quran-source"></p>
       <ul class="sources" id="r-sources"></ul>
     </section>
+
+    <p class="transparency">This episode was prepared with an AI assistant from teacher-approved cards and reviewed by a Kottab teacher.</p>
   </article>
 </main>
 
@@ -119,7 +121,9 @@
       .map(
         (s) => `<li>
           <b>${escapeHtml(s.card_id)} · ${escapeHtml(s.source)}</b>
-          <span class="loc" lang="ar">${escapeHtml(s.location)}</span>
+          <span class="loc" lang="ar">${escapeHtml(s.location)}${s.page_ref && s.page_ref !== "يُستكمل" ? ` · ${escapeHtml(s.page_ref)}` : ""}</span>
+          ${s.edition ? `<span class="loc" lang="ar">${escapeHtml(s.edition)}</span>` : ""}
+          ${"hadith_grade" in s ? `<span class="small">Hadith grade: ${s.hadith_grade ? escapeHtml(s.hadith_grade) : "to be added"}${s.hadith_ref ? ` · ${escapeHtml(s.hadith_ref)}` : ""}${s.grade_source_url && s.grade_source_url.startsWith("https://") ? ` · <a href="${escapeHtml(s.grade_source_url)}" target="_blank" rel="noopener">Dorar</a>` : ""}</span>` : ""}
           ${s.source_url && s.source_url.startsWith("https://") ? `<a href="${escapeHtml(s.source_url.split(" ")[0])}" target="_blank" rel="noopener">${escapeHtml(s.source_url.split(" ")[0])}</a>` : ""}
         </li>`
       )
