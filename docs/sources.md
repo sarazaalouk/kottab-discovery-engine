@@ -31,11 +31,14 @@ The sources below follow the challenge's official reference pack, **"المرج�
 
 How the page references were found (2026-10-05): the main text (without footnotes) of Shamela pages 85–156 of volume 1 was read, and each card's `meaning_ar` was searched for, letters only, ignoring vowel marks, punctuation and honorifics (Shamela shows ﷺ and similar as symbols). A page is recorded only when every quoted part of the card was found in full.
 
-- 61 of 64 cards: found in full; page recorded.
-- 3 cards: **not** found word for word, so `page_ref` is "يُستكمل" and the text is waiting for Sara's decision:
-  - kb-064 (ج1 ص143): the card has the word "فضلها" after "وهي سبع آيات"; the edition does not.
-  - kb-066 (ج1 ص115): the card reads "والشيطان معناه في لغة العرب"; the edition reads "والشيطان في لغة العرب".
-  - kb-067 (ج1 ص116): the card reads "والرجيم معناه : فعيل"; the edition reads "والرّجيم: فعيل".
+- All 64 cards now match the edition; every card has a page.
+- 61 cards matched on the first check.
+- 3 cards had one extra word that is not in the edition. On Sara's decision (2026-10-05) the word was removed so the text matches the Dar Taybah edition, which is now the reference. Each of these cards records the correction, its date and the previous text in `text_corrected`:
+  - kb-064 (ج1 ص143): removed "فضلها" after "وهي سبع آيات".
+  - kb-066 (ج1 ص115): removed "معناه" in "والشيطان معناه في لغة العرب".
+  - kb-067 (ج1 ص116): removed "معناه" in "والرجيم معناه : فعيل".
+
+The original import file `data/kb_cards_import.md` is kept unchanged as the record of what was first entered.
 
 ## 4. Hadith grading
 

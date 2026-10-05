@@ -24,7 +24,8 @@
     "approved_by": "string — who approved the card (only on approved cards)",
     "approved_on": "string — approval date YYYY-MM-DD (only on approved cards)",
     "meaning_en_child": "string — one sentence for the child (max 20 words), same meaning as meaning_ar, no added ideas or images",
-    "meaning_en_child_status": "string — for_review | approved"
+    "meaning_en_child_status": "string — for_review | approved",
+    "text_corrected": "object (only when meaning_ar was corrected) — note, date, and the previous text"
   },
   "entries": [
     {
@@ -1706,12 +1707,17 @@
       "source_url": "https://quran.ksu.edu.sa/tafseer/ibn-tabary-katheer-saadi/sura1-aya7.html",
       "location": "الفاتحة 7 (فصل في خلاصة السورة)",
       "edition": "تفسير القرآن العظيم، ابن كثير، تحقيق سامي سلامة، دار طيبة، 1420هـ، نسخة المكتبة الشاملة shamela.ws",
-      "page_ref": "يُستكمل",
-      "meaning_ar": "اشتملت هذه السورة الكريمة وهي سبع آيات فضلها ، على حمد الله وتمجيده والثناء عليه ، بذكر أسمائه الحسنى المستلزمة لصفاته العليا ، وعلى ذكر المعاد وهو يوم الدين ، وعلى إرشاده عبيده إلى سؤاله والتضرع إليه ، والتبرؤ من حولهم وقوتهم ، وإلى إخلاص العبادة له وتوحيده بالألوهية تبارك وتعالى",
+      "page_ref": "ج1 ص143",
+      "meaning_ar": "اشتملت هذه السورة الكريمة وهي سبع آيات ، على حمد الله وتمجيده والثناء عليه ، بذكر أسمائه الحسنى المستلزمة لصفاته العليا ، وعلى ذكر المعاد وهو يوم الدين ، وعلى إرشاده عبيده إلى سؤاله والتضرع إليه ، والتبرؤ من حولهم وقوتهم ، وإلى إخلاص العبادة له وتوحيده بالألوهية تبارك وتعالى",
       "meaning_en": "This noble surah of seven verses contains: praising Allah, glorifying and extolling Him by mentioning His Beautiful Names, which point to His Highest Attributes; mention of the Return, which is the Day of Judgment; His guiding His servants to ask Him and call on Him humbly, and to let go of relying on their own power and strength; and to make worship sincerely for Him alone and to affirm that He alone is God, Blessed and Exalted is He.",
       "meaning_en_status": "translation_for_review",
       "pedagogy_note": "خريطة السورة في فقرة: للحلقة الأخيرة من الموسم ولتقرير الأهل النهائي.",
-      "status": "draft"
+      "status": "draft",
+      "text_corrected": {
+        "note": "صُحِّح نص meaning_ar ليطابق طبعة دار طيبة (تحقيق سامي سلامة) في المكتبة الشاملة حرفيًا",
+        "on": "2026-10-05",
+        "previous_text": "اشتملت هذه السورة الكريمة وهي سبع آيات فضلها ، على حمد الله وتمجيده والثناء عليه ، بذكر أسمائه الحسنى المستلزمة لصفاته العليا ، وعلى ذكر المعاد وهو يوم الدين ، وعلى إرشاده عبيده إلى سؤاله والتضرع إليه ، والتبرؤ من حولهم وقوتهم ، وإلى إخلاص العبادة له وتوحيده بالألوهية تبارك وتعالى"
+      }
     },
     {
       "id": "kb-065",
@@ -1753,12 +1759,17 @@
       "source_url": "https://quran.com/1 (تفسير ابن كثير)",
       "location": "الكلام على تفسير الاستعاذة (كلام ابن كثير)",
       "edition": "تفسير القرآن العظيم، ابن كثير، تحقيق سامي سلامة، دار طيبة، 1420هـ، نسخة المكتبة الشاملة shamela.ws",
-      "page_ref": "يُستكمل",
-      "meaning_ar": "والشيطان معناه في لغة العرب مشتق من شطن إذا بعد ، فهو بعيد بطبعه عن طباع البشر ، وبعيد بفسقه عن كل خير .",
+      "page_ref": "ج1 ص115",
+      "meaning_ar": "والشيطان في لغة العرب مشتق من شطن إذا بعد ، فهو بعيد بطبعه عن طباع البشر ، وبعيد بفسقه عن كل خير .",
       "meaning_en": "In Arabic, \"Shaytan\" (Satan) comes from \"shatana,\" meaning \"to be far.\" He is far by his nature from human nature, and far through his wickedness from all good.",
       "meaning_en_status": "translation_for_review",
       "pedagogy_note": "اختياري (حلقة الاستعاذة): شيطان من الجذر ش-ط-ن = البعيد.",
-      "status": "draft"
+      "status": "draft",
+      "text_corrected": {
+        "note": "صُحِّح نص meaning_ar ليطابق طبعة دار طيبة (تحقيق سامي سلامة) في المكتبة الشاملة حرفيًا",
+        "on": "2026-10-05",
+        "previous_text": "والشيطان معناه في لغة العرب مشتق من شطن إذا بعد ، فهو بعيد بطبعه عن طباع البشر ، وبعيد بفسقه عن كل خير ."
+      }
     },
     {
       "id": "kb-067",
@@ -1777,12 +1788,17 @@
       "source_url": "https://quran.com/1 (تفسير ابن كثير)",
       "location": "الكلام على تفسير الاستعاذة (كلام ابن كثير)",
       "edition": "تفسير القرآن العظيم، ابن كثير، تحقيق سامي سلامة، دار طيبة، 1420هـ، نسخة المكتبة الشاملة shamela.ws",
-      "page_ref": "يُستكمل",
-      "meaning_ar": "والرجيم معناه : فعيل بمعنى مفعول ، أي : أنه مرجوم مطرود عن الخير كله .",
+      "page_ref": "ج1 ص116",
+      "meaning_ar": "والرجيم : فعيل بمعنى مفعول ، أي : أنه مرجوم مطرود عن الخير كله .",
       "meaning_en": "\"Al-Rajim\" means \"the one who is stoned\": he is pelted and driven away from all good.",
       "meaning_en_status": "translation_for_review",
       "pedagogy_note": "اختياري (حلقة الاستعاذة): الرجيم = المرجوم المطرود عن الخير كله.",
-      "status": "draft"
+      "status": "draft",
+      "text_corrected": {
+        "note": "صُحِّح نص meaning_ar ليطابق طبعة دار طيبة (تحقيق سامي سلامة) في المكتبة الشاملة حرفيًا",
+        "on": "2026-10-05",
+        "previous_text": "والرجيم معناه : فعيل بمعنى مفعول ، أي : أنه مرجوم مطرود عن الخير كله ."
+      }
     },
     {
       "id": "kb-068",
