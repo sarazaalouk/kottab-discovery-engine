@@ -11,6 +11,7 @@ const { validateEpisode, normalizeArabic } = require("./validator");
 const episodes = require("./lib/episodes");
 const { generateLimit, askLimit } = require("./lib/limits");
 const { initialStatus, autoReview, teacherApproved, applyDecision } = require("./lib/publish");
+const noor = require("./lib/noor");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -72,6 +73,11 @@ app.get("/health", (req, res) => {
     status: "ok",
     apiKeyConfigured: Boolean(process.env.ANTHROPIC_API_KEY),
   });
+});
+
+// Letter-game content from Noor Al-Bayan (fixed rules, no model): stage 1 letters and stage 3 words.
+app.get("/api/noor", (req, res) => {
+  res.json(noor.diagnosisContent());
 });
 
 // The verified Al-Fatiha text, read-only (used by the letter games).

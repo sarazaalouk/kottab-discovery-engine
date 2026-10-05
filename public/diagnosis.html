@@ -13,7 +13,7 @@
 <main>
   <section class="card" id="intro" aria-labelledby="intro-title">
     <span class="eyebrow">Letter games</span>
-    <h1 id="intro-title">Three little games</h1>
+    <h1 id="intro-title">Little letter games</h1>
     <p id="intro-text">Take your time. There is no clock. Just do your best, and a grown-up can sit with you.</p>
     <p class="notice warn" id="no-profile" hidden>A parent needs to set up your profile first. <a href="index.html">Go to the parent page</a>.</p>
     <button class="btn block" id="start">Start</button>
@@ -28,10 +28,10 @@
 
   <section class="card" id="done" hidden aria-labelledby="done-title">
     <span class="eyebrow">All done</span>
-    <h2 id="done-title">You tried all three games!</h2>
+    <h2 id="done-title">Well done for playing!</h2>
     <p>Thank you. Now ask a grown-up to look at the next step with you.</p>
     <div class="stack">
-      <a class="btn block" href="episode.html">Go to my episode</a>
+      <a class="btn block" id="next-link" href="episode.html">Go to my episode</a>
       <a class="btn secondary block" href="index.html">Parent page</a>
     </div>
   </section>
@@ -42,38 +42,44 @@
   renderTopbar("diagnosis.html");
   const $ = (id) => document.getElementById(id);
 
-  // ---- Game content (fixed; no model involved) ----
-  // Every letter shown in games 1 and 2 is a letter used in the words of Al-Fatiha,
-  // so the result feeds straight into the episodes.
-  // Game 1: the parent says a letter sound, the child picks the letter.
-  const HEAR = [
-    { answer: "ر", options: ["د", "ر", "ل"], say: "ra (ر)" },
-    { answer: "ح", options: ["ح", "ه", "ع"], say: "Ha, from the throat (ح)" },
-    { answer: "م", options: ["ن", "ب", "م"], say: "meem (م)" },
-    { answer: "س", options: ["ص", "س", "ي"], say: "seen (س)" },
-  ];
-  // Game 2: match a letter to its shape when it is joined in a word.
+  // ---- Four stages, each opens only if the one before was passed (fixed rules, no model) ----
+  // Stage 1: the parent says a letter sound, the child picks it. Letters of the Basmala;
+  //          the other options are letters of Al-Fatiha (mostly Noor Al-Bayan's similar-letter pairs).
+  //          ن and ي are reserves, used when the grown-up skips a letter (at most twice).
+  const SOUND = {
+    "ب": ["ب", "ن", "ت"],
+    "س": ["ص", "س", "ي"],
+    "م": ["ن", "ب", "م"],
+    "ل": ["ر", "ك", "ل"],
+    "ر": ["ر", "د", "ذ"],
+    "ح": ["ه", "ح", "ع"],
+    "ن": ["ب", "ت", "ن"],
+    "ي": ["ي", "ت", "ن"],
+  };
+  const SOUND_ORDER = ["ب", "س", "م", "ل", "ر", "ح"];
+  const SOUND_RESERVE = ["ن", "ي"];
+  // Stage 2: match a letter to its shape when it is joined in a word.
   const SHAPE = [
     { letter: "ر", answer: "ـر", options: ["ـد", "ـر", "ـن"] },
     { letter: "ح", answer: "حـ", options: ["حـ", "عـ", "هـ"] },
     { letter: "م", answer: "ـمـ", options: ["ـنـ", "ـيـ", "ـمـ"] },
     { letter: "ك", answer: "ـك", options: ["ـل", "ـك", "ـن"] },
   ];
-  // Game 3: the child reads a word from Al-Fatiha; the parent confirms.
-  // Words are taken from the verified Quran file by reference: [ayah, word number].
+  // Stage 3: three fatha words from Noor Al-Bayan, chosen by the server (GET /api/noor).
+  // Stage 4: words from the verified Al-Fatiha file, by reference [ayah, word number].
   const READ_REFS = [[1, 1], [1, 2], [2, 3], [4, 2]];
+  const PASS = { sound: 4, shape: 3, fatha: 2, fatiha: 2 }; // out of 6, 4, 3, 4
 
-  // ---- Level from fixed rules ----
-  function levelFrom(scores) {
-    const letters = scores.hear + scores.shape;
-    if (scores.read >= 3 && letters >= 4) return "Reads short words";
-    if (letters >= 6) return "Knows most letters";
-    if (letters >= 3) return "Knows some letters";
-    return "Does not know the letters yet";
+  // ---- Level from the stages (READING_LEVELS on the server) ----
+  function levelFrom(st) {
+    if (!st.sound.passed) return "Does not know the letters yet";
+    if (!st.shape.passed) return "Knows some letters";
+    if (!st.fatha.passed) return "Knows most letters";
+    return "Reads short words";
   }
 
-  const scores = { hear: 0, shape: 0, read: 0 };
-  let readWords = [];
+  let noor = null;
+  let fatihaWords = [];
 
   function dots(total, done) {
     $("dots").innerHTML = Array.from({ length: total }, (_, i) => `<span class="${i < done ? "done" : ""}"></span>`).join("");
@@ -86,39 +92,73 @@
     $("game-title").textContent = title;
   }
 
-  // Shows one multiple-choice round; resolves with the picked option.
-  function choiceRound(promptHtml, options) {
+  // One multiple-choice round. Resolves with the picked option, or null when the grown-up skips.
+  function choiceRound(promptHtml, options, { canSkip = false } = {}) {
     return new Promise((resolve) => {
       $("game-body").innerHTML = `${promptHtml}
         <div class="choices">${options
           .map((o, i) => `<button class="choice" data-i="${i}" aria-label="Letter ${o}"><span class="letter" lang="ar">${o}</span></button>`)
-          .join("")}</div>`;
+          .join("")}</div>
+        ${canSkip ? `<button class="btn secondary small-btn" id="skip">Grown-up: skip this letter</button>` : ""}`;
       $("game-body").querySelectorAll(".choice").forEach((btn) =>
         btn.addEventListener("click", () => {
           btn.classList.add("picked");
-          $("game-body").querySelectorAll(".choice").forEach((b) => (b.disabled = true));
+          $("game-body").querySelectorAll("button").forEach((b) => (b.disabled = true));
           setTimeout(() => resolve(options[Number(btn.dataset.i)]), 350);
         })
       );
+      if (canSkip) $("skip").addEventListener("click", () => resolve(null));
     });
   }
 
-  async function gameHear() {
-    showGame("Game 1 of 3", "Which letter do you hear?");
-    for (let i = 0; i < HEAR.length; i++) {
-      dots(HEAR.length, i);
-      const r = HEAR[i];
-      const picked = await choiceRound(
-        `<p>Listen to your grown-up, then tap the letter.</p>
-         <details class="parent-cue"><summary>Grown-up: tap to see what to say</summary>Say the sound <b>${r.say}</b> clearly, twice.</details>`,
-        r.options
-      );
-      if (picked === r.answer) scores.hear++;
-    }
+  // Grown-up confirms a reading (stages 3 and 4).
+  function readRounds(words, label, title, prompt, wordClass) {
+    showGame(label, title);
+    return new Promise((resolve) => {
+      let i = 0, score = 0;
+      const next = () => {
+        dots(words.length, i);
+        if (i >= words.length) return resolve(score);
+        $("game-body").innerHTML = `
+          <p>${prompt}</p>
+          <div class="${wordClass}" lang="ar">${escapeHtml(words[i])}</div>
+          <p class="parent-cue">Grown-up: did they read it?</p>
+          <div class="row">
+            <button class="btn" id="yes">Read it</button>
+            <button class="btn secondary" id="no">Not yet</button>
+          </div>`;
+        $("yes").onclick = () => { score++; i++; next(); };
+        $("no").onclick = () => { i++; next(); };
+      };
+      next();
+    });
   }
 
-  async function gameShape() {
-    showGame("Game 2 of 3", "Find the same letter");
+  async function stageSound() {
+    showGame("Stage 1", "Which letter do you hear?");
+    const queue = [...SOUND_ORDER];
+    const reserve = [...SOUND_RESERVE];
+    const name = (l) => (noor.sound_letters.find((x) => x.letter === l) || {}).name_latin || l;
+    let score = 0, answered = 0, skips = 0;
+    while (queue.length) {
+      dots(SOUND_ORDER.length, answered);
+      const letter = queue.shift();
+      const picked = await choiceRound(
+        `<p>Listen to your grown-up, then tap the letter.</p>
+         <details class="parent-cue"><summary>Grown-up: tap to see what to say</summary>Say the sound <b>${escapeHtml(name(letter))} (${letter})</b> clearly, twice.</details>`,
+        SOUND[letter],
+        { canSkip: skips < 2 && reserve.length > 0 }
+      );
+      if (picked === null) { skips++; queue.push(reserve.shift()); continue; }
+      answered++;
+      if (picked === letter) score++;
+    }
+    return { score, total: 6, passed: score >= PASS.sound, skipped: skips };
+  }
+
+  async function stageShape() {
+    showGame("Stage 2", "Find the same letter");
+    let score = 0;
     for (let i = 0; i < SHAPE.length; i++) {
       dots(SHAPE.length, i);
       const r = SHAPE[i];
@@ -127,56 +167,64 @@
          <p class="center">This letter looks a little different when it joins a word. Which one is it?</p>`,
         r.options
       );
-      if (picked === r.answer) scores.shape++;
+      if (picked === r.answer) score++;
     }
+    return { score, total: SHAPE.length, passed: score >= PASS.shape };
   }
 
-  function gameRead() {
-    showGame("Game 3 of 3", "Read a word from Al-Fatiha");
-    return new Promise((resolve) => {
-      let i = 0;
-      const next = () => {
-        dots(readWords.length, i);
-        if (i >= readWords.length) return resolve();
-        $("game-body").innerHTML = `
-          <p>Read this word out loud to your grown-up.</p>
-          <div class="big-word quran" lang="ar">${escapeHtml(readWords[i].text)}</div>
-          <p class="parent-cue">Grown-up: did they read it?</p>
-          <div class="row">
-            <button class="btn" id="yes">Read it</button>
-            <button class="btn secondary" id="no">Not yet</button>
-          </div>`;
-        $("yes").onclick = () => { scores.read++; i++; next(); };
-        $("no").onclick = () => { i++; next(); };
-      };
-      next();
-    });
+  async function stageFatha() {
+    const words = noor.fatha_words.map((w) => w.word);
+    const score = await readRounds(words, "Stage 3", "Read a short word", "Read this word out loud to your grown-up.", "big-word noor-word");
+    return { score, total: words.length, passed: score >= PASS.fatha, words: noor.fatha_words };
   }
 
-  async function loadReadWords() {
-    const res = await fetch("/api/quran");
-    if (!res.ok) throw new Error("quran");
-    const quran = await res.json();
-    readWords = READ_REFS.map(([ayah, word]) => ({
+  async function stageFatiha() {
+    const score = await readRounds(fatihaWords.map((w) => w.text), "Stage 4", "Read a word from Al-Fatiha", "Read this word out loud to your grown-up.", "big-word quran");
+    return { score, total: fatihaWords.length, passed: score >= PASS.fatiha };
+  }
+
+  async function loadContent() {
+    const [n, q] = await Promise.all([
+      fetch("/api/noor").then((r) => { if (!r.ok) throw 0; return r.json(); }),
+      fetch("/api/quran").then((r) => { if (!r.ok) throw 0; return r.json(); }),
+    ]);
+    noor = n;
+    fatihaWords = READ_REFS.map(([ayah, word]) => ({
       ref: `1:${ayah}`,
-      text: quran.ayahs.find((a) => a.ayah === ayah).text_ar.split(/\s+/)[word - 1],
+      text: q.ayahs.find((a) => a.ayah === ayah).text_ar.split(/\s+/)[word - 1],
     }));
   }
 
   $("start").addEventListener("click", async () => {
     $("start").disabled = true;
     try {
-      await loadReadWords();
+      await loadContent();
     } catch {
       $("start").disabled = false;
       $("intro-text").textContent = "We couldn't load the games. Please check the connection and try again.";
       return;
     }
-    await gameHear();
-    await gameShape();
-    await gameRead();
-    const level = levelFrom(scores);
-    store.set(KEYS.diagnosis, { scores: { ...scores }, level_label: level, reading_level: level, done_at: new Date().toISOString() });
+    const stages = {};
+    stages.sound = await stageSound();
+    if (stages.sound.passed) stages.shape = await stageShape();
+    if (stages.shape && stages.shape.passed) stages.fatha = await stageFatha();
+    if (stages.fatha && stages.fatha.passed) stages.fatiha = await stageFatiha();
+
+    const filled = { sound: stages.sound, shape: stages.shape || { passed: false }, fatha: stages.fatha || { passed: false } };
+    const level = levelFrom(filled);
+    store.set(KEYS.diagnosis, {
+      stages,
+      stages_run: Object.keys(stages),
+      level_label: level,
+      reading_level: level,
+      reads_fatiha_words: stages.fatiha ? stages.fatiha.passed : false,
+      done_at: new Date().toISOString(),
+    });
+    // Children who do not know the letters yet start with the Bismillah letters path (no episode).
+    if (level === "Does not know the letters yet") {
+      $("next-link").href = "letters.html";
+      $("next-link").textContent = "Start the Bismillah letters";
+    }
     $("game").hidden = true;
     $("done").hidden = false;
   });

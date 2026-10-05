@@ -234,7 +234,11 @@
     const d = store.get(KEYS.diagnosis);
     if (d) {
       $("diag-result").hidden = false;
-      $("diag-text").textContent = `${d.level_label}. Heard ${d.scores.hear}/4 letters, matched ${d.scores.shape}/4 shapes, read ${d.scores.read}/4 words.`;
+      const LABELS = { sound: "letter sounds", shape: "letter shapes", fatha: "short words", fatiha: "Al-Fatiha words" };
+      const parts = d.stages
+        ? Object.entries(d.stages).map(([k, s]) => `${LABELS[k]} ${s.score}/${s.total}${s.passed ? " ✓" : ""}`)
+        : [];
+      $("diag-text").textContent = `${d.level_label}.${parts.length ? " " + parts.join(", ") + "." : ""}${d.reads_fatiha_words ? " Reads words from Al-Fatiha." : ""}`;
     }
   }
 
