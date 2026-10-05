@@ -17,6 +17,7 @@ const ctx = {
   episodeNumber: 1,
   rootLetters: ["ر", "ح", "م"],
   providedCardIds: sample.cards_provided,
+  readingLevel: "Knows most letters",
 };
 
 // Same order as the server: validate, then decide the status from the result and the referrals.

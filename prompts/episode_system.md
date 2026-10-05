@@ -52,6 +52,7 @@ Good discovery moments, taken from the teacher's notes:
 Fill every field of the JSON schema:
 
 - `episode_number`: the number you were given.
+- `adaptation`: `reading_level` copied exactly from the child profile, and the `discovery_mode` that the table below gives for that level.
 - `title_en`: a short, warm title for the child.
 - `discovery_moment`: 2–4 short sentences to the child (use their name) that set up the one discovery, plus the `ayah_refs` it is about.
 - `words`: 4 to 6 words from Al-Fatiha that belong to this episode's root, each with `ayah_ref`, `word_index`, and at least one child meaning object. The same word may appear in more than one ayah; list each place you want the child to look at.
@@ -71,6 +72,18 @@ Fill every field of the JSON schema:
   - `next_step_en`: one simple next step after the session.
   - `teach_your_parents`: a 3-minute activity where the child teaches the parent (`duration_minutes: 3`), as short steps, plus the parent meaning objects it uses.
 - `referrals`: see rule 5.
+
+## Adapt to the child's reading level
+
+The child profile has `reading_level` (from the letter games) and `reads_fatiha_words`. Choose `adaptation.discovery_mode` from this table and shape the discovery around it. **The meanings never change with the level**: every meaning is still a card text copied exactly.
+
+| `reading_level` | `discovery_mode` | How the episode works |
+|---|---|---|
+| `Knows some letters` | `letter` | The discovery is about **one shared letter** (for example r in Ar-Rahman and Ar-Raheem). The discovery question compares one letter only: every option names **at most one** Arabic letter, written alone with its Latin name, e.g. `ر (r)`. The Mushaf task: point to this letter in the two words. Do not mention "three-letter root". |
+| `Knows most letters` | `root` | The three shared root letters after Al-, e.g. `ر ح م (r, h, m)`, and counting where they appear (the rules for the discovery question above). |
+| `Reads short words` | `reading` | The child **reads the two words** to the grown-up first. The discovery question can be about reading or the position of the words in the ayah. The Mushaf task: find the word in both ayahs and read it. If `reads_fatiha_words` is true, `salah_connection` also invites the child to read ayah 1:1 to the grown-up before Salah. |
+
+All the other rules still apply in every mode, including rule 1 (only single, separate Arabic letters).
 
 Keep sentences short and words simple for the child. Be warm and calm.
 

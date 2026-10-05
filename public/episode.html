@@ -160,7 +160,8 @@
         age: profile.age,
         home_language: profile.home_language,
         recites: isTrial ? "not shared" : profile.recites_list.join(", "),
-        reading_level: (diag && diag.reading_level) || profile.parent_reading_level,
+        reading_level: readingLevel(),
+        reads_fatiha_words: Boolean(diag && diag.reads_fatiha_words),
       },
       root: SEASON_ROOTS[EPISODE_NUMBER],
       episode_number: EPISODE_NUMBER,
@@ -310,8 +311,20 @@
     $("ask-btn").disabled = false;
   });
 
+  // Reading level from the letter games, or the parent's guess if the games were not played.
+  function readingLevel() {
+    const diag = store.get(KEYS.diagnosis);
+    const profile = store.get(KEYS.profile) || {};
+    return (diag && diag.reading_level) || profile.parent_reading_level;
+  }
+
   // ---------- init ----------
   function init() {
+    // Children who do not know the letters yet follow the Bismillah letters path (no model, no episode).
+    if (store.get(KEYS.profile) && readingLevel() === "Does not know the letters yet") {
+      location.replace("letters.html");
+      return;
+    }
     const id = store.get(KEYS.episodeId);
     if (id) return loadEpisode(id);
     $("no-profile").hidden = Boolean(store.get(KEYS.profile));

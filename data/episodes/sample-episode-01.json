@@ -1,6 +1,6 @@
 {
   "id": "sample-episode-01",
-  "sample_note": "Synthetic sample (child: Adam). Generated on 2026-10-04 with the first version of prompts/episode_system.md, before Sara's review of Episode 1. Used as the fixture for npm test.",
+  "sample_note": "Synthetic sample (child: Adam). Generated on 2026-10-04 with the first version of prompts/episode_system.md, before Sara's review of Episode 1. Used as the fixture for npm test. On 2026-10-05 the field adaptation (Knows most letters → root) was added by hand so the fixture matches the current schema; the rest of the model output is unchanged.",
   "status": "pending_review",
   "created_at": "2026-10-04T09:39:26.616Z",
   "model": "claude-sonnet-5-5",
@@ -30,6 +30,10 @@
   },
   "episode": {
     "episode_number": 1,
+    "adaptation": {
+      "reading_level": "Knows most letters",
+      "discovery_mode": "root"
+    },
     "title_en": "Two Names, One Root",
     "discovery_moment": {
       "text_en": "Adam, you already know Ar-Rahman (a name of Allah) and Ar-Raheem (another name of Allah) from Al-Fatiha. Listen to how alike they sound. Today you will look for what hides inside these two names, like a detective.",

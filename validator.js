@@ -4,6 +4,13 @@
 // Rules: see CLAUDE.md ("الفاحص الآلي").
 
 const MEMORY_LABEL = "memory picture, not a tafsir";
+// Reading level (letter games) → discovery mode. "Does not know the letters yet" has no episode:
+// those children follow the Bismillah letters path, which uses no model.
+const MODE_FOR_LEVEL = {
+  "Knows some letters": "letter",
+  "Knows most letters": "root",
+  "Reads short words": "reading",
+};
 const ARABIC_RE = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/;
 
 // Strip diacritics/tatweel and unify letter forms so Arabic can be compared loosely.
@@ -86,7 +93,7 @@ function hasRootLetters(word, rootLetters) {
 
 /**
  * @param {string} rawText  the model's raw text output
- * @param {object} ctx      { schema, kb, quran, episodeNumber, rootLetters, providedCardIds }
+ * @param {object} ctx      { schema, kb, quran, episodeNumber, rootLetters, providedCardIds, readingLevel }
  * @returns {{ passed: boolean, errors: string[], warnings: string[], output: object|null }}
  */
 function validateEpisode(rawText, ctx) {
@@ -175,6 +182,25 @@ function validateEpisode(rawText, ctx) {
     else fail("d", `${path}: Arabic text written by the model (only exact meaning_ar copies are allowed)`);
   });
 
+  // (adapt) the discovery mode must match the child's reading level; in "letter" mode every
+  // discovery-question option may name at most one Arabic letter.
+  if (ctx.readingLevel) {
+    const expected = MODE_FOR_LEVEL[ctx.readingLevel];
+    if (!expected) fail("adapt", `reading level "${ctx.readingLevel}" has no discovery mode (no episode for this level)`);
+    if (out.adaptation.reading_level !== ctx.readingLevel) {
+      fail("adapt", `adaptation.reading_level is "${out.adaptation.reading_level}", expected "${ctx.readingLevel}"`);
+    }
+    if (expected && out.adaptation.discovery_mode !== expected) {
+      fail("adapt", `discovery_mode is "${out.adaptation.discovery_mode}", expected "${expected}" for "${ctx.readingLevel}"`);
+    }
+    if (out.adaptation.discovery_mode === "letter") {
+      out.discovery_question.options.forEach((o, i) => {
+        const n = (normalizeArabic(o.text_en).match(/[ء-ي]/g) || []).length;
+        if (n > 1) fail("adapt", `discovery_question.options[${i}]: ${n} Arabic letters in letter mode (at most 1)`);
+      });
+    }
+  }
+
   // (هـ) memory picture label
   if (out.memory_picture.label !== MEMORY_LABEL) fail("e", `memory_picture.label must be "${MEMORY_LABEL}"`);
   if (!out.memory_picture.description_en.trim()) fail("e", "memory_picture.description_en is empty");
@@ -184,4 +210,4 @@ function validateEpisode(rawText, ctx) {
   return { passed: errors.length === 0, errors, warnings, output: out };
 }
 
-module.exports = { validateEpisode, normalizeArabic, MEMORY_LABEL };
+module.exports = { validateEpisode, normalizeArabic, MEMORY_LABEL, MODE_FOR_LEVEL };

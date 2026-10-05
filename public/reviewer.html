@@ -54,6 +54,13 @@
     rejected: "رفضها الفاحص",
   };
   const DECISION_AR = { approve: "اعتماد", return: "إرجاع للتعديل", refer: "إحالة للمعلم", withdraw: "سحب الحلقة", auto_approved: "نُشرت تلقائيًا" };
+  const MODE_AR = { letter: "حرف واحد مشترك", root: "الجذر الثلاثي", reading: "قراءة الكلمتين" };
+  // Reading level and discovery mode at the top of each episode.
+  function levelLine(e) {
+    const level = `المستوى: <bdi>${escapeHtml(e.reading_level || "—")}</bdi>`;
+    const mode = e.adaptation ? `وضع الاكتشاف: ${MODE_AR[e.adaptation.discovery_mode] || escapeHtml(e.adaptation.discovery_mode)}` : "وضع الاكتشاف: — (حلقة قبل التكييف)";
+    return `${level} · ${mode}`;
+  }
   const isAuto = (e) => e.status === "approved" && e.review && e.review.decision === "auto_approved";
 
   const en = (html) => `<div class="en" dir="ltr" lang="en">${html}</div>`;
@@ -76,6 +83,7 @@
         <span class="ep-head">
           <b>الحلقة ${e.episode_number} · الجذر ${escapeHtml(e.root)}</b>
           <span class="muted small">${escapeHtml(e.child.name)}، ${e.child.age} سنوات · ${fmtDate(e.created_at)}</span>
+          <span class="small">${levelLine(e)}</span>
         </span>
         <span class="chips">
           <span class="chip status-${e.status}">${STATUS_AR[e.status] || e.status}</span>${isAuto(e) ? `<span class="chip auto">نُشرت تلقائيًا · لم تُراجَع بعد</span>` : ""}${e.trial ? `<span class="chip trial">جلسة تجربة · في الذاكرة فقط</span>` : ""}

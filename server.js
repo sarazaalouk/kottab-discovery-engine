@@ -7,7 +7,7 @@ const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const Anthropic = require("@anthropic-ai/sdk");
-const { validateEpisode, normalizeArabic } = require("./validator");
+const { validateEpisode, normalizeArabic, MODE_FOR_LEVEL } = require("./validator");
 const episodes = require("./lib/episodes");
 const { generateLimit, askLimit } = require("./lib/limits");
 const { initialStatus, autoReview, teacherApproved, applyDecision } = require("./lib/publish");
@@ -59,7 +59,9 @@ function validateChildProfile(p, trial) {
   if (!Number.isInteger(p.age) || p.age < 6 || p.age > 10) return "child.age must be an integer from 6 to 10";
   if (!str(p.home_language, 40)) return "child.home_language must be a short string";
   if (!str(p.recites, 80)) return "child.recites must be a short string";
-  if (!str(p.reading_level, 80)) return "child.reading_level must be a short string";
+  if (!READING_LEVELS.includes(p.reading_level)) return `child.reading_level must be one of: ${READING_LEVELS.join(", ")}`;
+  if (!MODE_FOR_LEVEL[p.reading_level]) return "this reading level has no discovery episode; use the Bismillah letters path";
+  if ("reads_fatiha_words" in p && typeof p.reads_fatiha_words !== "boolean") return "child.reads_fatiha_words must be true or false";
   return null;
 }
 
@@ -97,7 +99,9 @@ app.post("/api/generate-episode", generateLimit, async (req, res) => {
     return res.status(400).json({ error: "episode_number must be an integer from 1 to 10" });
   }
   const letters = rootLetters(root || "");
-  if (letters.length < 2) return res.status(400).json({ error: "root is required, e.g. ر-ح-م" });
+  if (letters.length < 2 || !letters.every((c) => /[ء-ي]/.test(c))) {
+    return res.status(400).json({ error: "root must be Arabic letters, e.g. ر-ح-م" });
+  }
 
   const quran = readJson(QURAN_PATH);
   const kb = readJson(KB_PATH);
@@ -121,6 +125,7 @@ app.post("/api/generate-episode", generateLimit, async (req, res) => {
       home_language: child.home_language,
       recites: child.recites,
       reading_level: child.reading_level,
+      reads_fatiha_words: child.reads_fatiha_words === true,
     },
     root,
     episode_number: episodeNumber,
@@ -183,6 +188,7 @@ app.post("/api/generate-episode", generateLimit, async (req, res) => {
       quran,
       episodeNumber,
       rootLetters: letters,
+      readingLevel: child.reading_level,
       providedCardIds: cards.map((c) => c.id),
     });
     if (validation.output && Array.isArray(validation.output.referrals)) referrals.push(...validation.output.referrals);
@@ -409,6 +415,8 @@ function episodeSummary(r) {
     root: r.root,
     child: { name: r.child.name, age: r.child.age },
     title: r.episode ? r.episode.title_en : null,
+    reading_level: r.child.reading_level,
+    adaptation: r.episode && r.episode.adaptation ? r.episode.adaptation : null,
     validation: r.validation,
     review: r.review || null,
   };

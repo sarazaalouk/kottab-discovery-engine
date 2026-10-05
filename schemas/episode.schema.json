@@ -4,6 +4,7 @@
   "additionalProperties": false,
   "required": [
     "episode_number",
+    "adaptation",
     "title_en",
     "discovery_moment",
     "words",
@@ -16,6 +17,15 @@
   ],
   "properties": {
     "episode_number": { "type": "integer" },
+    "adaptation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reading_level", "discovery_mode"],
+      "properties": {
+        "reading_level": { "type": "string" },
+        "discovery_mode": { "type": "string", "enum": ["letter", "root", "reading"] }
+      }
+    },
     "title_en": { "type": "string" },
     "discovery_moment": {
       "type": "object",

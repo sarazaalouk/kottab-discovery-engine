@@ -17,6 +17,7 @@ const ctx = {
   episodeNumber: 1,
   rootLetters: ["ر", "ح", "م"],
   providedCardIds: sample.cards_provided,
+  readingLevel: "Knows most letters",
 };
 
 // [name, expected rule tag or null for pass, mutate(output) -> output | raw string]
@@ -33,6 +34,13 @@ const cases = [
   ["9. (f) output is not JSON", "[schema]", () => "{not json"],
   ["10. (d) single root letters allowed", null, (o) => { o.discovery_question.question_en += " ر ح م (r, h, m)"; return o; }],
   ["11. (d) root letters joined into a word", "[d]", (o) => { o.discovery_question.question_en += " رحم"; return o; }],
+  ["14. (adapt) discovery mode does not match the reading level", "[adapt]", (o) => { o.adaptation.discovery_mode = "letter"; return o; }],
+  ["14b. (adapt) letter mode with a three-letter option", "[adapt]", (o) => {
+    ctx.readingLevel = "Knows some letters"; // restored below
+    o.adaptation = { reading_level: "Knows some letters", discovery_mode: "letter" };
+    o.discovery_question.options[0].text_en = "They share ر ح م (r, h, m)";
+    return o;
+  }],
   // A teacher/parent-only card shown to the child. The card is approved here (in this test only) so the
   // audience rule is the one that rejects it.
   ["12. (b) teacher/parent-only card on a child screen", "[b]", (o) => {
@@ -48,6 +56,7 @@ for (const [name, expected, mutate] of cases) {
   const result = mutate(JSON.parse(JSON.stringify(sample.episode)));
   const raw = typeof result === "string" ? result : JSON.stringify(result);
   const v = validateEpisode(raw, ctx);
+  ctx.readingLevel = "Knows most letters";
   const ok = expected === null ? v.passed : !v.passed && v.errors.some((e) => e.startsWith(expected));
   if (!ok) failed++;
   console.log(`${ok ? "ok  " : "FAIL"} ${name} -> ${v.passed ? "passed" : v.errors[0]}`);
