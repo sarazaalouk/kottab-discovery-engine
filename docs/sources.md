@@ -61,3 +61,21 @@ Used to check the English wording of Islamic terms in translations (see the term
 - **Child episode:** meaning cards show the card id and the source name.
 - **Parent report:** a Sources section lists each card's source, location, edition and page, and the hadith grade when there is one.
 - **Reviewer page:** each meaning is shown next to the source text (`meaning_ar`), its location and page, and the three hadith fields.
+
+## 6. Noor Al-Bayan — letter games and the Bismillah letters path
+
+| | |
+|---|---|
+| Book | نور البيان لتعليم القراءة وترتيل القرآن — محمد حسن محمد (طارق السعيد) |
+| Edition | The scanned edition Sara uploaded; page numbers follow the book's own numbering; words copied as printed, with the book's vowel marks |
+| File | `data/noor_albayan.json` (unit 1: the letters, fatha lessons 1–10, samples of kasra and damma) |
+| Used by | Letter games stage 3, and the Bismillah letters path (`letters.html`) — fixed content, no model |
+| Check | Every Arabic word the letters path serves must be found exactly in this file or in `data/quran_fatiha.json`; otherwise the server refuses (case 15 in `docs/validator-tests.md`) |
+
+Words and pages used (picked by fixed rules in `lib/noor.js`):
+
+- **Letter games, stage 3:** حَبَسَ، مَسَحَ (الفتح 6، ص8)، هَمَسَ (الفتح 8، ص10) — the first three fatha words made only of Basmala letters.
+- **Letters path, step 1 (بِسْمِ ٱللَّهِ):** picture words بَيت (ص3)، سَمَكة (ص4)، مَوز (ص5)، أَقصى (ص3)، لَيمون (ص5)، هَرَم (ص5); reading words سَأَلَ، جَلَسَ، حَبَسَ (الفتح 6، ص8).
+- **Letters path, step 2 (ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ):** picture words أَقصى (ص3)، لَيمون (ص5)، رَغيف (ص4)، حَمامة (ص3)، مَوز (ص5)، نَخلة (ص5)، يَد (ص5); reading words أَمَرَ، طَحَنَ، مَسَحَ (الفتح 6، ص8).
+- Alif (ا) uses the book's picture word for أ (أَقصى), as the book does in its first lesson.
+- The Bismillah text itself always comes from `data/quran_fatiha.json` (1:1).

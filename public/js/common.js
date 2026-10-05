@@ -11,6 +11,7 @@ const KEYS = {
   gate: "kottab.parentGate",
   trial: "kottab.trial",
   trialEpisodes: "kottab.trialEpisodes",
+  letters: "kottab.letters",
 };
 
 const trial = {
@@ -31,7 +32,7 @@ const trial = {
       });
     } catch { /* the server also forgets trial episodes after a few hours */ }
     try {
-      [KEYS.profile, KEYS.diagnosis, KEYS.episodeId, KEYS.trialEpisodes, KEYS.trial].forEach((k) => sessionStorage.removeItem(k));
+      [KEYS.profile, KEYS.diagnosis, KEYS.episodeId, KEYS.letters, KEYS.trialEpisodes, KEYS.trial].forEach((k) => sessionStorage.removeItem(k));
     } catch { /* storage unavailable */ }
   },
 };

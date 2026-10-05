@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bismillah letters · Kottab Discovery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/letters.css">
+</head>
+<body>
+<main>
+  <!-- Overview -->
+  <section class="card" id="overview" aria-labelledby="ov-title">
+    <span class="eyebrow">The Bismillah letters</span>
+    <h1 id="ov-title">Let's learn the letters of Bismillah</h1>
+    <p>Two short steps. In each one you listen, meet the letters, read with a grown-up, and write.</p>
+    <div class="steps-list" id="steps-list"></div>
+    <p class="notice error" id="load-error" hidden>We couldn't load the letters. Please check the connection and try again.</p>
+  </section>
+
+  <!-- One step, shown part by part -->
+  <section class="card" id="step" hidden aria-live="polite">
+    <span class="eyebrow" id="part-label"></span>
+    <h2 id="part-title"></h2>
+    <div id="part-body" class="stack"></div>
+    <button class="btn block" id="part-next"></button>
+  </section>
+
+  <!-- All done -->
+  <section class="card" id="all-done" hidden aria-labelledby="done-title">
+    <span class="eyebrow">Well done</span>
+    <h2 id="done-title">You know the whole Bismillah</h2>
+    <p class="basmala quran" lang="ar" dir="rtl" id="done-basmala"></p>
+    <p>Say it before you start reading, and listen for it at the start of Al-Fatiha in Salah (prayer).</p>
+  </section>
+
+  <!-- Parent report (fixed template, no model) -->
+  <section class="card" id="report" hidden aria-labelledby="rep-title">
+    <span class="eyebrow">For grown-ups</span>
+    <h2 id="rep-title">What your child did</h2>
+    <div id="report-body" class="stack"></div>
+    <p class="small muted" id="report-source"></p>
+  </section>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+  renderTopbar("letters.html");
+  const $ = (id) => document.getElementById(id);
+  const LETTERS_KEY = KEYS.letters; // progress, kept like the profile (sessionStorage in a trial)
+
+  const steps = {}; // step number -> content from GET /api/letters/:step
+  const progress = () => store.get(LETTERS_KEY) || { done: [] };
+
+  // ---------- overview ----------
+  function renderOverview() {
+    const done = progress().done;
+    $("steps-list").innerHTML = [1, 2]
+      .map((n) => {
+        const s = steps[n];
+        const isDone = done.includes(n);
+        return `<div class="step-row">
+            <div class="stack">
+              <b>Step ${n} · ${escapeHtml(s.label_en)}</b>
+              <span class="basmala-small quran" lang="ar" dir="rtl">${escapeHtml(s.text_ar)}</span>
+            </div>
+            <button class="btn ${isDone ? "secondary" : ""}" data-step="${n}">${isDone ? "Do it again" : "Start"}</button>
+          </div>`;
+      })
+      .join("");
+    $("steps-list").querySelectorAll("[data-step]").forEach((b) => b.addEventListener("click", () => runStep(Number(b.dataset.step))));
+    const allDone = done.includes(1) && done.includes(2);
+    $("all-done").hidden = !allDone;
+    if (allDone) $("done-basmala").textContent = `${steps[1].text_ar} ${steps[2].text_ar}`;
+    renderReport();
+  }
+
+  // ---------- one step, part by part ----------
+  function showPart(label, title, html, nextText) {
+    $("overview").hidden = true;
+    $("all-done").hidden = true;
+    $("report").hidden = true;
+    $("step").hidden = false;
+    $("part-label").textContent = label;
+    $("part-title").textContent = title;
+    $("part-body").innerHTML = html;
+    $("part-next").textContent = nextText;
+    $("step").scrollIntoView({ block: "start" });
+    return new Promise((resolve) => { $("part-next").onclick = resolve; });
+  }
+
+  async function runStep(n) {
+    const s = steps[n];
+    const label = (p) => `Step ${n} · ${p} of 5`;
+
+    // (a) Listen and repeat, three times
+    let said = 0;
+    const sayHtml = () => `
+      <p class="basmala quran" lang="ar" dir="rtl">${escapeHtml(s.text_ar)}</p>
+      <p class="parent-cue">Grown-up: read it slowly, then your child says it after you. Do this 3 times.</p>
+      <div class="progress-dots big" aria-label="${said} of 3">${[0, 1, 2].map((i) => `<span class="${i < said ? "done" : ""}"></span>`).join("")}</div>`;
+    showPart(label(1), "Listen and say it together", sayHtml(), "We said it together");
+    await new Promise((resolve) => {
+      $("part-next").onclick = () => {
+        said++;
+        $("part-body").innerHTML = sayHtml();
+        if (said >= 3) resolve();
+      };
+    });
+
+    // (b) The letters of this half
+    await showPart(label(2), "Meet the letters", `
+      <div class="letter-grid">${s.letters
+        .map((l) => `<div class="letter-card">
+            <span class="letter-big" lang="ar">${escapeHtml(l.letter)}</span>
+            <span class="letter-name">${escapeHtml(l.name_latin || "")} <span lang="ar">${escapeHtml(l.name_ar || "")}</span></span>
+            ${l.picture_word ? `<span class="picture-word" lang="ar">${escapeHtml(l.picture_word.word)}</span>` : ""}
+          </div>`)
+        .join("")}</div>
+      <p class="small muted">The word under each letter starts with it. Say the word together.</p>`, "Next");
+
+    // (c) Read with a grown-up
+    await showPart(label(3), "Read with your grown-up", `
+      <p>Read these words together, slowly. Point to each letter as you say it.</p>
+      <div class="read-words">${s.read_words.map((w) => `<span class="read-word" lang="ar">${escapeHtml(w.word)}</span>`).join("")}</div>`, "We read them together");
+
+    // (d) Writing
+    await showPart(label(4), "Write the letters", `
+      <p class="parent-cue">Grown-up: write each letter on paper and let your child trace it 3 times. You can also trace it here with a finger.</p>
+      <div class="trace-grid">${s.letters
+        .map((l, i) => `<div class="trace">
+            <canvas width="240" height="240" data-letter="${escapeHtml(l.letter)}" aria-label="Trace the letter ${escapeHtml(l.name_latin || "")}"></canvas>
+            <button class="btn secondary small-btn" data-clear="${i}">Clear</button>
+          </div>`)
+        .join("")}</div>`, "Next");
+    // (the canvases are set up right after the part is shown; see setupTracing)
+
+    // (e) Tonight in Salah
+    await showPart(label(5), "Tonight in Salah", `
+      <p class="basmala quran" lang="ar" dir="rtl">${escapeHtml(s.text_ar)}</p>
+      <p>Tonight, listen for these words at the start of Al-Fatiha.</p>`, "Finish this step");
+
+    const p = progress();
+    if (!p.done.includes(n)) p.done.push(n);
+    p[`step${n}_at`] = new Date().toISOString();
+    store.set(LETTERS_KEY, p);
+    $("step").hidden = true;
+    $("overview").hidden = false;
+    renderOverview();
+    $("overview").scrollIntoView({ block: "start" });
+  }
+
+  // Finger tracing: the letter is drawn faintly, the child traces over it.
+  function setupTracing() {
+    document.querySelectorAll(".trace canvas").forEach((c) => {
+      const ctx = c.getContext("2d");
+      const drawGuide = () => {
+        ctx.clearRect(0, 0, c.width, c.height);
+        ctx.fillStyle = "rgba(115, 21, 27, 0.14)";
+        ctx.font = "600 150px Cairo, 'Segoe UI', sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.direction = "rtl";
+        ctx.fillText(c.dataset.letter, c.width / 2, c.height / 2);
+      };
+      drawGuide();
+      let drawing = false;
+      const pos = (e) => {
+        const r = c.getBoundingClientRect();
+        return [((e.clientX - r.left) * c.width) / r.width, ((e.clientY - r.top) * c.height) / r.height];
+      };
+      c.addEventListener("pointerdown", (e) => { drawing = true; c.setPointerCapture(e.pointerId); ctx.beginPath(); ctx.moveTo(...pos(e)); });
+      c.addEventListener("pointermove", (e) => {
+        if (!drawing) return;
+        ctx.lineTo(...pos(e));
+        ctx.strokeStyle = "#B96759";
+        ctx.lineWidth = 10;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.stroke();
+      });
+      const stop = () => { drawing = false; };
+      c.addEventListener("pointerup", stop);
+      c.addEventListener("pointercancel", stop);
+      c.parentElement.querySelector("[data-clear]").addEventListener("click", drawGuide);
+      // redraw once the Arabic font has loaded
+      document.fonts && document.fonts.ready.then(drawGuide);
+    });
+  }
+  new MutationObserver(() => { if (document.querySelector(".trace canvas:not([data-ready])")) {
+    document.querySelectorAll(".trace canvas").forEach((c) => (c.dataset.ready = "1"));
+    setupTracing();
+  } }).observe($("part-body"), { childList: true });
+
+  // ---------- parent report (fixed template, no model) ----------
+  function renderReport() {
+    const done = progress().done.slice().sort();
+    if (!done.length) { $("report").hidden = true; return; }
+    $("report").hidden = false;
+    const said = done.map((n) => `<span class="quran" lang="ar">${escapeHtml(steps[n].text_ar)}</span>`).join(" · ");
+    const letters = [...new Map(done.flatMap((n) => steps[n].letters).map((l) => [l.letter, l])).values()];
+    const words = done.flatMap((n) => steps[n].read_words);
+    $("report-body").innerHTML = `
+      <div><b>Heard and repeated</b><p>${said}</p></div>
+      <div><b>Letters met</b><p class="report-letters">${letters
+        .map((l) => `<span lang="ar">${escapeHtml(l.letter)}</span> <span class="small muted">${escapeHtml(l.name_latin || "")}</span>`)
+        .join(" · ")}</p></div>
+      <div><b>Words read together</b><p class="report-words" lang="ar">${words.map((w) => escapeHtml(w.word)).join(" · ")}</p></div>
+      <div><b>Next step</b><p>Repeat a step whenever you like. In a few days, play the letter games again: when your child recognises these letters, the discovery episodes about Al-Fatiha open.</p></div>`;
+    $("report-source").textContent = `Letters and words: ${steps[1].source.title} (unit 1). Bismillah: ${steps[1].source.quran}. Fixed content, no AI.`;
+  }
+
+  // ---------- load ----------
+  (async () => {
+    try {
+      const [s1, s2] = await Promise.all([1, 2].map((n) => fetch(`/api/letters/${n}`).then((r) => { if (!r.ok) throw 0; return r.json(); })));
+      steps[1] = s1;
+      steps[2] = s2;
+      renderOverview();
+    } catch {
+      $("load-error").hidden = false;
+    }
+  })();
+</script>
+</body>
+</html>

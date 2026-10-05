@@ -54,3 +54,16 @@ Script: `tests/publish-tests.js` (also run by `npm test`). Rule in `lib/publish.
 | P8 | Teacher confirms an auto-published episode | Counted as teacher-reviewed |
 
 Last run: 2026-10-05, all 8 cases behaved as expected.
+
+## Bismillah letters path (case 15)
+
+Script: `tests/letters-tests.js` (also run by `npm test`). Check in `lib/noor.js` (`unknownArabicWords`), applied by the server to every `GET /api/letters/:step` response.
+
+| # | What is checked | Expected result |
+|---|---|---|
+| 15.1 / 15.2 | Steps 1 and 2 as served | Every Arabic word is found exactly in `noor_albayan.json` or `quran_fatiha.json` |
+| 15.1b / 15.2b | Reading words of each step | Three fatha words, each with at least two letters of that step |
+| 15.3 | A word that is not in the sources is added | Caught (the server would answer 500 and not show it) |
+| 15.4 | A Quran word without its Mushaf marks | Caught: words must match with their marks |
+
+Last run: 2026-10-05, all cases behaved as expected.

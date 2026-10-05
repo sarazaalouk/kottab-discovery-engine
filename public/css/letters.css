@@ -1,0 +1,59 @@
+/* Bismillah letters path. Quran words use Amiri; letters and Noor Al-Bayan words use Cairo. */
+
+.steps-list { display: grid; gap: 10px; }
+.step-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.step-row > .stack { min-width: 0; gap: 2px; }
+.basmala-small { font-size: 1.6rem; line-height: 1.8; }
+
+.basmala { font-size: 2.6rem; line-height: 2; text-align: center; margin: 0; }
+.progress-dots.big span { width: 14px; height: 14px; }
+
+.letter-grid { direction: rtl; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
+.letter-card {
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 6px;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  background: var(--surface);
+}
+.letter-big { font-family: var(--font-ar); font-weight: 700; font-size: 2.8rem; line-height: 1.4; color: var(--maroon); }
+.letter-name { font-size: .8rem; color: var(--muted); text-align: center; }
+.letter-name [lang="ar"] { font-family: var(--font-ar); }
+.picture-word { font-family: var(--font-ar); font-weight: 600; font-size: 1.15rem; color: var(--ink); }
+
+.read-words { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; direction: rtl; }
+.read-word {
+  font-family: var(--font-ar);
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 1.6;
+  padding: 4px 16px;
+  border: 1.5px solid var(--terracotta);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.trace-grid { direction: rtl; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.trace { display: grid; gap: 6px; justify-items: center; }
+.trace canvas {
+  width: 100%;
+  max-width: 200px;
+  aspect-ratio: 1;
+  border: 1.5px dashed var(--terracotta);
+  border-radius: 12px;
+  background: var(--surface);
+  touch-action: none;
+}
+
+.report-letters [lang="ar"], .report-words { font-family: var(--font-ar); font-size: 1.2rem; }

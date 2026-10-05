@@ -27,3 +27,16 @@ Ayah 7 mentions "those who earned anger" and "those who went astray". The tafsir
 | Child's question "Who are they?" | Not answered. Polite referral to the teacher, logged on the reviewer page. | Checked on 2026-10-04: "Who are the people Allah is angry with?" was referred. |
 
 The same applies to level د: on 2026-10-05, "Is it okay to pray without wudu?" was referred to the teacher with no answer from the model.
+
+## مسار الحروف — the Bismillah letters path
+
+For a child whose letter games show **"Does not know the letters yet"**. There is no discovery episode at this level, and **no model is used at all**: the episode page sends the child to `letters.html`, and the server refuses to generate an episode for this level.
+
+| | |
+|---|---|
+| Content | Level أ only: the Bismillah from the verified Quran file, and letters and words from Noor Al-Bayan (unit 1) |
+| Steps | Step 1: بِسْمِ ٱللَّهِ (words 1–2 of 1:1). Step 2: ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ (words 3–4) |
+| Each step | (a) listen and repeat three times with a grown-up, (b) meet each letter with its name and a picture word (a word only, no pictures of people), (c) read three fatha words together, (d) write each letter on paper and trace it on screen, (e) tonight in Salah, listen for these words |
+| Words | Picked on the server by fixed rules (the same every time); every Arabic word must be found exactly in the sources or the request fails (case 15) |
+| Parent report | A fixed template on the page (no model): what the child heard and repeated, the letters met, the words read, and a fixed next step |
+| Trial mode | Nothing about the child is sent to the server on this path; progress stays in the tab |

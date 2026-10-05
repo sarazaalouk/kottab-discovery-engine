@@ -7,7 +7,7 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
-    "test": "node tests/validator-tests.js && node tests/publish-tests.js"
+    "test": "node tests/validator-tests.js && node tests/publish-tests.js && node tests/letters-tests.js"
   },
   "engines": {
     "node": ">=20"

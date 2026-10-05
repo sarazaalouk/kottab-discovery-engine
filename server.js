@@ -82,6 +82,18 @@ app.get("/api/noor", (req, res) => {
   res.json(noor.diagnosisContent());
 });
 
+// Bismillah letters path, step 1 or 2 (fixed content, no model, nothing about the child is sent here).
+// Every Arabic word must be found exactly in noor_albayan.json or quran_fatiha.json, or the request fails.
+app.get("/api/letters/:step", (req, res) => {
+  const content = noor.lettersStep(Number(req.params.step));
+  if (!content) return res.status(404).json({ error: "step must be 1 or 2" });
+  const unknown = noor.unknownArabicWords(content);
+  if (unknown.length) {
+    return res.status(500).json({ error: "letters content failed the source check", words: unknown });
+  }
+  res.json(content);
+});
+
 // The verified Al-Fatiha text, read-only (used by the letter games).
 app.get("/api/quran", (req, res) => {
   const quran = readJson(QURAN_PATH);
