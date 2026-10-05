@@ -98,3 +98,5 @@
 @media (max-width: 360px) {
   .ayah { font-size: 1.9rem; }
 }
+
+.seconds { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--terracotta); }

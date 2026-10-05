@@ -63,5 +63,8 @@ const confirmed = rec();
 applyDecision(confirmed, "approve", "");
 check("P8. teacher confirms after review -> teacher-reviewed", String(teacherApproved(confirmed)), "true");
 
-console.log(failed ? `\n${failed} publishing case(s) failed` : `\nall 8 publishing cases behaved as expected`);
+const generating = { status: "generating", validation: undefined, review: null };
+check("P9. no decision while the episode is still being generated", applyDecision(generating, "refer", "x"), "the episode is still being generated");
+
+console.log(failed ? `\n${failed} publishing case(s) failed` : `\nall 9 publishing cases behaved as expected`);
 process.exit(failed ? 1 : 0);

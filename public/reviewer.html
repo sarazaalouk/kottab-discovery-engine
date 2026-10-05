@@ -6,7 +6,9 @@
   <title>المراجع · Kottab Discovery</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap">
+  <link rel="preload" href="css/app.css" as="style">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap"></noscript>
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/episode.css">
   <link rel="stylesheet" href="css/reviewer.css">
@@ -48,6 +50,8 @@
 
   const STATUS_AR = {
     pending_review: "بانتظار المراجعة",
+    generating: "جارٍ التوليد",
+    failed: "تعذّر التوليد",
     approved: "معتمدة",
     returned: "مُرجَعة للتعديل",
     referred: "محالة للمعلم",
@@ -87,7 +91,7 @@
         </span>
         <span class="chips">
           <span class="chip status-${e.status}">${STATUS_AR[e.status] || e.status}</span>${isAuto(e) ? `<span class="chip auto">نُشرت تلقائيًا · لم تُراجَع بعد</span>` : ""}${e.trial ? `<span class="chip trial">جلسة تجربة · في الذاكرة فقط</span>` : ""}
-          <span class="chip ${v.passed ? "ok" : "bad"}">${v.passed ? "الفاحص: ناجحة" : "الفاحص: مرفوضة"}</span>
+          ${e.validation ? `<span class="chip ${v.passed ? "ok" : "bad"}">${v.passed ? "الفاحص: ناجحة" : "الفاحص: مرفوضة"}</span>` : ""}
         </span>
       </summary>`;
   }
@@ -212,6 +216,9 @@
 
   function detailHtml(d) {
     const v = d.validation;
+    if (d.status === "generating") {
+      return `<p class="notice">جارٍ توليد الحلقة. افتحها مرة أخرى بعد قليل.</p>`;
+    }
     if (!d.episode) {
       return `${validatorHtml(v)}
         ${d.raw_model_output ? `<section class="block"><h3>مخرج الموديل الخام</h3><pre class="raw" dir="ltr">${escapeHtml(d.raw_model_output)}</pre></section>` : ""}

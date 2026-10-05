@@ -52,8 +52,9 @@ Script: `tests/publish-tests.js` (also run by `npm test`). Rule in `lib/publish.
 | P6 | Teacher withdraws with a note | `returned`; the auto-approval is kept in `review_history` |
 | P7 | Withdraw an episode that is not published | Refused |
 | P8 | Teacher confirms an auto-published episode | Counted as teacher-reviewed |
+| P9 | Any decision while the episode is still being generated | Refused |
 
-Last run: 2026-10-05, all 8 cases behaved as expected.
+Last run: 2026-10-05, all 9 cases behaved as expected.
 
 ## Bismillah letters path (case 15)
 

@@ -6,7 +6,9 @@
   <title>My episode · Kottab Discovery</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap">
+  <link rel="preload" href="css/app.css" as="style">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap"></noscript>
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/episode.css">
 </head>
@@ -24,6 +26,8 @@
   <!-- Loading -->
   <section class="card" id="loading" hidden aria-live="polite" aria-labelledby="loading-title">
     <h2 id="loading-title">Making your episode…</h2>
+    <p>This usually takes about a minute.</p>
+    <p class="seconds" id="loading-seconds" aria-live="off">0 seconds</p>
     <ol class="steps" id="steps">
       <li data-step="0">Reading your letter games</li>
       <li data-step="1">Choosing today's root</li>
@@ -121,21 +125,60 @@
 
   // ---------- generate ----------
   // Steps 1 and 2 are illustrative and move on a timer.
-  // Step 3 (checking meanings) is only marked done when the server's reply has arrived.
+  // Step 3 (checking meanings) is only marked done when the finished episode has come back from the server.
+  const POLL_MS = 5000;
+  const GIVE_UP_MS = 4 * 60 * 1000;
   let stepTimers = [];
+  let secondsTimer = null;
   function setStep(i, state) {
     $("steps").children[i].dataset.state = state;
   }
-  function runSteps() {
+  function runSteps(startedAt = Date.now()) {
     [...$("steps").children].forEach((li) => li.removeAttribute("data-state"));
     setStep(0, "active");
     stepTimers = [
       setTimeout(() => { setStep(0, "done"); setStep(1, "active"); }, 1500),
       setTimeout(() => { setStep(1, "done"); setStep(2, "active"); }, 3000),
     ];
+    const tick = () => {
+      const s = Math.round((Date.now() - startedAt) / 1000);
+      $("loading-seconds").textContent = `${s} second${s === 1 ? "" : "s"}`;
+    };
+    tick();
+    clearInterval(secondsTimer);
+    secondsTimer = setInterval(tick, 1000);
   }
   function stopSteps() {
     stepTimers.forEach(clearTimeout);
+    clearInterval(secondsTimer);
+  }
+
+  // Checks the episode every few seconds until it is no longer being generated.
+  async function waitForEpisode(id, startedAt) {
+    show("loading");
+    if (!secondsTimer) runSteps(startedAt);
+    while (true) {
+      await new Promise((r) => setTimeout(r, POLL_MS));
+      let data;
+      try {
+        const res = await fetch(`/api/episodes/${encodeURIComponent(id)}`);
+        if (res.status === 404) { stopSteps(); secondsTimer = null; store.remove(KEYS.episodeId); return init(); }
+        if (!res.ok) continue;
+        data = await res.json();
+      } catch {
+        continue; // a dropped request is retried on the next check
+      }
+      if (data.status !== "generating") break;
+      if (Date.now() - startedAt > GIVE_UP_MS) {
+        stopSteps(); secondsTimer = null;
+        store.remove(KEYS.episodeId);
+        return showError("This is taking much longer than usual. Please try again in a moment.");
+      }
+    }
+    stopSteps(); secondsTimer = null;
+    [0, 1, 2].forEach((i) => setStep(i, "done"));
+    await new Promise((r) => setTimeout(r, 600));
+    loadEpisode(id);
   }
 
   function showError(text) {
@@ -167,8 +210,9 @@
       episode_number: EPISODE_NUMBER,
       trial: isTrial,
     };
+    const startedAt = Date.now();
     show("loading");
-    runSteps();
+    runSteps(startedAt);
     let res;
     try {
       res = await fetch("/api/generate-episode", {
@@ -182,12 +226,10 @@
     if (res.status === 429) return showError("Lots of episodes are being made right now. Please ask a grown-up to try again a little later.");
     if (!res.ok) return showError("Something went wrong while making the episode. Please try again in a moment.");
     const { id } = await res.json();
-    stopSteps();
-    [0, 1, 2].forEach((i) => setStep(i, "done"));
-    await new Promise((r) => setTimeout(r, 600));
     store.set(KEYS.episodeId, id);
+    store.set(KEYS.generatingSince, startedAt);
     if (isTrial) store.set(KEYS.trialEpisodes, [...(store.get(KEYS.trialEpisodes) || []), id]);
-    loadEpisode(id);
+    waitForEpisode(id, startedAt);
   }
 
   // ---------- load / status ----------
@@ -204,20 +246,27 @@
     }
     if (!res.ok) return showError("We couldn't load the episode. Please try again.");
     const data = await res.json();
+    if (data.status === "generating") return waitForEpisode(id, store.get(KEYS.generatingSince) || Date.now());
+    if (data.status === "failed") {
+      store.remove(KEYS.episodeId);
+      return showError("We couldn't make your episode this time. Please try again in a moment.");
+    }
     if (data.status === "approved") return renderEpisode(data);
 
     // returned (withdrawn or sent back): the teacher is updating it.
     // pending_review (has a referral), rejected, referred: the teacher is checking it.
+    const reviewerLink = gate.isOpen() ? ` You can open it on the <a href="reviewer.html">Reviewer page</a>.` : "";
     if (data.status === "returned") {
       $("waiting-title").textContent = "Your teacher is updating this episode";
       $("waiting-text").textContent = "It will be ready again soon. Thank you for waiting!";
+      $("waiting-cue").innerHTML = `Grown-up: the teacher took this episode back to update it. It will be back soon.${reviewerLink}`;
     } else {
       $("waiting-title").textContent = "Your teacher is checking your episode";
       $("waiting-text").textContent = "Your teacher wants to look at this one first. Come back soon!";
+      $("waiting-cue").innerHTML = gate.isOpen()
+        ? `Grown-up: this episode is <b>${escapeHtml(data.status.replace("_", " "))}</b>.${reviewerLink}`
+        : "Grown-up: episodes that need a teacher's answer wait for the teacher before they open.";
     }
-    $("waiting-cue").innerHTML = gate.isOpen()
-      ? `Grown-up: this episode is <b>${escapeHtml(data.status.replace("_", " "))}</b>. You can open it on the <a href="reviewer.html">Reviewer page</a>.`
-      : "Grown-up: episodes that need a teacher's answer wait for the teacher before they open.";
     $("new-episode").hidden = !gate.isOpen();
     show("waiting");
   }

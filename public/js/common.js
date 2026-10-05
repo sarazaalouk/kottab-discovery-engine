@@ -12,6 +12,7 @@ const KEYS = {
   trial: "kottab.trial",
   trialEpisodes: "kottab.trialEpisodes",
   letters: "kottab.letters",
+  generatingSince: "kottab.generatingSince",
 };
 
 const trial = {
@@ -32,7 +33,7 @@ const trial = {
       });
     } catch { /* the server also forgets trial episodes after a few hours */ }
     try {
-      [KEYS.profile, KEYS.diagnosis, KEYS.episodeId, KEYS.letters, KEYS.trialEpisodes, KEYS.trial].forEach((k) => sessionStorage.removeItem(k));
+      [KEYS.profile, KEYS.diagnosis, KEYS.episodeId, KEYS.letters, KEYS.generatingSince, KEYS.trialEpisodes, KEYS.trial].forEach((k) => sessionStorage.removeItem(k));
     } catch { /* storage unavailable */ }
   },
 };
