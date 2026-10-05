@@ -76,3 +76,5 @@ details[open] > .ep-summary::after { content: "▴ إخفاء"; }
 .hadith dt { font-weight: 600; color: var(--amber); }
 .hadith dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .hadith .missing { color: var(--muted); font-style: italic; }
+
+.chip.trial { color: var(--amber); border-color: var(--amber); background: var(--amber-wash); }

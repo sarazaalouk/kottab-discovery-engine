@@ -31,6 +31,37 @@
     </form>
   </section>
 
+  <p class="notice ok" id="ended" hidden>The trial session has ended. Everything from it was erased from this device and from the server.</p>
+
+  <!-- Trial session with a real child (shown after the gate) -->
+  <section class="card" id="trial-start" aria-labelledby="trial-title" hidden>
+    <span class="eyebrow">Kottab trial session</span>
+    <h2 id="trial-title">Trying it with a real child?</h2>
+    <p class="small">In a trial session nothing is saved. Your child gets a made-up name, only an approximate age and first language are used, and everything is erased when you end the session (or after 3 hours).</p>
+    <form id="trial-form" class="stack" novalidate>
+      <div class="field">
+        <label for="t-name">Made-up name</label>
+        <select id="t-name">
+          <option>Child A</option><option>Child B</option><option>Child C</option><option>Child D</option><option>Child E</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="t-age">Approximate age</label>
+        <select id="t-age">
+          <option value="7">6 to 7</option>
+          <option value="9">8 to 10</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="t-language">First language</label>
+        <input id="t-language" type="text" maxlength="40" value="English">
+      </div>
+      <label class="check consent"><input type="checkbox" id="t-consent">I am this child's parent or guardian and I agree to this trial session.</label>
+      <p class="notice error" id="trial-error" hidden></p>
+      <button class="btn block" type="submit">Start a trial session</button>
+    </form>
+  </section>
+
   <!-- Profile (shown after the gate) -->
   <section class="card" id="profile" aria-labelledby="profile-title" hidden>
     <div class="stack">
@@ -123,10 +154,45 @@
 
   function showParentArea() {
     $("gate").hidden = true;
-    $("profile").hidden = false;
     $("reviewer-link").hidden = false;
+    if (trial.isOn()) {
+      showNext(store.get(KEYS.profile));
+      return;
+    }
+    $("profile").hidden = false;
+    $("trial-start").hidden = false;
     loadProfile();
   }
+
+  // ----- trial session -----
+  $("trial-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!$("t-consent").checked) {
+      $("trial-error").textContent = "Please confirm the parent or guardian agreement first.";
+      $("trial-error").hidden = false;
+      return;
+    }
+    if (!$("t-language").value.trim()) {
+      $("trial-error").textContent = "Please add a first language.";
+      $("trial-error").hidden = false;
+      return;
+    }
+    if (!trial.start()) {
+      $("trial-error").textContent = "This browser is blocking storage, so a session can't start. Try a normal (not private) window.";
+      $("trial-error").hidden = false;
+      return;
+    }
+    const p = {
+      name: $("t-name").value,
+      age: Number($("t-age").value),
+      age_label: $("t-age").selectedOptions[0].textContent,
+      home_language: $("t-language").value.trim(),
+      recites_list: [],
+      trial: true,
+    };
+    store.set(KEYS.profile, p);
+    location.reload();
+  });
 
   $("gate-form").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -162,7 +228,9 @@
 
   function showNext(p) {
     $("next").hidden = false;
-    $("saved-line").textContent = `Saved on this device for ${p.name}, age ${p.age}.`;
+    $("saved-line").textContent = p.trial
+      ? `Trial session for ${p.name}, age ${p.age_label}. Start with the letter games: the episode uses their result. Nothing is saved.`
+      : `Saved on this device for ${p.name}, age ${p.age}.`;
     const d = store.get(KEYS.diagnosis);
     if (d) {
       $("diag-result").hidden = false;
@@ -217,6 +285,7 @@
     $("next").scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
+  if (new URLSearchParams(location.search).has("ended")) $("ended").hidden = false;
   if (gate.isOpen()) showParentArea();
 </script>
 </body>

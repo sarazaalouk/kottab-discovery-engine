@@ -231,3 +231,29 @@ fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
 
 /* Fixed AI-transparency line (required by the challenge reference pack) */
 .transparency { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
+
+/* Trial session bar: always visible while a session with a real child is running */
+.trial-bar {
+  background: var(--amber-wash);
+  color: var(--ink);
+  border-bottom: 2px solid var(--amber);
+  padding: 8px var(--gutter);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  font-size: .85rem;
+}
+.trial-bar button {
+  font: inherit;
+  font-weight: 600;
+  border: 1.5px solid var(--amber);
+  background: var(--surface);
+  color: var(--amber);
+  border-radius: 999px;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.check.consent { border-radius: 10px; align-items: flex-start; }
+.check.consent input { margin-top: 4px; }

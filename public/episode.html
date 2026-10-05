@@ -148,16 +148,23 @@
     const profile = store.get(KEYS.profile);
     if (!profile) return;
     const diag = store.get(KEYS.diagnosis);
+    const isTrial = trial.isOn();
+    // Trial: only the pseudonym, approximate age, first language and the letter-game level are sent.
+    if (isTrial && !diag) {
+      $("start-text").textContent = "Let's play the three letter games first. Then we can make your episode.";
+      return;
+    }
     const body = {
       child: {
         name: profile.name,
         age: profile.age,
         home_language: profile.home_language,
-        recites: profile.recites_list.join(", "),
+        recites: isTrial ? "not shared" : profile.recites_list.join(", "),
         reading_level: (diag && diag.reading_level) || profile.parent_reading_level,
       },
       root: SEASON_ROOTS[EPISODE_NUMBER],
       episode_number: EPISODE_NUMBER,
+      trial: isTrial,
     };
     show("loading");
     runSteps();
@@ -177,6 +184,7 @@
     [0, 1, 2].forEach((i) => setStep(i, "done"));
     await new Promise((r) => setTimeout(r, 600));
     store.set(KEYS.episodeId, id);
+    if (isTrial) store.set(KEYS.trialEpisodes, [...(store.get(KEYS.trialEpisodes) || []), id]);
     loadEpisode(id);
   }
 

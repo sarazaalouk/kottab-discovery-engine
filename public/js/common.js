@@ -1,18 +1,50 @@
 // Kottab Discovery Engine — shared browser helpers.
-// All child data stays in this browser (localStorage). Nothing here is sent anywhere
-// except the profile fields the episode request needs.
+// Demo mode: child data stays in this browser (localStorage).
+// Trial mode (sessions with real children, see CLAUDE.md): data lives only in this tab
+// (sessionStorage) and is erased, here and on the server, when the session ends.
+// Nothing is sent anywhere except the profile fields the episode request needs.
 
 const KEYS = {
   profile: "kottab.profile",
   diagnosis: "kottab.diagnosis",
   episodeId: "kottab.episodeId",
   gate: "kottab.parentGate",
+  trial: "kottab.trial",
+  trialEpisodes: "kottab.trialEpisodes",
 };
+
+const trial = {
+  isOn() {
+    try { return sessionStorage.getItem(KEYS.trial) === "on"; } catch { return false; }
+  },
+  start() {
+    try { sessionStorage.setItem(KEYS.trial, "on"); return true; } catch { return false; }
+  },
+  // Erases the session's episodes on the server, then everything in this tab.
+  async end() {
+    const ids = store.get(KEYS.trialEpisodes) || [];
+    try {
+      await fetch("/api/trial/end", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ episode_ids: ids }),
+      });
+    } catch { /* the server also forgets trial episodes after a few hours */ }
+    try {
+      [KEYS.profile, KEYS.diagnosis, KEYS.episodeId, KEYS.trialEpisodes, KEYS.trial].forEach((k) => sessionStorage.removeItem(k));
+    } catch { /* storage unavailable */ }
+  },
+};
+
+// Demo mode uses localStorage; trial mode uses sessionStorage only.
+function backend() {
+  return trial.isOn() ? sessionStorage : localStorage;
+}
 
 const store = {
   get(key) {
     try {
-      const raw = localStorage.getItem(key);
+      const raw = backend().getItem(key);
       return raw ? JSON.parse(raw) : null;
     } catch {
       return null;
@@ -20,14 +52,14 @@ const store = {
   },
   set(key, value) {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      backend().setItem(key, JSON.stringify(value));
       return true;
     } catch {
       return false;
     }
   },
   remove(key) {
-    try { localStorage.removeItem(key); } catch { /* storage unavailable */ }
+    try { backend().removeItem(key); } catch { /* storage unavailable */ }
   },
 };
 
@@ -63,8 +95,21 @@ function renderTopbar(current) {
     <div class="topbar-inner">
       <div class="brand">Kottab Discovery<small>Al-Fatiha · Season 1</small></div>
       <nav class="nav" aria-label="Pages">${links}${reviewer}</nav>
-    </div>`;
+    </div>
+    ${trial.isOn() ? `<div class="trial-bar">
+      <span><b>Trial session</b> · nothing is saved</span>
+      <button type="button" id="end-trial">End session</button>
+    </div>` : ""}`;
   document.body.prepend(header);
+  const endBtn = header.querySelector("#end-trial");
+  if (endBtn) {
+    endBtn.addEventListener("click", async () => {
+      endBtn.disabled = true;
+      endBtn.textContent = "Erasing…";
+      await trial.end();
+      location.href = "index.html?ended=1";
+    });
+  }
 }
 
 function escapeHtml(s) {

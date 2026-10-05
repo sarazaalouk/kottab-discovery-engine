@@ -35,9 +35,23 @@ function rootLetters(root) {
   return [...normalizeArabic(String(root)).replace(/[\s\-ـ]/g, "")];
 }
 
-function validateChildProfile(p) {
+const READING_LEVELS = [
+  "Does not know the letters yet",
+  "Knows some letters",
+  "Knows most letters",
+  "Reads short words",
+];
+
+function validateChildProfile(p, trial) {
   if (!p || typeof p !== "object") return "child must be an object";
   const str = (v, max) => typeof v === "string" && v.trim().length > 0 && v.length <= max;
+  // Trial sessions with real children: only a pseudonym, an approximate age, a first language,
+  // and the reading level from the fixed-rule letter games (see CLAUDE.md).
+  if (trial) {
+    if (!/^Child [A-E]$/.test(p.name)) return "in a trial session child.name must be a pseudonym: Child A to Child E";
+    if (p.recites !== "not shared") return "in a trial session child.recites must be \"not shared\"";
+    if (!READING_LEVELS.includes(p.reading_level)) return "in a trial session child.reading_level must come from the letter games";
+  }
   if (!str(p.name, 40)) return "child.name must be a short string";
   if (!Number.isInteger(p.age) || p.age < 6 || p.age > 10) return "child.age must be an integer from 6 to 10";
   if (!str(p.home_language, 40)) return "child.home_language must be a short string";
@@ -66,8 +80,9 @@ app.get("/api/quran", (req, res) => {
 // Generate one episode. The result is saved for human review and is never shown to a child from here.
 app.post("/api/generate-episode", async (req, res) => {
   const { child, root, episode_number: episodeNumber } = req.body || {};
+  const trial = req.body && req.body.trial === true;
 
-  const profileError = validateChildProfile(child);
+  const profileError = validateChildProfile(child, trial);
   if (profileError) return res.status(400).json({ error: profileError });
   if (!Number.isInteger(episodeNumber) || episodeNumber < 1 || episodeNumber > 10) {
     return res.status(400).json({ error: "episode_number must be an integer from 1 to 10" });
@@ -139,7 +154,7 @@ app.post("/api/generate-episode", async (req, res) => {
   }
 
   const createdAt = new Date().toISOString();
-  const id = `episode-${String(episodeNumber).padStart(2, "0")}-${createdAt.replace(/[:.]/g, "-")}`;
+  const id = `${trial ? "trial" : "episode"}-${String(episodeNumber).padStart(2, "0")}-${createdAt.replace(/[:.]/g, "-")}`;
   const rawText = response.content.filter((b) => b.type === "text").map((b) => b.text).join("");
 
   // A declined or cut-off request fails safely: the episode is rejected and the request is referred to the teacher.
@@ -202,12 +217,7 @@ app.post("/api/generate-episode", async (req, res) => {
 
   episodes.save(record);
 
-  if (referrals.length) {
-    const lines = referrals.map((r) =>
-      JSON.stringify({ created_at: createdAt, episode_id: id, child_name: request.child.name, ...r })
-    );
-    fs.appendFileSync(REFERRALS_LOG, lines.join("\n") + "\n", "utf8");
-  }
+  referrals.forEach((r) => logReferral({ episode_id: id, child_name: request.child.name, ...r, source: "engine" }));
 
   // The caller only learns the id and status; content is served after review.
   res.json({ id: record.id, status: record.status });
@@ -310,8 +320,11 @@ app.get("/api/episodes/:id/report", (req, res) => {
 
 // ---------- child questions ----------
 
+// Trial referrals stay in memory with their episode; all others go to data/referrals.jsonl.
 function logReferral(entry) {
-  fs.appendFileSync(REFERRALS_LOG, JSON.stringify({ created_at: new Date().toISOString(), ...entry }) + "\n", "utf8");
+  const full = { created_at: new Date().toISOString(), ...entry };
+  if (entry.episode_id && episodes.isTrialId(entry.episode_id)) return episodes.addTrialReferral({ ...full, trial: true });
+  fs.appendFileSync(REFERRALS_LOG, JSON.stringify(full) + "\n", "utf8");
 }
 
 const REFERRAL_REPLY =
@@ -324,7 +337,9 @@ app.post("/api/ask", async (req, res) => {
   }
   const record = episodes.get(episodeId);
   const refer = (reason) => {
-    logReferral({ episode_id: record ? record.id : null, child_name: record ? record.child.name : null, question, reason, source: "child_question" });
+    // A trial question is kept in memory even if its episode has already expired.
+    const episodeRef = record ? record.id : episodes.isTrialId(episodeId) ? episodeId : null;
+    logReferral({ episode_id: episodeRef, child_name: record ? record.child.name : null, question, reason, source: "child_question" });
     return res.json({ type: "referral", text: REFERRAL_REPLY });
   };
   if (!record || record.status !== "approved") return refer("no approved episode for this question");
@@ -375,6 +390,7 @@ function episodeSummary(r) {
   return {
     id: r.id,
     status: r.status,
+    trial: episodes.isTrialId(r.id),
     created_at: r.created_at,
     episode_number: r.episode_number,
     root: r.root,
@@ -428,10 +444,18 @@ app.get("/api/review/referrals", (req, res) => {
   try {
     lines = fs.readFileSync(REFERRALS_LOG, "utf8").split("\n").filter(Boolean);
   } catch {
-    return res.json([]);
+    lines = [];
   }
   const entries = lines.map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
-  res.json(entries.reverse());
+  const all = [...entries, ...episodes.listTrialReferrals()].sort((a, b) => a.created_at.localeCompare(b.created_at));
+  res.json(all.reverse());
+});
+
+// End a trial session: erase its episodes and referrals from memory.
+app.post("/api/trial/end", (req, res) => {
+  const ids = Array.isArray(req.body && req.body.episode_ids) ? req.body.episode_ids : [];
+  const erased = ids.filter((id) => episodes.isTrialId(id) && episodes.erase(id)).length;
+  res.json({ erased });
 });
 
 const DECISIONS = { approve: "approved", return: "returned", refer: "referred" };
