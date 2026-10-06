@@ -59,7 +59,7 @@ Script: `tests/publish-tests.js` (also run by `npm test`). Rule in `lib/publish.
 | P8 | Teacher confirms an auto-published episode | Counted as teacher-reviewed |
 | P9 | Any decision while the episode is still being generated | Refused |
 
-Last run: 2026-10-05, all 9 cases behaved as expected.
+Last run: 2026-10-06, all 9 cases behaved as expected.
 
 ## Bismillah letters path (case 15)
 
@@ -72,4 +72,16 @@ Script: `tests/letters-tests.js` (also run by `npm test`). Check in `lib/noor.js
 | 15.3 | A word that is not in the sources is added | Caught (the server would answer 500 and not show it) |
 | 15.4 | A Quran word without its Mushaf marks | Caught: words must match with their marks |
 
-Last run: 2026-10-05, all cases behaved as expected.
+Last run: 2026-10-06, all cases behaved as expected.
+
+## Other checks run by `npm test`
+
+| Script | What it checks | Cases |
+|---|---|---|
+| `tests/ask-tests.js` | "Ask a question": only approved cards for the child (with a child sentence) can answer; a parent/teacher-only card is never offered or shown; the answer is the child sentence word for word | A1–A5 |
+| `tests/trial-tests.js` | Trial sessions: erased on "End session", and a generation that finishes later saves nothing and logs no referral | T1–T6 |
+| `tests/client-tests.js` | Episode page: a shown episode is checked every 30 seconds; a withdrawn one is reported once and the checks stop; a dropped request is retried | W1–W4 |
+| `tests/pin-tests.js` | Reviewer PIN: 503 when no PIN is set on the server, 401 for a wrong or missing PIN, allowed with the right PIN | R1–R4 |
+| `tests/docs-tests.js` | The numbers in the docs match the project: approved cards (19) and the number of cases in each table of this file | D1–D3 |
+
+Last run: 2026-10-06, all cases behaved as expected.
