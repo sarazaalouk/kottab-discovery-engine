@@ -18,6 +18,7 @@
     <h1 id="intro-title">Little letter games</h1>
     <p id="intro-text">Take your time. There is no clock. Just do your best, and a grown-up can sit with you.</p>
     <p class="child-line">Every day you say Al-Fatiha in Salah. Let's find out what you are saying.</p>
+    <p class="parent-cue small" id="start-note" hidden>We start from the level you chose and go down only if needed.</p>
     <p class="notice warn" id="no-profile" hidden>A parent needs to set up your profile first. <a href="index.html">Go to the parent page</a>.</p>
     <button class="btn block" id="start">Start</button>
   </section>
@@ -211,17 +212,14 @@
       $("intro-text").textContent = "We couldn't load the games. Please check the connection and try again.";
       return;
     }
-    const stages = {};
-    stages.sound = await stageSound();
-    if (stages.sound.passed) stages.shape = await stageShape();
-    if (stages.shape && stages.shape.passed) stages.fatha = await stageFatha();
-    if (stages.fatha && stages.fatha.passed) stages.fatiha = await stageFatiha();
-    if (stages.fatiha && stages.fatiha.passed) stages.ayah = await stageAyah();
+    // Start from the level the parent chose and go down only if needed (js/levels.js: startStage, runStages).
+    const PLAY = { sound: stageSound, shape: stageShape, fatha: stageFatha, fatiha: stageFatiha, ayah: stageAyah };
+    const { stages, shown } = await runStages(startStage(store.get(KEYS.profile)), (key) => PLAY[key]());
 
     const level = levelFrom(stages);
     store.set(KEYS.diagnosis, {
       stages,
-      stages_run: Object.keys(stages),
+      stages_run: shown,
       level_label: level,
       diagnosis_source: "games",
       reading_level: level,
@@ -238,6 +236,7 @@
   });
 
   if (!store.get(KEYS.profile)) $("no-profile").hidden = false;
+  $("start-note").hidden = startStage(store.get(KEYS.profile)) === "sound";
 </script>
 </body>
 </html>

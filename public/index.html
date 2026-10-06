@@ -273,7 +273,7 @@
       $("diag-result").hidden = false;
       const LABELS = { sound: "letter sounds", shape: "letter shapes", fatha: "short words", fatiha: "Al-Fatiha words", ayah: "ayah 1:1 in full" };
       const parts = d.stages
-        ? Object.entries(d.stages).map(([k, s]) => `${LABELS[k]} ${s.score}/${s.total}${s.passed ? " ✓" : ""}`)
+        ? Object.entries(d.stages).map(([k, s]) => (s.inferred ? `${LABELS[k]} ✓ (not needed)` : `${LABELS[k]} ${s.score}/${s.total}${s.passed ? " ✓" : ""}`))
         : [];
       $("diag-text").textContent = `${levelLabel(d.reading_level || d.level_label, d.diagnosis_source || "games")}${d.diagnosis_source === "parent" ? ` (your choice: ${d.reading_level})` : ""}.${parts.length ? " " + parts.join(", ") + "." : ""}${d.reads_fatiha_words ? " Reads words from Al-Fatiha." : ""}`;
     }

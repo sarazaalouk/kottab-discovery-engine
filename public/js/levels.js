@@ -43,6 +43,47 @@
     return LEVEL_LABELS[level] || level;
   }
 
-  if (typeof module !== "undefined" && module.exports) module.exports = { levelFrom, parentDiagnosis, levelLabel };
-  else Object.assign(root, { levelFrom, parentDiagnosis, levelLabel });
+  // Adaptive starting point for the letter games, from the level the parent chose.
+  // Readers start at stage 3 (Noor Al-Bayan words), "Knows most letters" at stage 2; anyone else,
+  // and every trial session, starts at stage 1 as before.
+  const STAGE_ORDER = ["sound", "shape", "fatha", "fatiha", "ayah"];
+  function startStage(profile) {
+    if (!profile || profile.trial) return "sound";
+    const level = profile.parent_reading_level;
+    if (level === "Reads Arabic well" || level === "Reads short words") return "fatha";
+    if (level === "Knows most letters") return "shape";
+    return "sound";
+  }
+
+  // Plays the stages from the starting point. play(key) runs one stage and resolves with { passed, ... }.
+  // Failing the start goes down one stage at a time until one is passed or stage 1 is reached.
+  // Passing the start goes up as before (each stage opens only if the one before was passed).
+  // Stages below the lowest one played and passed are counted as passed: { passed: true, inferred: true }.
+  // Resolves with { stages, shown } (shown: the stages the child actually played, in order).
+  async function runStages(start, play) {
+    const stages = {};
+    const shown = [];
+    const startAt = STAGE_ORDER.indexOf(start);
+    let at = startAt;
+    for (;;) {
+      const key = STAGE_ORDER[at];
+      stages[key] = await play(key);
+      shown.push(key);
+      if (stages[key].passed || at === 0) break;
+      at--;
+    }
+    if (stages[STAGE_ORDER[at]].passed) {
+      for (let k = 0; k < at; k++) stages[STAGE_ORDER[k]] = { passed: true, inferred: true };
+      if (at === startAt) {
+        for (let j = startAt + 1; j < STAGE_ORDER.length && stages[STAGE_ORDER[j - 1]].passed; j++) {
+          stages[STAGE_ORDER[j]] = await play(STAGE_ORDER[j]);
+          shown.push(STAGE_ORDER[j]);
+        }
+      }
+    }
+    return { stages, shown };
+  }
+
+  if (typeof module !== "undefined" && module.exports) module.exports = { levelFrom, parentDiagnosis, levelLabel, startStage, runStages };
+  else Object.assign(root, { levelFrom, parentDiagnosis, levelLabel, startStage, runStages });
 })(typeof window !== "undefined" ? window : globalThis);

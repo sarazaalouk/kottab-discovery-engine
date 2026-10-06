@@ -1,5 +1,5 @@
 // Reading level from the letter games, including stage 5 (reading ayah 1:1 in full). Run: npm test
-const { levelFrom, parentDiagnosis, levelLabel } = require("../public/js/levels");
+const { levelFrom, parentDiagnosis, levelLabel, startStage, runStages } = require("../public/js/levels");
 
 let failed = 0;
 const check = (name, actual, expected) => {
@@ -31,5 +31,19 @@ check("L14. from the parent (games skipped), both skip levels are shown as the p
   "Parent's estimate — the letter games were skipped|Parent's estimate — the letter games were skipped|Knows most letters");
 check("L11. skip never offered in a trial session", parentDiagnosis(parent("Reads Arabic well", { trial: true })), null);
 
-console.log(failed ? `\n${failed} level case(s) failed` : "\nall level cases behaved as expected");
-process.exit(failed ? 1 : 0);
+// L15–L17: adaptive starting point. play() answers from a fixed list; "shown" is what the child actually played.
+(async () => {
+  const run = (profile, results) => runStages(startStage(profile), async (key) => ({ passed: results[key] }));
+  const up = await run({ parent_reading_level: "Reads Arabic well" }, { fatha: true, fatiha: true, ayah: true });
+  check("L15. a reader starts at stage 3 and passes: stage 1 is never shown, stages 1–2 are counted as passed",
+    `${up.shown.join(",")}|${up.stages.sound.inferred && up.stages.shape.inferred}|${levelFrom(up.stages)}`, "fatha,fatiha,ayah|true|Reads Arabic well");
+  const down = await run({ parent_reading_level: "Reads short words" }, { fatha: false, shape: true });
+  check("L16. a reader fails stage 3 and passes stage 2 → Knows most letters",
+    `${down.shown.join(",")}|${levelFrom(down.stages)}`, "fatha,shape|Knows most letters");
+  const none = await run({}, { sound: true, shape: false });
+  check("L17. no level chosen (and any trial session) starts at stage 1",
+    `${none.shown.join(",")}|${startStage({ trial: true, parent_reading_level: "Reads Arabic well" })}`, "sound,shape|sound");
+
+  console.log(failed ? `\n${failed} level case(s) failed` : "\nall level cases behaved as expected");
+  process.exit(failed ? 1 : 0);
+})();
