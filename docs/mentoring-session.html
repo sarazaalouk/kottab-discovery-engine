@@ -119,7 +119,7 @@ footer { color: var(--muted); font-size: .85rem; border-top: 1px solid var(--lin
   <div class="status">
     <div class="stat"><b>7 / 7</b><span>آيات الفاتحة، روجعت حرفًا حرفًا على المصحف</span></div>
     <div class="stat"><b>69</b><span>بطاقة معرفة (ابن كثير + الميسر)، النص العربي منقول حرفيًا</span></div>
-    <div class="stat"><b>20</b><span>بطاقة معتمدة للحلقة الأولى، بترجمة للأهل وجملة للطفل</span></div>
+    <div class="stat"><b>19</b><span>بطاقة معتمدة للحلقة الأولى (8 منها للطفل)، بترجمة للأهل وجملة للطفل</span></div>
     <div class="stat"><b>12 / 12</b><span>حالة اختبار للفاحص تتصرف كما هو متوقع</span></div>
   </div>
 </section>
@@ -127,12 +127,12 @@ footer { color: var(--muted); font-size: .85rem; border-top: 1px solid var(--lin
 <section aria-labelledby="pipeline">
   <h2 id="pipeline">مسار الحلقة</h2>
   <ol class="flow">
-    <li><b>البطاقات</b>المعتمدة فقط، حسب الجذر أو رقم الحلقة (حد 20)</li>
+    <li><b>البطاقات</b>المعتمدة فقط، حسب الجذر أو رقم الحلقة (حد أقصى 20 في الطلب)</li>
     <li><b>الموديل</b><span><bdi class="mono">claude-sonnet-5-5</bdi>، يشير للآيات بالرقم فقط</span></li>
     <li class="gate"><b>الفاحص الآلي</b><span>أي مخالفة تعني <bdi class="mono">rejected</bdi> مع السبب</span></li>
     <li><b>السيرفر</b>يضع نص الآيات من الملف المعتمد</li>
-    <li class="gate"><b>مراجعة سارة</b><span><bdi class="mono">pending_review</bdi> حتى الاعتماد</span></li>
-    <li><b>الطفل</b>بعد الاعتماد فقط</li>
+    <li class="gate"><b>مراجعة المعلم</b><span>بعد العرض، مع إمكانية السحب؛ والحلقة التي فيها إحالة تنتظر المعلم</span></li>
+    <li><b>الطفل</b>بعد الفحص الآلي مباشرة</li>
   </ol>
 </section>
 

@@ -22,7 +22,7 @@ The episode request still goes to the model provider's API; it contains only the
 
 ## Checked on 2026-10-05
 
-A full trial session (Child B, 8 to 10): gate → consent → letter games → episode generated → approved on the reviewer page → child question referred → End session.
+A full trial session (Child B, 8 to 10): gate → consent → letter games → episode generated → approved on the reviewer page → child question referred → End session. (This check was run on 2026-10-05, before episodes were published automatically. Today an episode without referrals is shown right after the automatic check, and the teacher reviews it afterwards and can withdraw it.)
 
 - Files in `data/episodes/` before and after: 4 and 4. Lines in `data/referrals.jsonl`: 1 and 1. The trial question was not written to disk.
 - After "End session": the episode returns 404, no trial referrals remain, the tab's session storage is empty, and the page shows "The trial session has ended. Everything from it was erased."

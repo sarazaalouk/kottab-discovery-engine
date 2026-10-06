@@ -89,7 +89,7 @@
   async function init() {
     const id = store.get(KEYS.episodeId);
     if (!id) {
-      $("empty-text").textContent = "Make an episode first. The report appears here once a Kottab teacher has approved it.";
+      $("empty-text").textContent = "Make an episode first. The report appears here as soon as the episode has passed the automatic check and is shown to your child.";
       $("empty").hidden = false;
       return;
     }
@@ -103,7 +103,7 @@
       return;
     }
     if (data.status !== "approved") {
-      $("empty-text").textContent = "This report will appear after a Kottab teacher approves the episode.";
+      $("empty-text").textContent = "This report will appear when the episode is shown. Episodes with a question for the teacher wait for the teacher first, and an episode the teacher has taken back to update is not shown.";
       $("empty").hidden = false;
       return;
     }
