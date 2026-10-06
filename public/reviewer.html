@@ -135,7 +135,10 @@
     const others = list.filter((e) => e.status !== "pending_review");
     $("count-pending").textContent = pending.length;
     $("count-done").textContent = others.length;
-    $("count-referrals").textContent = referrals.length;
+    // Count of referrals with no teacher reply yet: on the tab and in the page title.
+    const unanswered = referrals.filter((r) => !r.teacher_reply).length;
+    $("count-referrals").textContent = unanswered;
+    document.title = `المراجع (${unanswered} إحالة بلا رد) · Kottab Discovery`;
 
     $("panel-pending").innerHTML = pending.length
       ? pending.map(episodeShell).join("")
@@ -144,23 +147,52 @@
       ? others.map(episodeShell).join("")
       : `<p class="notice">لا توجد حلقات أخرى بعد.</p>`;
     $("panel-referrals").innerHTML = referralsHtml(referrals);
+    $("panel-referrals").querySelectorAll("form.reply").forEach((f) => f.addEventListener("submit", saveReply));
 
     document.querySelectorAll("details.ep").forEach((d) =>
       d.addEventListener("toggle", () => { if (d.open && !d.dataset.loaded) loadDetail(d); })
     );
   }
 
+  const REFERRALS_NOTE = `<p class="muted small">الأسئلة خارج الحدود تصل هنا مع رقم الحلقة ووقتها؛ في وضع التجربة تبقى في الذاكرة وتُمسح بنهاية الجلسة. ردّ المعلم يُكتب بالإنجليزية ويظهر للطفل تحت صندوق الأسئلة في الحلقة نفسها، ولا يمر بالنموذج (الحروف العربية المنفردة مسموحة، والكلمات العربية لا).</p>`;
+
   function referralsHtml(items) {
-    if (!items.length) return `<p class="notice ok">لا توجد إحالات.</p>`;
-    return `<ul class="referrals">${items
+    if (!items.length) return REFERRALS_NOTE + `<p class="notice ok">لا توجد إحالات.</p>`;
+    return REFERRALS_NOTE + `<ul class="referrals">${items
       .map(
         (r) => `<li class="card">
           <span class="muted small">${fmtDate(r.created_at)} · ${r.source === "reviewer" ? "من المراجِع" : r.source === "child_question" ? "سؤال من الطفل" : "من المحرك"}${r.child_name ? " · " + escapeHtml(r.child_name) : ""}${r.trial ? " · جلسة تجربة (تُمسح مع الجلسة)" : ""}</span>
           ${en(`<p><b>${escapeHtml(r.question)}</b></p><p class="muted small">${escapeHtml(r.reason || "")}</p>`)}
           ${r.episode_id ? `<span class="muted small mono-id">${escapeHtml(r.episode_id)}</span>` : ""}
+          <form class="reply stack" data-id="${escapeHtml(r.id)}">
+            <label class="small" for="reply-${escapeHtml(r.id)}">رد المعلم ${r.teacher_reply ? `<span class="muted">(حُفظ · ${fmtDate(r.replied_at)})</span>` : `<span class="chip">بلا رد</span>`}</label>
+            <textarea id="reply-${escapeHtml(r.id)}" dir="ltr" lang="en" rows="2" maxlength="600" placeholder="Reply in English">${escapeHtml(r.teacher_reply || "")}</textarea>
+            <button class="btn small-btn" type="submit">حفظ الرد</button>
+            <p class="notice error small" hidden></p>
+          </form>
         </li>`
       )
       .join("")}</ul>`;
+  }
+
+  async function saveReply(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const error = form.querySelector(".notice.error");
+    error.hidden = true;
+    const res = await reviewerFetch(`/api/review/referrals/${encodeURIComponent(form.dataset.id)}/reply`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reply: form.querySelector("textarea").value }),
+    }).catch(() => null);
+    if (!res || !res.ok) {
+      const body = res ? await res.json().catch(() => ({})) : {};
+      error.textContent = body.error === undefined ? "تعذّر حفظ الرد." : `تعذّر حفظ الرد: ${body.error}`;
+      error.hidden = false;
+      return;
+    }
+    await loadList();
+    selectTab("referrals");
   }
 
   // ---------- detail ----------

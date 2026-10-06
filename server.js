@@ -13,6 +13,7 @@ const { generateLimit, askLimit } = require("./lib/limits");
 const { initialStatus, publishMode, autoReview, teacherApproved, applyDecision } = require("./lib/publish");
 const noor = require("./lib/noor");
 const { checkProblems, checksForEpisode } = require("./lib/checks");
+const { referralId, newReferralId, replyProblem, setReplyInLines, repliesForEpisode } = require("./lib/referrals");
 const { askCandidates, askAnswer } = require("./lib/ask");
 const { requireReviewerPin, pinConfigured } = require("./lib/reviewer-pin");
 
@@ -353,6 +354,26 @@ function childMeanings(ep, kbById) {
 }
 
 // Child view: status always; content only when approved.
+function referralLines() {
+  try {
+    return fs.readFileSync(REFERRALS_LOG, "utf8").split("\n").filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+// All referrals, from the log file and (trial sessions) from memory, each with its id.
+function allReferrals() {
+  const entries = referralLines().map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+  return [...entries, ...episodes.listTrialReferrals()].map((e) => ({ ...e, id: referralId(e) }));
+}
+
+// The teacher's replies to questions asked from this episode (shown under the question box).
+app.get("/api/episodes/:id/replies", (req, res) => {
+  if (!episodes.isValidId(req.params.id)) return res.status(404).json({ error: "episode not found" });
+  res.json(repliesForEpisode(allReferrals(), req.params.id));
+});
+
 app.get("/api/episodes/:id", (req, res) => {
   const record = episodes.get(req.params.id);
   if (!record) return res.status(404).json({ error: "episode not found" });
@@ -413,7 +434,7 @@ app.get("/api/episodes/:id/report", (req, res) => {
 
 // Trial referrals stay in memory with their episode; all others go to data/referrals.jsonl.
 function logReferral(entry) {
-  const full = { created_at: new Date().toISOString(), ...entry };
+  const full = { id: newReferralId(), created_at: new Date().toISOString(), ...entry };
   if ((entry.episode_id && episodes.isTrialId(entry.episode_id)) || entry.trial_session_id) return episodes.addTrialReferral({ ...full, trial: true });
   fs.appendFileSync(REFERRALS_LOG, JSON.stringify(full) + "\n", "utf8");
 }
@@ -539,15 +560,22 @@ app.get("/api/review/episodes/:id", (req, res) => {
 });
 
 app.get("/api/review/referrals", (req, res) => {
-  let lines = [];
-  try {
-    lines = fs.readFileSync(REFERRALS_LOG, "utf8").split("\n").filter(Boolean);
-  } catch {
-    lines = [];
-  }
-  const entries = lines.map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
-  const all = [...entries, ...episodes.listTrialReferrals()].sort((a, b) => a.created_at.localeCompare(b.created_at));
+  const all = allReferrals().sort((a, b) => a.created_at.localeCompare(b.created_at));
   res.json(all.reverse());
+});
+
+// The teacher's reply to a referral (English, written by the teacher, no model).
+// Trial referrals keep it in memory; the others in data/referrals.jsonl.
+app.post("/api/review/referrals/:id/reply", (req, res) => {
+  const reply = req.body && req.body.reply;
+  const problem = replyProblem(reply);
+  if (problem) return res.status(400).json({ error: problem });
+  const at = new Date().toISOString();
+  if (episodes.setTrialReply(req.params.id, reply, at)) return res.json({ saved: true, trial: true });
+  const lines = setReplyInLines(referralLines(), req.params.id, reply, at);
+  if (!lines) return res.status(404).json({ error: "referral not found" });
+  fs.writeFileSync(REFERRALS_LOG, lines.join("\n") + "\n", "utf8");
+  res.json({ saved: true });
 });
 
 // End a trial session: mark its session id as ended and erase its episodes and referrals from memory.

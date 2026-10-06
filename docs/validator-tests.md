@@ -93,7 +93,8 @@ Last run: 2026-10-06, all cases behaved as expected.
 | `tests/checks-tests.js` | "Before you move on": the teacher's questions file is refused if a card is missing or not approved, or a question has no source; 2 of 3 passes | C1–C7 |
 | `tests/ask-tests.js` | "Ask a question": only approved cards for the child (with a child sentence) can answer; a parent/teacher-only card is never offered or shown; the answer is the child sentence word for word | A1–A5 |
 | `tests/trial-tests.js` | Trial sessions: erased on "End session", and a generation that finishes later saves nothing and logs no referral; the session id (made in the browser before any generation) erases everything from the session even if the episode id never reached the browser | T1–T10 |
-| `tests/client-tests.js` | Episode page: a shown episode is checked every 30 seconds; a withdrawn one is reported once and the checks stop; a dropped request is retried | W1–W4 |
+| `tests/replies-tests.js` | Teacher replies to referrals: English only (single Arabic letters allowed), stored on the referral in `referrals.jsonl` or in trial memory (erased with the session), shown only on their own episode | Y1–Y8 |
+| `tests/client-tests.js` | Episode page: a shown episode is checked every 30 seconds; a withdrawn one is reported once and the checks stop; a dropped request is retried; the teacher's replies are checked every 30 seconds | W1–W5 |
 | `tests/pin-tests.js` | Reviewer PIN: 503 when no PIN is set on the server, 401 for a wrong or missing PIN, allowed with the right PIN | R1–R4 |
 | `tests/docs-tests.js` | The numbers in the docs match the project: approved cards (19) and the number of cases in each table of this file | D1–D3 |
 

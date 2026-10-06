@@ -25,6 +25,27 @@
     return stop;
   }
 
-  if (typeof module !== "undefined" && module.exports) module.exports = { watchEpisode };
-  else root.watchEpisode = watchEpisode;
+  // The teacher's replies to this episode's questions: fetched now and every 30 seconds;
+  // onReplies(list) is called whenever the number of replies changes. Returns a stop function.
+  function watchReplies({ fetchReplies, onReplies, intervalMs = 30000, timers = root }) {
+    let shown = 0;
+    const tick = async () => {
+      let list;
+      try {
+        list = await fetchReplies();
+      } catch {
+        return; // tried again on the next check
+      }
+      if (Array.isArray(list) && list.length !== shown) {
+        shown = list.length;
+        onReplies(list);
+      }
+    };
+    tick();
+    const handle = timers.setInterval(tick, intervalMs);
+    return () => timers.clearInterval(handle);
+  }
+
+  if (typeof module !== "undefined" && module.exports) module.exports = { watchEpisode, watchReplies };
+  else Object.assign(root, { watchEpisode, watchReplies });
 })(typeof window !== "undefined" ? window : globalThis);

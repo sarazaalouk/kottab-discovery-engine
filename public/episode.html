@@ -114,6 +114,7 @@
         <button class="btn" type="submit" id="ask-btn">Ask</button>
       </form>
       <div id="ask-answer" aria-live="polite"></div>
+      <div id="teacher-replies" class="stack" aria-live="polite"></div>
     </section>
 
     <p class="transparency" id="transparency"></p>
@@ -316,8 +317,23 @@
     });
   }
 
+  // Replies the teacher wrote on the reviewer page (human text, no model), checked every 30 seconds.
+  let stopReplies = null;
+  function startReplies(id) {
+    if (stopReplies) stopReplies();
+    stopReplies = watchReplies({
+      fetchReplies: () => fetch(`/api/episodes/${encodeURIComponent(id)}/replies`).then((r) => (r.ok ? r.json() : null)),
+      onReplies: (list) => {
+        $("teacher-replies").innerHTML = list
+          .map((r) => `<div class="notice ok">${r.question ? `<p class="small muted">You asked: ${escapeHtml(r.question)}</p>` : ""}<p><b>Your teacher answered:</b> ${formatLetters(r.reply)}</p></div>`)
+          .join("");
+      },
+    });
+  }
+
   function renderEpisode(d) {
     startWatching(d.id);
+    startReplies(d.id);
     $("ep-eyebrow").textContent = `Episode ${d.episode_number}`;
     $("ep-title").textContent = d.title;
     $("ep-moment").textContent = d.discovery_moment.text_en;
