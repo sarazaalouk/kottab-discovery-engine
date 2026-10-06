@@ -41,6 +41,16 @@ const cases = [
     o.discovery_question.options[0].text_en = "They share ر ح م (r, h, m)";
     return o;
   }],
+  ["14c. (adapt) Reads Arabic well uses reading mode", null, (o) => {
+    ctx.readingLevel = "Reads Arabic well"; // restored below
+    o.adaptation = { reading_level: "Reads Arabic well", discovery_mode: "reading" };
+    return o;
+  }],
+  ["14d. (adapt) Reads Arabic well with root mode", "[adapt]", (o) => {
+    ctx.readingLevel = "Reads Arabic well"; // restored below
+    o.adaptation = { reading_level: "Reads Arabic well", discovery_mode: "root" };
+    return o;
+  }],
   ["16. (c) child meaning uses the parent text of the card", "[c]", (o) => {
     const m = o.words[0].meanings[0];
     m.text = ctx.kb.entries.find((c) => c.id === m.card_id).meaning_en; // exists in the card, but is not the child sentence

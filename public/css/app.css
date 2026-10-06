@@ -260,4 +260,5 @@ fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
 
 /* Noor Al-Bayan words are not Quran text: Cairo, not Amiri */
 .big-word.noor-word { font-family: var(--font-ar); font-weight: 600; }
+.big-word.ayah-line { font-size: 2.2rem; line-height: 2; }
 .small-btn { padding: 8px 12px; font-size: .85rem; justify-self: center; }

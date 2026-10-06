@@ -21,6 +21,7 @@ const MODE_FOR_LEVEL = {
   "Knows some letters": "letter",
   "Knows most letters": "root",
   "Reads short words": "reading",
+  "Reads Arabic well": "reading",
 };
 const ARABIC_RE = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/;
 

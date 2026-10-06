@@ -109,6 +109,7 @@
           <option>Knows some letters</option>
           <option>Knows most letters</option>
           <option>Reads short words</option>
+          <option>Reads Arabic well</option>
         </select>
         <span class="hint">Your best guess is fine. The letter games will help check it.</span>
       </div>
@@ -236,7 +237,7 @@
     const d = store.get(KEYS.diagnosis);
     if (d) {
       $("diag-result").hidden = false;
-      const LABELS = { sound: "letter sounds", shape: "letter shapes", fatha: "short words", fatiha: "Al-Fatiha words" };
+      const LABELS = { sound: "letter sounds", shape: "letter shapes", fatha: "short words", fatiha: "Al-Fatiha words", ayah: "ayah 1:1 in full" };
       const parts = d.stages
         ? Object.entries(d.stages).map(([k, s]) => `${LABELS[k]} ${s.score}/${s.total}${s.passed ? " ✓" : ""}`)
         : [];

@@ -47,6 +47,7 @@ const READING_LEVELS = [
   "Knows some letters",
   "Knows most letters",
   "Reads short words",
+  "Reads Arabic well",
 ];
 
 function validateChildProfile(p, trial) {

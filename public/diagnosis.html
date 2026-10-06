@@ -40,11 +40,12 @@
 </main>
 
 <script src="js/common.js"></script>
+<script src="js/levels.js"></script>
 <script>
   renderTopbar("diagnosis.html");
   const $ = (id) => document.getElementById(id);
 
-  // ---- Four stages, each opens only if the one before was passed (fixed rules, no model) ----
+  // ---- Five stages, each opens only if the one before was passed (fixed rules, no model) ----
   // Stage 1: the parent says a letter sound, the child picks it. Letters of the Basmala;
   //          the other options are letters of Al-Fatiha (mostly Noor Al-Bayan's similar-letter pairs).
   //          ن and ي are reserves, used when the grown-up skips a letter (at most twice).
@@ -70,18 +71,14 @@
   // Stage 3: three fatha words from Noor Al-Bayan, chosen by the server (GET /api/noor).
   // Stage 4: words from the verified Al-Fatiha file, by reference [ayah, word number].
   const READ_REFS = [[1, 1], [1, 2], [2, 3], [4, 2]];
+  // Stage 5 (only after stage 4): the child reads ayah 1:1 in full to the grown-up, from the verified file.
   const PASS = { sound: 4, shape: 3, fatha: 2, fatiha: 2 }; // out of 6, 4, 3, 4
 
-  // ---- Level from the stages (READING_LEVELS on the server) ----
-  function levelFrom(st) {
-    if (!st.sound.passed) return "Does not know the letters yet";
-    if (!st.shape.passed) return "Knows some letters";
-    if (!st.fatha.passed) return "Knows most letters";
-    return "Reads short words";
-  }
+  // ---- Level from the stages: levelFrom() in js/levels.js (READING_LEVELS on the server) ----
 
   let noor = null;
   let fatihaWords = [];
+  let firstAyah = "";
 
   function dots(total, done) {
     $("dots").innerHTML = Array.from({ length: total }, (_, i) => `<span class="${i < done ? "done" : ""}"></span>`).join("");
@@ -113,7 +110,7 @@
     });
   }
 
-  // Grown-up confirms a reading (stages 3 and 4).
+  // Grown-up confirms a reading (stages 3, 4 and 5).
   function readRounds(words, label, title, prompt, wordClass) {
     showGame(label, title);
     return new Promise((resolve) => {
@@ -185,12 +182,18 @@
     return { score, total: fatihaWords.length, passed: score >= PASS.fatiha };
   }
 
+  async function stageAyah() {
+    const score = await readRounds([firstAyah], "Stage 5", "Read a whole ayah", "Read this ayah out loud to your grown-up, from the start to the end.", "big-word quran ayah-line");
+    return { score, total: 1, passed: score === 1 };
+  }
+
   async function loadContent() {
     const [n, q] = await Promise.all([
       fetch("/api/noor").then((r) => { if (!r.ok) throw 0; return r.json(); }),
       fetch("/api/quran").then((r) => { if (!r.ok) throw 0; return r.json(); }),
     ]);
     noor = n;
+    firstAyah = q.ayahs.find((a) => a.ayah === 1).text_ar;
     fatihaWords = READ_REFS.map(([ayah, word]) => ({
       ref: `1:${ayah}`,
       text: q.ayahs.find((a) => a.ayah === ayah).text_ar.split(/\s+/)[word - 1],
@@ -211,9 +214,9 @@
     if (stages.sound.passed) stages.shape = await stageShape();
     if (stages.shape && stages.shape.passed) stages.fatha = await stageFatha();
     if (stages.fatha && stages.fatha.passed) stages.fatiha = await stageFatiha();
+    if (stages.fatiha && stages.fatiha.passed) stages.ayah = await stageAyah();
 
-    const filled = { sound: stages.sound, shape: stages.shape || { passed: false }, fatha: stages.fatha || { passed: false } };
-    const level = levelFrom(filled);
+    const level = levelFrom(stages);
     store.set(KEYS.diagnosis, {
       stages,
       stages_run: Object.keys(stages),

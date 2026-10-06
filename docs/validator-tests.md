@@ -25,6 +25,8 @@ Each test takes the sample episode (`data/episodes/sample-episode-01.json`), bre
 | 12 | (b) child screens use child cards only | Teacher/parent-only card kb-020 (approved for this test) put in a word meaning | Rejected: `[b] card kb-020 is not for children` |
 | 14 | (adapt) discovery mode matches the reading level | `discovery_mode` set to `letter` for a child at "Knows most letters" | Rejected: `[adapt] discovery_mode is "letter", expected "root"` |
 | 14b | (adapt) letter mode compares one letter only | Child at "Knows some letters", an option names ر ح م | Rejected: `[adapt] 3 Arabic letters in letter mode (at most 1)` |
+| 14c | (adapt) fifth level uses reading mode | Child at "Reads Arabic well", `discovery_mode` = `reading` | Accepted |
+| 14d | (adapt) fifth level with another mode | Child at "Reads Arabic well", `discovery_mode` = `root` | Rejected: `[adapt] discovery_mode is "root", expected "reading" for "Reads Arabic well"` |
 | 16 | (c) a child meaning is the child sentence | A word meaning uses the card's parent text (`meaning_en`) | Rejected: `[c] a meaning for the child must be card kb-030's meaning_en_child, word for word` |
 | 16b | (c) the child's positions decide, not the model's audience label | A word meaning labelled `parent` by the model, with the parent text | Rejected: `[c]` — word meanings and the revealed answer card are always shown to the child, so they must be the child sentence |
 | 17 | (options) the three options are different | Option 2 is option 1 in capitals with a space | Rejected: `[options] two options are the same text` |
@@ -37,7 +39,7 @@ Each test takes the sample episode (`data/episodes/sample-episode-01.json`), bre
 
 ## Last run
 
-2026-10-06: all 24 cases (0–12, 14, 14b, 16, 16b, 17, 18, 18b, 18c, 19, 19b, 19c) behaved as expected. The sample fixture got the `adaptation` field (Knows most letters → root) by hand when the field was added to the schema.
+2026-10-06: all 26 cases (0–12, 14, 14b, 14c, 14d, 16, 16b, 17, 18, 18b, 18c, 19, 19b, 19c) behaved as expected. The sample fixture got the `adaptation` field (Knows most letters → root) by hand when the field was added to the schema.
 
 ## Not covered by the validator (human review)
 
@@ -87,6 +89,7 @@ Last run: 2026-10-06, all cases behaved as expected.
 | Script | What it checks | Cases |
 |---|---|---|
 | `tests/word-tests.js` | Meaning card ↔ ayah word (case 18): kb-030 on Ar-Rahman / Ar-Raheem in 1:1 and 1:3, a wrong word, an ayah outside the card, a range ayah, the Uthmani small alif | M1–M8 |
+| `tests/levels-tests.js` | Reading level from the letter games, including stage 5 (ayah 1:1 read in full → "Reads Arabic well") | L1–L7 |
 | `tests/ask-tests.js` | "Ask a question": only approved cards for the child (with a child sentence) can answer; a parent/teacher-only card is never offered or shown; the answer is the child sentence word for word | A1–A5 |
 | `tests/trial-tests.js` | Trial sessions: erased on "End session", and a generation that finishes later saves nothing and logs no referral; the session id (made in the browser before any generation) erases everything from the session even if the episode id never reached the browser | T1–T10 |
 | `tests/client-tests.js` | Episode page: a shown episode is checked every 30 seconds; a withdrawn one is reported once and the checks stop; a dropped request is retried | W1–W4 |
