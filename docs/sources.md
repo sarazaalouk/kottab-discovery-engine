@@ -10,7 +10,7 @@ The sources below follow the challenge's official reference pack, **"المرج�
 | Current source | quran.com — Uthmani text, Hafs |
 | Verified | Checked letter by letter against a printed Mushaf by Sara Zaalouk on 2026-10-04 |
 | Reference-pack source | مصحف المدينة النبوية، مجمع الملك فهد لطباعة المصحف الشريف، رواية حفص (النص الرقمي للمطورين) |
-| Status of the match | **Pending.** On 2026-10-05 the King Fahd Complex developer site (qurancomplex.gov.sa/quran-dev) could not be reached, so the source was left unchanged. Recorded in `kfgqpc_match` inside the file. |
+| Status of the match | **Matched manually** on 2026-10-06 by Sara Zaalouk, word by word and mark by mark, against the printed Madinah Mushaf (King Fahd Complex). Letters, marks and the seven ayah breaks match; the only difference is how the sukun is drawn (the Mushaf's open form vs the standard round sign U+0652), a difference of script, not of text. The developer site (qurancomplex.gov.sa/quran-dev) could not be reached on 2026-10-05. Recorded in `kfgqpc_match` inside the file. |
 
 ## 2. Al-Tafsir Al-Muyassar — first source for word definitions
 
@@ -46,7 +46,8 @@ The original import file `data/kb_cards_import.md` is kept unchanged as the reco
 |---|---|
 | Platform | الدرر السنية — dorar.net/hadith |
 | Fields | `hadith_grade`, `grade_source_url`, `hadith_ref` on every card that quotes a hadith |
-| Filled in by | Sara Zaalouk (empty until then; the reviewer page shows "لم يُعبَّأ بعد") |
+| Filled in | 2026-10-06, from dorar.net/hadith, at Sara Zaalouk's request |
+| How (التخريج) | For each card, a distinctive phrase of the hadith was searched on Dorar's hadith encyclopedia. The result chosen is the one in the collection the card names (e.g. Sahih Muslim for kb-001); when the card names Abu Dawud or the Musnad, the grading shown for that collection's hadith number was used (al-Albani on Abu Dawud, Shu'ayb al-Arna'ut on the Musnad). `hadith_grade` is the "خلاصة حكم المحدث" copied as written, with the grading scholar in brackets; `hadith_ref` is the collection and number; `grade_source_url` is the result's permanent Dorar link. No grade was written from memory. When the hadith was not found, or the gradings disagreed and the card does not say which collection it means, `hadith_grade` is `not_found` and the link is empty (kb-029, kb-043, kb-062), for Sara to decide. |
 | Cards | kb-001, kb-002, kb-004, kb-005, kb-006, kb-009, kb-010, kb-026, kb-029, kb-033, kb-038, kb-041, kb-042, kb-043, kb-051, kb-056, kb-062, kb-063, kb-068 |
 
 ## 5. English terminology
