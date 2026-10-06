@@ -39,7 +39,7 @@
 3. **Save Changes**. Render هيعيد التشغيل تلقائيًا.
 4. للتأكد: `https://kottab-discovery-engine.onrender.com/health` لازم يرجّع `"reviewerPinConfigured":true`.
 
-لو `REVIEWER_PIN` مش موجود، صفحة المراجع بتفضل مفتوحة (ده مقصود للتشغيل المحلي بس)، والسيرفر بيكتب تنبيه بكده في الـ Logs.
+لو `REVIEWER_PIN` مش موجود، صفحة المراجع وكل `/api/review/*` بترد 503 ("غير متاحة") ومش بتتفتح أبدًا، حتى في التشغيل المحلي. للتشغيل المحلي ضيفي سطر `REVIEWER_PIN=...` في ملف `.env` بتاعك (اللي مش بيترفع على GitHub).
 
 ## للجنة التحكيم
 

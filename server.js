@@ -546,5 +546,5 @@ app.post("/api/review/episodes/:id/decision", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Kottab Discovery Engine running on http://localhost:${PORT}`);
-  if (!pinConfigured()) console.log("REVIEWER_PIN is not set: the reviewer API is open (fine locally, set it on Render).");
+  if (!pinConfigured()) console.log("REVIEWER_PIN is not set: the reviewer page and /api/review/* answer 503 until it is set.");
 });

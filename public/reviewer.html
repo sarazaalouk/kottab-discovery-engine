@@ -119,6 +119,13 @@
       ]);
     } catch (e) {
       if (e && (e.status === 401 || e.status === 429)) return askForPin(e.status === 429 ? "محاولات خاطئة كثيرة. حاول بعد قليل." : "");
+      if (e && e.status === 503) {
+        $("locked").hidden = true;
+        $("app").hidden = false;
+        $("load-error").textContent = "صفحة المراجع غير متاحة: لم يُضبط رقم PIN للمراجع (REVIEWER_PIN) على السيرفر.";
+        $("load-error").hidden = false;
+        return;
+      }
       $("load-error").hidden = false;
       return;
     }
