@@ -134,6 +134,8 @@
     <div class="stack">
       <a class="btn block" href="diagnosis.html">Start the letter games</a>
       <a class="btn secondary block" href="episode.html">Go to the episode</a>
+      <button class="btn secondary block" type="button" id="skip-games" hidden>Skip the games — go to the episode</button>
+      <p class="hint" id="skip-hint" hidden>Uses the reading level you chose. The letter games stay open from the top bar.</p>
     </div>
   </section>
 
@@ -145,6 +147,7 @@
 </main>
 
 <script src="js/common.js"></script>
+<script src="js/levels.js"></script>
 <script>
   renderTopbar("index.html");
 
@@ -234,6 +237,10 @@
     $("saved-line").textContent = p.trial
       ? `Trial session for ${p.name}, age ${p.age_label}. Start with the letter games: the episode uses their result. We do not write trial data to disk; it is held briefly in server memory and erased when the session ends.`
       : `Saved on this device for ${p.name}, age ${p.age}.`;
+    // Skip button: only when the parent chose "Reads short words" or "Reads Arabic well" (not in a trial).
+    const canSkip = Boolean(parentDiagnosis(p));
+    $("skip-games").hidden = !canSkip;
+    $("skip-hint").hidden = !canSkip;
     const d = store.get(KEYS.diagnosis);
     if (d) {
       $("diag-result").hidden = false;
@@ -241,7 +248,7 @@
       const parts = d.stages
         ? Object.entries(d.stages).map(([k, s]) => `${LABELS[k]} ${s.score}/${s.total}${s.passed ? " ✓" : ""}`)
         : [];
-      $("diag-text").textContent = `${d.level_label}.${parts.length ? " " + parts.join(", ") + "." : ""}${d.reads_fatiha_words ? " Reads words from Al-Fatiha." : ""}`;
+      $("diag-text").textContent = `${d.level_label}${d.diagnosis_source === "parent" ? " (your choice; the games were skipped)" : ""}.${parts.length ? " " + parts.join(", ") + "." : ""}${d.reads_fatiha_words ? " Reads words from Al-Fatiha." : ""}`;
     }
   }
 
@@ -290,6 +297,14 @@
     }
     showNext(p);
     $("next").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  $("skip-games").addEventListener("click", () => {
+    const d = parentDiagnosis(store.get(KEYS.profile));
+    if (!d) return;
+    store.set(KEYS.diagnosis, d);
+    store.remove(KEYS.episodeId);
+    location.href = "episode.html";
   });
 
   if (new URLSearchParams(location.search).has("ended")) $("ended").hidden = false;

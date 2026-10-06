@@ -13,6 +13,22 @@
     return "Reads short words";
   }
 
-  if (typeof module !== "undefined" && module.exports) module.exports = { levelFrom };
-  else root.levelFrom = levelFrom;
+  // Parents of children who already read can skip the games: the level is the parent's own choice
+  // (diagnosis_source "parent"). Only for the two reading levels, and never in a trial session,
+  // where the level must come from the games. Returns null when skipping is not offered.
+  const SKIP_LEVELS = ["Reads short words", "Reads Arabic well"];
+  function parentDiagnosis(profile, at = new Date().toISOString()) {
+    if (!profile || profile.trial || !SKIP_LEVELS.includes(profile.parent_reading_level)) return null;
+    return {
+      reading_level: profile.parent_reading_level,
+      level_label: profile.parent_reading_level,
+      diagnosis_source: "parent",
+      // Reading a whole ayah includes reading its words.
+      reads_fatiha_words: profile.parent_reading_level === "Reads Arabic well",
+      done_at: at,
+    };
+  }
+
+  if (typeof module !== "undefined" && module.exports) module.exports = { levelFrom, parentDiagnosis };
+  else Object.assign(root, { levelFrom, parentDiagnosis });
 })(typeof window !== "undefined" ? window : globalThis);

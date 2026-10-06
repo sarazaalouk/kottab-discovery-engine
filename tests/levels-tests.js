@@ -1,5 +1,5 @@
 // Reading level from the letter games, including stage 5 (reading ayah 1:1 in full). Run: npm test
-const { levelFrom } = require("../public/js/levels");
+const { levelFrom, parentDiagnosis } = require("../public/js/levels");
 
 let failed = 0;
 const check = (name, actual, expected) => {
@@ -16,6 +16,14 @@ check("L4. stage 3 passed, stage 4 failed (no stage 5)", levelFrom({ sound: p(tr
 check("L5. stage 4 passed, stage 5 failed", levelFrom({ sound: p(true), shape: p(true), fatha: p(true), fatiha: p(true), ayah: p(false) }), "Reads short words");
 check("L6. stage 5 passed", levelFrom({ sound: p(true), shape: p(true), fatha: p(true), fatiha: p(true), ayah: p(true) }), "Reads Arabic well");
 check("L7. stage 5 cannot count without stage 4", levelFrom({ sound: p(true), shape: p(true), fatha: p(true), ayah: p(true) }), "Reads short words");
+
+// L8–L11: "Skip the games" (parent page)
+const parent = (level, extra = {}) => ({ name: "Adam", parent_reading_level: level, ...extra });
+const d = parentDiagnosis(parent("Reads Arabic well"), "2026-10-06T00:00:00Z");
+check("L8. skip offered for Reads Arabic well; the level is the parent's choice", d && `${d.reading_level}|${d.diagnosis_source}|${d.reads_fatiha_words}`, "Reads Arabic well|parent|true");
+check("L9. skip offered for Reads short words", parentDiagnosis(parent("Reads short words")).reading_level, "Reads short words");
+check("L10. skip not offered for the letter levels", ["Does not know the letters yet", "Knows some letters", "Knows most letters"].map((l) => parentDiagnosis(parent(l))).every((x) => x === null), true);
+check("L11. skip never offered in a trial session", parentDiagnosis(parent("Reads Arabic well", { trial: true })), null);
 
 console.log(failed ? `\n${failed} level case(s) failed` : "\nall level cases behaved as expected");
 process.exit(failed ? 1 : 0);
