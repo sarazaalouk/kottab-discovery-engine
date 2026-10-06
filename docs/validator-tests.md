@@ -93,7 +93,7 @@ Last run: 2026-10-06, all cases behaved as expected.
 | `tests/checks-tests.js` | "Before you move on": the teacher's questions file is refused if a card is missing or not approved, or a question has no source; 2 of 3 passes; the closing screen shows only after passing | C1–C9 |
 | `tests/sukun-tests.js` | Quran display: U+0652 shown as U+06E1 (Madinah Mushaf sukun) in `.quran` elements only; the verified file is unchanged | K1–K4 |
 | `tests/why-tests.js` | "Why this journey": approved cards kb-002, kb-003, kb-001 only, in that order, texts and sources as in the knowledge base | V1–V3 |
-| `tests/pages-tests.js` | Page structure: "Why this journey" on the parent page is after the parent gate and filled only once the gate is passed | G1–G2 |
+| `tests/pages-tests.js` | Page structure: "Why this journey" on the parent page is after the parent gate and filled only once the gate is passed; no next root or next episode is promised by name in the product or the docs | G1–G3 |
 | `tests/ask-tests.js` | "Ask a question": only approved cards for the child (with a child sentence) can answer; a parent/teacher-only card is never offered or shown; the answer is the child sentence word for word | A1–A5 |
 | `tests/trial-tests.js` | Trial sessions: erased on "End session", and a generation that finishes later saves nothing and logs no referral; the session id (made in the browser before any generation) erases everything from the session even if the episode id never reached the browser | T1–T10 |
 | `tests/replies-tests.js` | Teacher replies to referrals: English only (single Arabic letters allowed), stored on the referral in `referrals.jsonl` or in trial memory (erased with the session), shown only on their own episode | Y1–Y8 |

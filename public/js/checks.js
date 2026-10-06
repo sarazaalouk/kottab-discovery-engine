@@ -14,7 +14,7 @@
     return {
       heading: "What you discovered today",
       title: titleEn,
-      next: "Next episode: root س-ل-م — opens when your teacher approves its cards",
+      next: "Your next discovery is coming after teacher review.",
       again: "Play the discovery question again",
     };
   }

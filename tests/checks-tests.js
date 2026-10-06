@@ -42,9 +42,9 @@ check("C7. 1 of 3 right does not pass", scoreChecks(qs, [0, 2, 1], 2).passed ===
 // C8–C9: closing screen, only after passing
 check("C8. no closing screen before the questions are passed", closingScreen("Two Names", false) === null);
 const c = closingScreen("Two Names", true);
-check("C9. after passing: today's title, the next root, and the question again (no badges)",
+check("C9. after passing: today's title, the next-discovery line, and the question again (no badges)",
   c.heading === "What you discovered today" && c.title === "Two Names" &&
-  c.next === "Next episode: root س-ل-م — opens when your teacher approves its cards" &&
+  c.next === "Your next discovery is coming after teacher review." &&
   c.again === "Play the discovery question again" && Object.keys(c).length === 4);
 
 console.log(failed ? `\n${failed} check case(s) failed` : "\nall check cases behaved as expected");

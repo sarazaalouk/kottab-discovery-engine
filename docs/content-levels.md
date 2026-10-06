@@ -29,7 +29,7 @@ These parts are written by people or copied from the sources, and the model neve
 | "Why this journey" | Parent page after the parent gate (kb-002, kb-003, kb-001) and the top of the report (kb-002, its short sentence) | ب | Approved cards only, texts as in the knowledge base (`GET /api/cards/why`) |
 | Child line before the games | Letter games page | — | Fixed sentence: "Every day you say Al-Fatiha in Salah. Let's find out what you are saying." |
 | "Before you move on" | End of episode 1 | أ and ب | Three questions written by the teacher (`data/episode_checks.json`), each tied to an approved card (kb-030, kb-034) or to the verified Quran file. The server refuses to start if a card is not approved. 2 of 3 passes; no points, badges or timer |
-| Closing screen | After passing "Before you move on" | — | Fixed text: "What you discovered today" with the episode title, "Next episode: root س-ل-م — opens when your teacher approves its cards", and "Play the discovery question again" |
+| Closing screen | After passing "Before you move on" | — | Fixed text: "What you discovered today" with the episode title, "Your next discovery is coming after teacher review.", and "Play the discovery question again" |
 | Teacher replies | Under the question box | — | The teacher's own English text |
 
 ## Reading levels

@@ -111,7 +111,7 @@
 
 ## محتوى ثابت بلا نموذج
 - **Before you move on** (نهاية الحلقة 1): ثلاثة أسئلة من تأليف المعلمة في `data/episode_checks.json`، كل سؤال مربوط ببطاقة معتمدة (`card_id`) أو بملف القرآن المعتمد (`source`)، ويُقدَّم من `GET /api/checks/:episode`. السيرفر يرفض التشغيل لو بطاقة غير معتمدة. النجاح 2 من 3 يحفظ `episode_1_passed`؛ بلا أوسمة ولا نقاط ولا مؤقت.
-- **شاشة الختام** بعد النجاح: "What you discovered today" مع عنوان الحلقة، و"Next episode: root س-ل-م — opens when your teacher approves its cards"، وزر "Play the discovery question again".
+- **شاشة الختام** بعد النجاح: "What you discovered today" مع عنوان الحلقة، و"Your next discovery is coming after teacher review."، وزر "Play the discovery question again".
 - **Why this journey**: في صفحة الأهل بعد سؤال الأهل بطاقات kb-002 ثم kb-003 ثم kb-001 بمصادرها، وأعلى التقرير kb-002 مختصرة (جملتها القصيرة)، من `GET /api/cards/why` (المعتمد فقط).
 - **السكون في العرض**: داخل عناصر `.quran` فقط يُعرض U+0652 كـ U+06E1 (سكون مصحف المدينة) في المتصفح (`public/js/sukun.js`). ملف القرآن المعتمد لا يتغير.
 
