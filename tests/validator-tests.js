@@ -60,6 +60,21 @@ const cases = [
     o.words[0].word_index = 1; // بِسْمِ — kb-030 is about Ar-Rahman / Ar-Raheem
     return o;
   }],
+  ["18b. (word) kb-030 on Ar-Rahman in 1:1 and in 1:3 is accepted", null, (o) => {
+    // kb-030 (الرحمن الرحيم, ayah [1, 3]) on ٱلرَّحْمَـٰنِ / ٱلرَّحِيمِ in both ayahs
+    o.words = [
+      { ayah_ref: "1:1", word_index: 3, meanings: [o.words[0].meanings[0]] },
+      { ayah_ref: "1:1", word_index: 4, meanings: [o.words[0].meanings[0]] },
+      { ayah_ref: "1:3", word_index: 1, meanings: [o.words[0].meanings[0]] },
+      { ayah_ref: "1:3", word_index: 2, meanings: [o.words[0].meanings[0]] },
+    ];
+    return o;
+  }],
+  ["18c. (word) kb-030 on a word of another ayah (1:2, الحمد)", "[word]", (o) => {
+    o.words[0].ayah_ref = "1:2";
+    o.words[0].word_index = 1;
+    return o;
+  }],
   ["19. (define) free text defines a word", "[define]", (o) => {
     o.discovery_moment.text_en += " The word Ar-Rahman is about mercy for everyone.";
     return o;

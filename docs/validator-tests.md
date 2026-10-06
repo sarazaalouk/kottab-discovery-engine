@@ -28,14 +28,16 @@ Each test takes the sample episode (`data/episodes/sample-episode-01.json`), bre
 | 16 | (c) a child meaning is the child sentence | A word meaning uses the card's parent text (`meaning_en`) | Rejected: `[c] a meaning for the child must be card kb-030's meaning_en_child, word for word` |
 | 16b | (c) the child's positions decide, not the model's audience label | A word meaning labelled `parent` by the model, with the parent text | Rejected: `[c]` — word meanings and the revealed answer card are always shown to the child, so they must be the child sentence |
 | 17 | (options) the three options are different | Option 2 is option 1 in capitals with a space | Rejected: `[options] two options are the same text` |
-| 18 | (word) a meaning card is about the word it is attached to | kb-030 (الرحمن الرحيم) attached to 1:1 word 1 (بِسْمِ) | Rejected: `[word] meaning card kb-030 is not about 1:1 word 1`. Context cards are exempt; the comparison ignores marks, ال, a joined ل/ب/و and alif (the Uthmani small alif) |
+| 18 | (word) a meaning card is about the word it is attached to | kb-030 (الرحمن الرحيم) attached to 1:1 word 1 (بِسْمِ) | Rejected: `[word]`. Rule: the word at ayah_ref/word_index must be one of the card's words (word_ar split into words) and the ayah must be one of the card's ayahs (a number, a list like [1, 3], or a range like "2-7"). Both sides in one normal form: marks removed, hamzat al-wasl and hamza seats as alif, ة as ه, ال removed, and alif removed (the Uthmani small alif). Context cards are exempt. Unit cases M1–M8 in `tests/word-tests.js` |
+| 18b | (word) positive: kb-030 on Ar-Rahman and Ar-Raheem in 1:1 and in 1:3 | Four words, all with kb-030 | Passes |
+| 18c | (word) negative: kb-030 on a word of an ayah it does not cover | kb-030 on 1:2 word 1 (الحمد) | Rejected: `[word]` |
 | 19 | (define) free text does not define words | "The word Ar-Rahman is about mercy…" added to the discovery moment | Rejected: `[define] free text uses a definition phrase` |
 | 19b | (define) same rule for the memory picture | "…because Ar-Rahman means mercy" | Rejected: `[define]` |
 | 19c | (define) same rule for the three options | "Ar-Rahman means the Most Merciful" as an option | Rejected: `[define]` |
 
 ## Last run
 
-2026-10-06: all 22 cases (0–12, 14, 14b, 16, 16b, 17–19, 19b, 19c) behaved as expected. The sample fixture got the `adaptation` field (Knows most letters → root) by hand when the field was added to the schema.
+2026-10-06: all 24 cases (0–12, 14, 14b, 16, 16b, 17, 18, 18b, 18c, 19, 19b, 19c) behaved as expected. The sample fixture got the `adaptation` field (Knows most letters → root) by hand when the field was added to the schema.
 
 ## Not covered by the validator (human review)
 
@@ -80,6 +82,7 @@ Last run: 2026-10-06, all cases behaved as expected.
 
 | Script | What it checks | Cases |
 |---|---|---|
+| `tests/word-tests.js` | Meaning card ↔ ayah word (case 18): kb-030 on Ar-Rahman / Ar-Raheem in 1:1 and 1:3, a wrong word, an ayah outside the card, a range ayah, the Uthmani small alif | M1–M8 |
 | `tests/ask-tests.js` | "Ask a question": only approved cards for the child (with a child sentence) can answer; a parent/teacher-only card is never offered or shown; the answer is the child sentence word for word | A1–A5 |
 | `tests/trial-tests.js` | Trial sessions: erased on "End session", and a generation that finishes later saves nothing and logs no referral | T1–T6 |
 | `tests/client-tests.js` | Episode page: a shown episode is checked every 30 seconds; a withdrawn one is reported once and the checks stop; a dropped request is retried | W1–W4 |

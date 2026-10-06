@@ -96,21 +96,34 @@ function walkStrings(value, path, fn) {
   if (value && typeof value === "object") Object.entries(value).forEach(([k, v]) => walkStrings(v, `${path}.${k}`, fn));
 }
 
-// Word comparison for meaning cards: marks removed, ة as ه, and the article ال removed
-// (also after a joined ل/ب/و, e.g. لِلَّهِ). A card about several words matches any of them.
-function bareWord(w) {
-  let s = normalizeArabic(w).replace(/ة/g, "ه").replace(/[^ء-ي]/g, "");
-  s = s.replace(/^[وب]?ال/, "").replace(/^لل/, "ل");
-  return s;
+// Meaning cards and the word they are attached to (case 18).
+// One normal form for both sides: vowel marks removed, hamzat al-wasl (ٱ) and hamza seats as plain alif
+// (normalizeArabic), ة as ه, letters only, the article ال removed, and alif removed — the Uthmani script
+// writes some long a's as a small alif (ٱلْعَـٰلَمِينَ, مَـٰلِكِ) that the marks step takes away.
+function wordForm(w) {
+  return normalizeArabic(w)
+    .replace(/ة/g, "ه")
+    .replace(/[^ء-ي]/g, "")
+    .replace(/^ال/, "")
+    .replace(/ا/g, "");
 }
-function cardMatchesWord(cardWord, ayahWord) {
-  const target = bareWord(ayahWord);
-  // The Uthmani script writes some long a's as a small alif (ٱلْعَـٰلَمِينَ, مَـٰلِكِ), so alif is ignored too.
-  const variants = (t) => [t, t.replace(/^[لبو]/, "")].flatMap((v) => [v, v.replace(/ا/g, "")]);
-  return String(cardWord)
-    .split(/[\s/]+/)
-    .filter(Boolean)
-    .some((t) => variants(bareWord(t)).some((v) => v && variants(target).includes(v)));
+
+// The words a card may be attached to: every word of its word_ar, in normal form.
+function allowedWords(card) {
+  return new Set(String(card.word_ar).split(/[\s/]+/).filter(Boolean).map(wordForm).filter(Boolean));
+}
+
+// The card's ayah may be a number, a list ([1, 3]) or a range ("2-7").
+function ayahAllowed(cardAyah, ayahNumber) {
+  if (Array.isArray(cardAyah)) return cardAyah.includes(ayahNumber);
+  if (typeof cardAyah === "number") return cardAyah === ayahNumber;
+  const range = /^(\d+)\s*-\s*(\d+)$/.exec(String(cardAyah));
+  return range ? ayahNumber >= Number(range[1]) && ayahNumber <= Number(range[2]) : false;
+}
+
+// Accepted when the word at ayah_ref/word_index is one of the card's words and the ayah is the card's.
+function cardAllowsWord(card, ayahNumber, ayahWord) {
+  return ayahAllowed(card.ayah, ayahNumber) && allowedWords(card).has(wordForm(ayahWord));
 }
 
 function hasRootLetters(word, rootLetters) {
@@ -206,8 +219,8 @@ function validateEpisode(rawText, ctx) {
       for (const m of w.meanings) {
         const card = cardsById.get(m.card_id);
         if (!card || card.type !== "meaning") continue;
-        if (!cardMatchesWord(card.word_ar, word)) {
-          fail("word", `words[${i}]: meaning card ${m.card_id} (${card.word_ar}) is not about ${w.ayah_ref} word ${w.word_index}`);
+        if (!cardAllowsWord(card, ayah.ayah, word)) {
+          fail("word", `words[${i}]: meaning card ${m.card_id} (${card.word_ar}, ayah ${JSON.stringify(card.ayah)}) is not about ${w.ayah_ref} word ${w.word_index}`);
         }
       }
     }
@@ -273,4 +286,4 @@ function validateEpisode(rawText, ctx) {
   return { passed: errors.length === 0, errors, warnings, output: out };
 }
 
-module.exports = { validateEpisode, normalizeArabic, MEMORY_LABEL, MODE_FOR_LEVEL };
+module.exports = { validateEpisode, normalizeArabic, MEMORY_LABEL, MODE_FOR_LEVEL, cardAllowsWord };
