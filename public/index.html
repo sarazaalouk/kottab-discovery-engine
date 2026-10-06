@@ -116,7 +116,7 @@
           <option>Knows some letters</option>
           <option>Knows most letters</option>
           <option>Reads short words</option>
-          <option>Reads Arabic well</option>
+          <option value="Reads Arabic well">Read ayah 1:1 aloud (confirmed by a grown-up)</option>
         </select>
         <span class="hint">Your best guess is fine. The letter games will help check it.</span>
       </div>
@@ -259,7 +259,7 @@
     $("saved-line").textContent = p.trial
       ? `Trial session for ${p.name}, age ${p.age_label}. Start with the letter games: the episode uses their result. We do not write trial data to disk; it is held briefly in server memory and erased when the session ends.`
       : `Saved on this device for ${p.name}, age ${p.age}.`;
-    // Skip button: only when the parent chose "Reads short words" or "Reads Arabic well" (not in a trial).
+    // Skip button: only when the parent chose "Reads short words" or "Reads Arabic well" (shown as "Read ayah 1:1 aloud (confirmed by a grown-up)"), not in a trial.
     const canSkip = Boolean(parentDiagnosis(p));
     $("skip-games").hidden = !canSkip;
     $("skip-hint").hidden = !canSkip;
@@ -270,7 +270,7 @@
       const parts = d.stages
         ? Object.entries(d.stages).map(([k, s]) => `${LABELS[k]} ${s.score}/${s.total}${s.passed ? " ✓" : ""}`)
         : [];
-      $("diag-text").textContent = `${d.level_label}${d.diagnosis_source === "parent" ? " (your choice; the games were skipped)" : ""}.${parts.length ? " " + parts.join(", ") + "." : ""}${d.reads_fatiha_words ? " Reads words from Al-Fatiha." : ""}`;
+      $("diag-text").textContent = `${levelLabel(d.reading_level || d.level_label)}${d.diagnosis_source === "parent" ? " (your choice; the games were skipped)" : ""}.${parts.length ? " " + parts.join(", ") + "." : ""}${d.reads_fatiha_words ? " Reads words from Al-Fatiha." : ""}`;
     }
   }
 

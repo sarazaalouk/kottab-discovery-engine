@@ -1,5 +1,5 @@
 // Reading level from the letter games, including stage 5 (reading ayah 1:1 in full). Run: npm test
-const { levelFrom, parentDiagnosis } = require("../public/js/levels");
+const { levelFrom, parentDiagnosis, levelLabel } = require("../public/js/levels");
 
 let failed = 0;
 const check = (name, actual, expected) => {
@@ -23,6 +23,8 @@ const d = parentDiagnosis(parent("Reads Arabic well"), "2026-10-06T00:00:00Z");
 check("L8. skip offered for Reads Arabic well; the level is the parent's choice", d && `${d.reading_level}|${d.diagnosis_source}|${d.reads_fatiha_words}`, "Reads Arabic well|parent|true");
 check("L9. skip offered for Reads short words", parentDiagnosis(parent("Reads short words")).reading_level, "Reads short words");
 check("L10. skip not offered for the letter levels", ["Does not know the letters yet", "Knows some letters", "Knows most letters"].map((l) => parentDiagnosis(parent(l))).every((x) => x === null), true);
+check("L12. Reads Arabic well is shown to parents as reading ayah 1:1 aloud; other levels keep their names",
+  `${levelLabel("Reads Arabic well")}|${levelLabel("Reads short words")}`, "Read ayah 1:1 aloud (confirmed by a grown-up)|Reads short words");
 check("L11. skip never offered in a trial session", parentDiagnosis(parent("Reads Arabic well", { trial: true })), null);
 
 console.log(failed ? `\n${failed} level case(s) failed` : "\nall level cases behaved as expected");

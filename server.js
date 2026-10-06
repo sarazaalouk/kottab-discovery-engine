@@ -14,6 +14,7 @@ const { initialStatus, publishMode, autoReview, teacherApproved, applyDecision }
 const noor = require("./lib/noor");
 const { checkProblems, checksForEpisode } = require("./lib/checks");
 const { whyCards } = require("./lib/why");
+const { levelLabel } = require("./public/js/levels");
 const { referralId, newReferralId, replyProblem, setReplyInLines, repliesForEpisode } = require("./lib/referrals");
 const { askCandidates, askAnswer } = require("./lib/ask");
 const { requireReviewerPin, pinConfigured } = require("./lib/reviewer-pin");
@@ -172,6 +173,8 @@ app.post("/api/generate-episode", generateLimit, async (req, res) => {
       home_language: child.home_language,
       recites: child.recites,
       reading_level: child.reading_level,
+      // What parents read for this level (the model writes the report with it).
+      reading_level_for_parents: levelLabel(child.reading_level),
       reads_fatiha_words: child.reads_fatiha_words === true,
     },
     root,

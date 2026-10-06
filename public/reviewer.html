@@ -52,6 +52,7 @@
 
 <script src="js/common.js"></script>
 <script src="js/sukun.js"></script>
+<script src="js/levels.js"></script>
 <script>
   renderTopbar("reviewer.html");
   const $ = (id) => document.getElementById(id);
@@ -69,7 +70,7 @@
   const MODE_AR = { letter: "حرف واحد مشترك", root: "الجذر الثلاثي", reading: "قراءة الكلمتين" };
   // Reading level and discovery mode at the top of each episode.
   function levelLine(e) {
-    const level = `المستوى: <bdi>${escapeHtml(e.reading_level || "—")}</bdi>`;
+    const level = `المستوى: <bdi>${escapeHtml(e.reading_level ? levelLabel(e.reading_level) : "—")}</bdi>`;
     const mode = e.adaptation ? `وضع الاكتشاف: ${MODE_AR[e.adaptation.discovery_mode] || escapeHtml(e.adaptation.discovery_mode)}` : "وضع الاكتشاف: — (حلقة قبل التكييف)";
     return `${level} · ${mode}`;
   }
@@ -284,7 +285,7 @@
 
       <section class="block">
         <h3>ملف الطفل (اصطناعي)</h3>
-        ${en(`<p class="small">${escapeHtml(kids.name)} · age ${kids.age} · ${escapeHtml(kids.home_language)} · recites: ${escapeHtml(kids.recites)} · reading: ${escapeHtml(kids.reading_level)}</p>`)}
+        ${en(`<p class="small">${escapeHtml(kids.name)} · age ${kids.age} · ${escapeHtml(kids.home_language)} · recites: ${escapeHtml(kids.recites)} · reading: ${escapeHtml(levelLabel(kids.reading_level))}</p>`)}
       </section>
 
       <section class="block">

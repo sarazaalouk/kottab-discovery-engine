@@ -253,6 +253,15 @@ function validateEpisode(rawText, ctx) {
     if (expected && out.adaptation.discovery_mode !== expected) {
       fail("adapt", `discovery_mode is "${out.adaptation.discovery_mode}", expected "${expected}" for "${ctx.readingLevel}"`);
     }
+    // "Reads Arabic well" only means ayah 1:1 was read aloud, confirmed by a grown-up:
+    // the parent report must not claim general reading.
+    if (ctx.readingLevel === "Reads Arabic well") {
+      walkStrings(out.parent_report, "$.parent_report", (s, p) => {
+        if (/\breads? arabic well\b|\bfluent(ly)?\b|\breads? (arabic|the quran) (easily|confidently|fluently)\b/i.test(s)) {
+          fail("adapt", `${p}: claims general reading; this level only means ayah 1:1 was read aloud, confirmed by a grown-up`);
+        }
+      });
+    }
     if (out.adaptation.discovery_mode === "letter") {
       out.discovery_question.options.forEach((o, i) => {
         const n = (normalizeArabic(o.text_en).match(/[ء-ي]/g) || []).length;

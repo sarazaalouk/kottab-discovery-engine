@@ -51,6 +51,12 @@ const cases = [
     o.adaptation = { reading_level: "Reads Arabic well", discovery_mode: "root" };
     return o;
   }],
+  ["14e. (adapt) Reads Arabic well: the parent report claims general reading", "[adapt]", (o) => {
+    ctx.readingLevel = "Reads Arabic well"; // restored below
+    o.adaptation = { reading_level: "Reads Arabic well", discovery_mode: "reading" };
+    o.parent_report.strengths.push("Adam reads Arabic well, so he can read the two ayahs aloud himself.");
+    return o;
+  }],
   ["16. (c) child meaning uses the parent text of the card", "[c]", (o) => {
     const m = o.words[0].meanings[0];
     m.text = ctx.kb.entries.find((c) => c.id === m.card_id).meaning_en; // exists in the card, but is not the child sentence

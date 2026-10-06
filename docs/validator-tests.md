@@ -27,6 +27,7 @@ Each test takes the sample episode (`data/episodes/sample-episode-01.json`), bre
 | 14b | (adapt) letter mode compares one letter only | Child at "Knows some letters", an option names ر ح م | Rejected: `[adapt] 3 Arabic letters in letter mode (at most 1)` |
 | 14c | (adapt) fifth level uses reading mode | Child at "Reads Arabic well", `discovery_mode` = `reading` | Accepted |
 | 14d | (adapt) fifth level with another mode | Child at "Reads Arabic well", `discovery_mode` = `root` | Rejected: `[adapt] discovery_mode is "root", expected "reading" for "Reads Arabic well"` |
+| 14e | (adapt) fifth level: the parent report claims general reading | Child at "Reads Arabic well", a strength says "Adam reads Arabic well" | Rejected: `[adapt] … claims general reading; this level only means ayah 1:1 was read aloud, confirmed by a grown-up` |
 | 16 | (c) a child meaning is the child sentence | A word meaning uses the card's parent text (`meaning_en`) | Rejected: `[c] a meaning for the child must be card kb-030's meaning_en_child, word for word` |
 | 16b | (c) the child's positions decide, not the model's audience label | A word meaning labelled `parent` by the model, with the parent text | Rejected: `[c]` — word meanings and the revealed answer card are always shown to the child, so they must be the child sentence |
 | 17 | (options) the three options are different | Option 2 is option 1 in capitals with a space | Rejected: `[options] two options are the same text` |
@@ -39,7 +40,7 @@ Each test takes the sample episode (`data/episodes/sample-episode-01.json`), bre
 
 ## Last run
 
-2026-10-06: all 26 cases (0–12, 14, 14b, 14c, 14d, 16, 16b, 17, 18, 18b, 18c, 19, 19b, 19c) behaved as expected. The sample fixture got the `adaptation` field (Knows most letters → root) by hand when the field was added to the schema.
+2026-10-06: all 27 cases (0–12, 14, 14b, 14c, 14d, 14e, 16, 16b, 17, 18, 18b, 18c, 19, 19b, 19c) behaved as expected. The sample fixture got the `adaptation` field (Knows most letters → root) by hand when the field was added to the schema.
 
 ## Not covered by the validator (human review)
 
@@ -89,7 +90,7 @@ Last run: 2026-10-06, all cases behaved as expected.
 | Script | What it checks | Cases |
 |---|---|---|
 | `tests/word-tests.js` | Meaning card ↔ ayah word (case 18): kb-030 on Ar-Rahman / Ar-Raheem in 1:1 and 1:3, a wrong word, an ayah outside the card, a range ayah, the Uthmani small alif | M1–M8 |
-| `tests/levels-tests.js` | Reading level from the letter games, including stage 5 (ayah 1:1 read in full → "Reads Arabic well"), and "Skip the games" (parent's choice, reading levels only, never in a trial) | L1–L11 |
+| `tests/levels-tests.js` | Reading level from the letter games, including stage 5 (ayah 1:1 read in full → "Reads Arabic well"), "Skip the games" (parent's choice, reading levels only, never in a trial), and the name parents see for the fifth level | L1–L12 |
 | `tests/checks-tests.js` | "Review with a grown-up": the teacher's questions file is refused if a card is missing or not approved, or a question has no source; 2 of 3 is saved as passed, otherwise retry (nothing is locked, the same next-discovery line either way); the closing screen shows after the review whatever the result | C1–C9 |
 | `tests/sukun-tests.js` | Quran display: U+0652 shown as U+06E1 (Madinah Mushaf sukun) in `.quran` elements only; the verified file is unchanged | K1–K4 |
 | `tests/why-tests.js` | "Why this journey": approved cards kb-002, kb-003, kb-001 only, in that order, texts and sources as in the knowledge base | V1–V3 |

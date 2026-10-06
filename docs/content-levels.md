@@ -42,9 +42,11 @@ The letter games have five stages (fixed rules, no model); each opens only if th
 | Knows some letters | Stage 1 passed, stage 2 not | `letter`: one shared letter |
 | Knows most letters | Stage 2 passed, stage 3 not | `root`: the three root letters after Al- |
 | Reads short words | Stage 3 passed (stage 4 sets `reads_fatiha_words`), stage 5 not | `reading`: the child reads the two words |
-| Reads Arabic well | Stage 5 passed | `reading`: the child reads both ayahs in full, counts the root in the two ayahs together, and is invited to read the whole of Al-Fatiha to the grown-up before Salah |
+| Reads Arabic well (shown as "Read ayah 1:1 aloud (confirmed by a grown-up)") | Stage 5 passed | `reading`: the child reads both ayahs in full, counts the root in the two ayahs together, and is invited to read the whole of Al-Fatiha to the grown-up before Salah |
 
-Parents who choose "Reads short words" or "Reads Arabic well" can press "Skip the games — go to the episode": the level is then the parent's own choice (`diagnosis_source: "parent"`). This is not offered in a trial session, where the level must come from the games. The meanings never change with the level.
+**What the fifth level proves.** "Reads Arabic well" is only the internal value. This level shows that a grown-up confirmed the child read the Bismillah (ayah 1:1) aloud; it does not prove general reading. Parents, the report and the reviewer page therefore show it as "Read ayah 1:1 aloud (confirmed by a grown-up)", the model gets this wording for the parent report, and the validator rejects a parent report that claims general reading (case 14e).
+
+Parents who choose "Reads short words" or "Read ayah 1:1 aloud (confirmed by a grown-up)" can press "Skip the games — go to the episode": the level is then the parent's own choice (`diagnosis_source: "parent"`). This is not offered in a trial session, where the level must come from the games. The meanings never change with the level.
 
 ## Quran display
 

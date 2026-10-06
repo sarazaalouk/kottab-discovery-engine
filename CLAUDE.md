@@ -76,7 +76,7 @@
   3. قراءة كلمة فتح من نور البيان (`GET /api/noor`): أول 3 كلمات في `fatha_words` كل حروفها من حروف البسملة، النجاح 2 من 3.
   4. قراءة كلمة من الفاتحة (الملف المعتمد)، النجاح 2 من 4 → `reads_fatiha_words`.
   5. (بعد نجاح 4 فقط) قراءة الآية 1:1 كاملة للأهل من الملف المعتمد، والأهل يؤكدون.
-  - المستوى: رسب في 1 → Does not know the letters yet؛ نجح 1 ورسب 2 → Knows some letters؛ نجح 2 ورسب 3 → Knows most letters؛ نجح 3 → Reads short words؛ نجح 5 → Reads Arabic well.
+  - المستوى: رسب في 1 → Does not know the letters yet؛ نجح 1 ورسب 2 → Knows some letters؛ نجح 2 ورسب 3 → Knows most letters؛ نجح 3 → Reads short words؛ نجح 5 → Reads Arabic well (قيمة داخلية؛ يظهر للأهل وفي التقرير وصفحة المراجع "Read ayah 1:1 aloud (confirmed by a grown-up)"، لأنه يثبت قراءة البسملة بتأكيد ولي الأمر ولا يثبت قراءة عامة، والفاحص يرفض تقرير أهل يدّعي قراءة عامة — حالة 14e).
   - زر "Skip the games — go to the episode" في صفحة الأهل يظهر فقط لو الأهل اختاروا Reads short words أو Reads Arabic well، ويحفظ المستوى من اختيارهم (`diagnosis_source: "parent"`)، ولا يظهر في وضع التجربة. الألعاب تبقى متاحة من الشريط العلوي.
   - جملة ثابتة للطفل قبل زر Start: "Every day you say Al-Fatiha in Salah. Let's find out what you are saying."
   - كل الحروف المعروضة من حروف الفاتحة، وكل الكلمات من نور البيان أو من ملف القرآن المعتمد.

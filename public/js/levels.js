@@ -29,6 +29,14 @@
     };
   }
 
-  if (typeof module !== "undefined" && module.exports) module.exports = { levelFrom, parentDiagnosis };
-  else Object.assign(root, { levelFrom, parentDiagnosis });
+  // What parents and the reviewer read. The internal value stays the same everywhere else.
+  // "Reads Arabic well" only shows that a grown-up confirmed the child read ayah 1:1 (the Bismillah) aloud,
+  // not general reading, so it is never shown under that name.
+  const LEVEL_LABELS = { "Reads Arabic well": "Read ayah 1:1 aloud (confirmed by a grown-up)" };
+  function levelLabel(level) {
+    return LEVEL_LABELS[level] || level;
+  }
+
+  if (typeof module !== "undefined" && module.exports) module.exports = { levelFrom, parentDiagnosis, levelLabel };
+  else Object.assign(root, { levelFrom, parentDiagnosis, levelLabel });
 })(typeof window !== "undefined" ? window : globalThis);
