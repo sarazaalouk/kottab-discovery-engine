@@ -374,10 +374,13 @@
     try {
       const res = await fetch(`/api/checks/${episodeNumber}`);
       if (!res.ok) return;
-      checks = await res.json();
+      // Only questions about what this episode actually showed (js/checks.js).
+      checks = checksForShown(await res.json(), currentEpisode);
     } catch {
       return;
     }
+    // Nothing left to ask about this episode: no review, straight to the closing screen.
+    if (!checks.questions.length) return showClosing("passed");
     renderChecks();
   }
 
@@ -392,7 +395,7 @@
         return `<fieldset class="check-q stack">
             <legend><b>${qi + 1}.</b> ${escapeHtml(q.question_en)}</legend>
             <div class="options">${order.map((oi) => `<button class="option" data-q="${qi}" data-o="${oi}">${escapeHtml(q.options[oi])}</button>`).join("")}</div>
-            <span class="source-chip">${escapeHtml(q.card_id ? q.card_id + " · " + q.source : q.source)}</span>
+            <span class="source-chip">${escapeHtml(q.card_id ? q.card_id + " · " + q.source_label : q.source_label)}</span>
           </fieldset>`;
       })
       .join("");

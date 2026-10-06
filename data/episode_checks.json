@@ -23,7 +23,8 @@
         "question_en": "In which two ayahs of Al-Fatiha do you see Ar-Rahman and Ar-Raheem together?",
         "options": ["1:1 and 1:3", "1:2 and 1:4", "1:5 and 1:7"],
         "correct": 0,
-        "source": "quran_fatiha.json"
+        "source": "quran_fatiha.json",
+        "ayah_refs": ["1:1", "1:3"]
       }
     ]
   }

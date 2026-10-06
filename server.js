@@ -119,7 +119,7 @@ const EPISODE_CHECKS = readJson(CHECKS_PATH);
 app.get("/api/checks/:episode", (req, res) => {
   const checks = checksForEpisode(EPISODE_CHECKS, readJson(KB_PATH), req.params.episode);
   if (!checks) return res.status(404).json({ error: "no questions for this episode" });
-  checks.questions.forEach((q) => { q.source = SOURCE_SHORT[q.source] || q.source; }); // English name on the child page
+  checks.questions.forEach((q) => { q.source_label = SOURCE_SHORT[q.source_label] || q.source_label; }); // English name on the child page
   res.json(checks);
 });
 
@@ -412,6 +412,9 @@ app.get("/api/episodes/:id", (req, res) => {
       correct_index: q.options.findIndex((o) => o.is_correct),
     },
     meanings: childMeanings(ep, kbById),
+    // Which cards and ayahs the episode showed (ids and refs only), so the review asks only about them.
+    words: ep.words.map((w) => ({ ayah_ref: w.ayah_ref, word_index: w.word_index, meanings: w.meanings.map((m) => ({ card_id: m.card_id })) })),
+    discovery_question: { answer_meaning: { card_id: q.answer_meaning.card_id } },
     memory_picture: ep.memory_picture,
     mushaf_search_task: ep.mushaf_search_task,
     salah_connection: ep.salah_connection,
