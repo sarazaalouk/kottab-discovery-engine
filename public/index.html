@@ -39,7 +39,7 @@
   <section class="card" id="trial-start" aria-labelledby="trial-title" hidden>
     <span class="eyebrow">Kottab trial session</span>
     <h2 id="trial-title">Trying it with a real child?</h2>
-    <p class="small">In a trial session nothing is saved. Your child gets a made-up name, only an approximate age and first language are used, and everything is erased when you end the session (or after 3 hours).</p>
+    <p class="small">We do not write trial data to disk; it is held briefly in server memory and erased when the session ends. Your child gets a made-up name, and only an approximate age, first language and the letter-game level are used (the server forgets the session after 3 hours at the latest).</p>
     <form id="trial-form" class="stack" novalidate>
       <div class="field">
         <label for="t-name">Made-up name</label>
@@ -231,7 +231,7 @@
   function showNext(p) {
     $("next").hidden = false;
     $("saved-line").textContent = p.trial
-      ? `Trial session for ${p.name}, age ${p.age_label}. Start with the letter games: the episode uses their result. Nothing is saved.`
+      ? `Trial session for ${p.name}, age ${p.age_label}. Start with the letter games: the episode uses their result. We do not write trial data to disk; it is held briefly in server memory and erased when the session ends.`
       : `Saved on this device for ${p.name}, age ${p.age}.`;
     const d = store.get(KEYS.diagnosis);
     if (d) {

@@ -4,6 +4,8 @@ Rule (CLAUDE.md, privacy): in any trial with a real child, the parent agrees fir
 
 ## How the app enforces it
 
+What parents read: "We do not write trial data to disk; it is held briefly in server memory and erased when the session ends."
+
 | What | Demo mode | Trial mode |
 |---|---|---|
 | Start | Parent profile form | Parent gate, then "Start a trial session" with a consent checkbox (required) |
@@ -17,6 +19,8 @@ Rule (CLAUDE.md, privacy): in any trial with a real child, the parent agrees fir
 | Teacher review | Automatic check before the child sees the episode; teacher reviews after it is shown and can withdraw it; episodes with a referral wait for the teacher | Same; trial episodes are marked "جلسة تجربة" on the reviewer page |
 | End | — | "End session" in the amber bar on every page erases the episode and its referrals on the server, then everything in the tab |
 | Safety net | — | The server forgets trial episodes after 3 hours, or when it restarts |
+| A generation still running at "End session" | — | The session's ids are marked as ended, so a generation that finishes later saves nothing and logs no referral (`tests/trial-tests.js`) |
+| "Erased" message | — | Shown only after the server confirms; if the request fails, the bar says "Not erased yet" and the tab keeps its data so the parent can try again |
 
 The episode request still goes to the model provider's API; it contains only the fields above.
 

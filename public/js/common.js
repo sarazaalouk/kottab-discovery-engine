@@ -23,18 +23,24 @@ const trial = {
     try { sessionStorage.setItem(KEYS.trial, "on"); return true; } catch { return false; }
   },
   // Erases the session's episodes on the server, then everything in this tab.
+  // Returns true only when the server confirmed; the tab is cleared only then,
+  // so "erased" is never shown for a request that did not reach the server.
   async end() {
     const ids = store.get(KEYS.trialEpisodes) || [];
     try {
-      await fetch("/api/trial/end", {
+      const res = await fetch("/api/trial/end", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ episode_ids: ids }),
       });
-    } catch { /* the server also forgets trial episodes after a few hours */ }
+      if (!res.ok) return false;
+    } catch {
+      return false;
+    }
     try {
       [KEYS.profile, KEYS.diagnosis, KEYS.episodeId, KEYS.letters, KEYS.generatingSince, KEYS.trialEpisodes, KEYS.trial].forEach((k) => sessionStorage.removeItem(k));
     } catch { /* storage unavailable */ }
+    return true;
   },
 };
 
@@ -99,7 +105,7 @@ function renderTopbar(current) {
       <nav class="nav" aria-label="Pages">${links}${reviewer}</nav>
     </div>
     ${trial.isOn() ? `<div class="trial-bar">
-      <span><b>Trial session</b> · nothing is saved</span>
+      <span><b>Trial session</b> · not written to disk, erased when you end it</span>
       <button type="button" id="end-trial">End session</button>
     </div>` : ""}`;
   document.body.prepend(header);
@@ -108,8 +114,14 @@ function renderTopbar(current) {
     endBtn.addEventListener("click", async () => {
       endBtn.disabled = true;
       endBtn.textContent = "Erasing…";
-      await trial.end();
-      location.href = "index.html?ended=1";
+      if (await trial.end()) {
+        location.href = "index.html?ended=1";
+        return;
+      }
+      endBtn.disabled = false;
+      endBtn.textContent = "Try again";
+      header.querySelector(".trial-bar span").innerHTML =
+        "<b>Not erased yet.</b> We couldn't reach the server. Please check the connection and try again.";
     });
   }
 }
