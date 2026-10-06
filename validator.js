@@ -85,6 +85,23 @@ function walkStrings(value, path, fn) {
   if (value && typeof value === "object") Object.entries(value).forEach(([k, v]) => walkStrings(v, `${path}.${k}`, fn));
 }
 
+// Word comparison for meaning cards: marks removed, ة as ه, and the article ال removed
+// (also after a joined ل/ب/و, e.g. لِلَّهِ). A card about several words matches any of them.
+function bareWord(w) {
+  let s = normalizeArabic(w).replace(/ة/g, "ه").replace(/[^ء-ي]/g, "");
+  s = s.replace(/^[وب]?ال/, "").replace(/^لل/, "ل");
+  return s;
+}
+function cardMatchesWord(cardWord, ayahWord) {
+  const target = bareWord(ayahWord);
+  // The Uthmani script writes some long a's as a small alif (ٱلْعَـٰلَمِينَ, مَـٰلِكِ), so alif is ignored too.
+  const variants = (t) => [t, t.replace(/^[لبو]/, "")].flatMap((v) => [v, v.replace(/ا/g, "")]);
+  return String(cardWord)
+    .split(/[\s/]+/)
+    .filter(Boolean)
+    .some((t) => variants(bareWord(t)).some((v) => v && variants(target).includes(v)));
+}
+
 function hasRootLetters(word, rootLetters) {
   let i = 0;
   for (const ch of normalizeArabic(word)) if (ch === rootLetters[i]) i++;
@@ -121,6 +138,11 @@ function validateEpisode(rawText, ctx) {
   if (opts.length !== 3) fail("schema", `discovery_question.options: ${opts.length} options, expected 3`);
   if (opts.filter((o) => o.is_correct).length !== 1) fail("schema", "discovery_question.options: exactly one option must be correct");
   if (out.parent_report.teach_your_parents.duration_minutes !== 3) fail("schema", "teach_your_parents.duration_minutes must be 3");
+
+  // (17) the three options must be different texts (ignoring case, spaces, punctuation and Arabic marks)
+  const optionKey = (t) => normalizeArabic(String(t)).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+  const keys = opts.map((o) => optionKey(o.text_en));
+  if (new Set(keys).size !== keys.length) fail("options", "discovery_question.options: two options are the same text");
 
   // (أ) (ب) (ج) meanings
   const cardsById = new Map(ctx.kb.entries.map((c) => [c.id, c]));
@@ -164,8 +186,19 @@ function validateEpisode(rawText, ctx) {
     const count = ayah.text_ar.split(/\s+/).length;
     if (w.word_index < 1 || w.word_index > count) {
       fail("d", `words[${i}]: word_index ${w.word_index} is outside ${w.ayah_ref} (${count} words)`);
-    } else if (ctx.rootLetters && !hasRootLetters(ayah.text_ar.split(/\s+/)[w.word_index - 1], ctx.rootLetters)) {
-      warnings.push(`words[${i}]: ${w.ayah_ref} word ${w.word_index} does not contain the episode root letters`);
+    } else {
+      const word = ayah.text_ar.split(/\s+/)[w.word_index - 1];
+      if (ctx.rootLetters && !hasRootLetters(word, ctx.rootLetters)) {
+        warnings.push(`words[${i}]: ${w.ayah_ref} word ${w.word_index} does not contain the episode root letters`);
+      }
+      // (18) a meaning card (type "meaning") must be about this word; context cards are exempt.
+      for (const m of w.meanings) {
+        const card = cardsById.get(m.card_id);
+        if (!card || card.type !== "meaning") continue;
+        if (!cardMatchesWord(card.word_ar, word)) {
+          fail("word", `words[${i}]: meaning card ${m.card_id} (${card.word_ar}) is not about ${w.ayah_ref} word ${w.word_index}`);
+        }
+      }
     }
   });
 

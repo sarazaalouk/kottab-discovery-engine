@@ -46,6 +46,14 @@ const cases = [
     m.text = ctx.kb.entries.find((c) => c.id === m.card_id).meaning_en; // exists in the card, but is not the child sentence
     return o;
   }],
+  ["17. (options) two options are the same text", "[options]", (o) => {
+    o.discovery_question.options[1].text_en = o.discovery_question.options[0].text_en.toUpperCase() + " ";
+    return o;
+  }],
+  ["18. (word) a meaning card attached to the wrong word", "[word]", (o) => {
+    o.words[0].word_index = 1; // بِسْمِ — kb-030 is about Ar-Rahman / Ar-Raheem
+    return o;
+  }],
   // A teacher/parent-only card shown to the child. The card is approved here (in this test only) so the
   // audience rule is the one that rejects it.
   ["12. (b) teacher/parent-only card on a child screen", "[b]", (o) => {
