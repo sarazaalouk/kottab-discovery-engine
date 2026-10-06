@@ -13,12 +13,6 @@
 </head>
 <body>
 <main>
-  <section class="card" id="why" hidden aria-labelledby="why-title">
-    <span class="eyebrow">For parents</span>
-    <h2 id="why-title">Why this journey</h2>
-    <div id="why-list" class="stack"></div>
-  </section>
-
   <div class="stack">
     <span class="eyebrow">For parents</span>
     <h1>Set up your child's journey through Al-Fatiha</h1>
@@ -37,6 +31,13 @@
       <p class="notice error" id="gate-error" hidden>That's not quite right. Try again.</p>
       <button class="btn block" type="submit">Continue</button>
     </form>
+  </section>
+
+  <!-- Why this journey: shown after the parent gate -->
+  <section class="card" id="why" hidden aria-labelledby="why-title">
+    <span class="eyebrow">For parents</span>
+    <h2 id="why-title">Why this journey</h2>
+    <div id="why-list" class="stack"></div>
   </section>
 
   <p class="notice ok" id="ended" hidden>The trial session has ended. Everything from it was erased from this device and from the server.</p>
@@ -171,8 +172,6 @@
       document.getElementById("why").hidden = false;
     } catch { /* the box simply stays hidden */ }
   }
-  loadWhy(false);
-
   const $ = (id) => document.getElementById(id);
 
   // ----- gate -----
@@ -182,6 +181,7 @@
 
   function showParentArea() {
     $("gate").hidden = true;
+    loadWhy(false);
     $("reviewer-link").hidden = false;
     if (trial.isOn()) {
       showNext(store.get(KEYS.profile));
