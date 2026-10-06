@@ -13,6 +13,7 @@ const { generateLimit, askLimit } = require("./lib/limits");
 const { initialStatus, publishMode, autoReview, teacherApproved, applyDecision } = require("./lib/publish");
 const noor = require("./lib/noor");
 const { checkProblems, checksForEpisode } = require("./lib/checks");
+const { whyCards } = require("./lib/why");
 const { referralId, newReferralId, replyProblem, setReplyInLines, repliesForEpisode } = require("./lib/referrals");
 const { askCandidates, askAnswer } = require("./lib/ask");
 const { requireReviewerPin, pinConfigured } = require("./lib/reviewer-pin");
@@ -117,6 +118,11 @@ app.get("/api/checks/:episode", (req, res) => {
   if (!checks) return res.status(404).json({ error: "no questions for this episode" });
   checks.questions.forEach((q) => { q.source = SOURCE_SHORT[q.source] || q.source; }); // English name on the child page
   res.json(checks);
+});
+
+// "Why this journey" (parent page and report): approved cards kb-002, kb-003, kb-001 only, texts as in the file.
+app.get("/api/cards/why", (req, res) => {
+  res.json(whyCards(readJson(KB_PATH), sourceForParents));
 });
 
 app.get("/api/quran", (req, res) => {

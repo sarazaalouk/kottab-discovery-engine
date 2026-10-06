@@ -13,6 +13,12 @@
 </head>
 <body>
 <main>
+  <section class="card" id="why" hidden aria-labelledby="why-title">
+    <span class="eyebrow">For parents</span>
+    <h2 id="why-title">Why this journey</h2>
+    <div id="why-list" class="stack"></div>
+  </section>
+
   <div class="stack">
     <span class="eyebrow">For parents</span>
     <h1>Set up your child's journey through Al-Fatiha</h1>
@@ -150,6 +156,22 @@
 <script src="js/levels.js"></script>
 <script>
   renderTopbar("index.html");
+
+  // "Why this journey": approved cards kb-002, kb-003, kb-001 from the knowledge base (GET /api/cards/why), no model.
+  async function loadWhy(short) {
+    try {
+      const res = await fetch("/api/cards/why");
+      if (!res.ok) return;
+      const cards = await res.json();
+      const list = short ? cards.filter((c) => c.card_id === "kb-002") : cards;
+      if (!list.length) return;
+      document.getElementById("why-list").innerHTML = list
+        .map((c) => `<div class="why-card"><p>${escapeHtml(short ? c.meaning_short : c.meaning_en)}</p><p class="small muted">${escapeHtml(c.card_id)} · ${escapeHtml(c.source)}</p></div>`)
+        .join("");
+      document.getElementById("why").hidden = false;
+    } catch { /* the box simply stays hidden */ }
+  }
+  loadWhy(false);
 
   const $ = (id) => document.getElementById(id);
 
