@@ -11,6 +11,7 @@ The sources below follow the challenge's official reference pack, **"المرج�
 | Verified | Checked letter by letter against a printed Mushaf by Sara Zaalouk on 2026-10-04 |
 | Reference-pack source | مصحف المدينة النبوية، مجمع الملك فهد لطباعة المصحف الشريف، رواية حفص (النص الرقمي للمطورين) |
 | Status of the match | **Matched manually** on 2026-10-06 by Sara Zaalouk, word by word and mark by mark, against the printed Madinah Mushaf (King Fahd Complex). Letters, marks and the seven ayah breaks match; the only difference is how the sukun is drawn (the Mushaf's open form vs the standard round sign U+0652), a difference of script, not of text. The developer site (qurancomplex.gov.sa/quran-dev) could not be reached on 2026-10-05. Recorded in `kfgqpc_match` inside the file. |
+| Sukun on screen | On screen, the sukun mark U+0652 is converted to U+06E1 to show the Madinah Mushaf form. The verified file (`data/quran_fatiha.json`) and the API (`/api/quran` and the episode text the server inserts) keep the original U+0652; text copied from the page gives U+06E1. |
 
 ## 2. Al-Tafsir Al-Muyassar — first source for word definitions
 

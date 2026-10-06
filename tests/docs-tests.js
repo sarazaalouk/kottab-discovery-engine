@@ -44,5 +44,10 @@ const FEATURES = ["Reads Arabic well", "Skip the games", "Review with a grown-up
 const missing = FEATURES.filter((f) => !claude.includes(f) || !levelsDoc.includes(f));
 check("D5. new features are described in CLAUDE.md and content-levels.md", missing.length === 0, missing.join(", ") || `${FEATURES.length} features`);
 
+// D6: the sukun note: on-screen conversion, the file and the API keep U+0652, copying gives U+06E1
+const sourcesDoc = read("docs/sources.md");
+const sukunNote = (doc) => ["U+0652", "U+06E1", "Madinah Mushaf", "API", "copied from the page gives U+06E1"].every((p) => doc.includes(p));
+check("D6. sources.md and content-levels.md explain the on-screen sukun", sukunNote(sourcesDoc) && sukunNote(levelsDoc));
+
 console.log(failed ? `\n${failed} docs case(s) failed` : "\nall docs cases behaved as expected");
 process.exit(failed ? 1 : 0);

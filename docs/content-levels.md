@@ -50,7 +50,7 @@ Parents who choose "Reads short words" or "Read ayah 1:1 aloud (confirmed by a g
 
 ## Quran display
 
-Inside `.quran` elements the sukun is drawn in the Madinah Mushaf form: U+0652 is shown as U+06E1. Only the screen changes; `data/quran_fatiha.json` and everything the server checks keep U+0652.
+Inside `.quran` elements the sukun is drawn in the Madinah Mushaf form. On screen, the sukun mark U+0652 is converted to U+06E1 to show the Madinah Mushaf form. The verified file (`data/quran_fatiha.json`) and the API (`/api/quran` and the episode text the server inserts) keep the original U+0652; text copied from the page gives U+06E1. Everything the server checks uses U+0652.
 
 ## Example: Al-Fatiha, ayah 7
 
