@@ -210,6 +210,7 @@
       root: SEASON_ROOTS[EPISODE_NUMBER],
       episode_number: EPISODE_NUMBER,
       trial: isTrial,
+      trial_session_id: isTrial ? trial.sessionId() : undefined,
     };
     const startedAt = Date.now();
     show("loading");
@@ -352,7 +353,7 @@
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ episode_id: store.get(KEYS.episodeId), question }),
+        body: JSON.stringify({ episode_id: store.get(KEYS.episodeId), trial_session_id: trial.isOn() ? trial.sessionId() : undefined, question }),
       });
       if (res.status === 429) {
         $("ask-answer").innerHTML = `<p class="notice">Lots of questions right now! Please ask your teacher or a grown-up, or try again later.</p>`;

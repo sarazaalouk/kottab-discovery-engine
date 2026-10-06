@@ -88,7 +88,7 @@ Last run: 2026-10-06, all cases behaved as expected.
 |---|---|---|
 | `tests/word-tests.js` | Meaning card ↔ ayah word (case 18): kb-030 on Ar-Rahman / Ar-Raheem in 1:1 and 1:3, a wrong word, an ayah outside the card, a range ayah, the Uthmani small alif | M1–M8 |
 | `tests/ask-tests.js` | "Ask a question": only approved cards for the child (with a child sentence) can answer; a parent/teacher-only card is never offered or shown; the answer is the child sentence word for word | A1–A5 |
-| `tests/trial-tests.js` | Trial sessions: erased on "End session", and a generation that finishes later saves nothing and logs no referral | T1–T6 |
+| `tests/trial-tests.js` | Trial sessions: erased on "End session", and a generation that finishes later saves nothing and logs no referral; the session id (made in the browser before any generation) erases everything from the session even if the episode id never reached the browser | T1–T10 |
 | `tests/client-tests.js` | Episode page: a shown episode is checked every 30 seconds; a withdrawn one is reported once and the checks stop; a dropped request is retried | W1–W4 |
 | `tests/pin-tests.js` | Reviewer PIN: 503 when no PIN is set on the server, 401 for a wrong or missing PIN, allowed with the right PIN | R1–R4 |
 | `tests/docs-tests.js` | The numbers in the docs match the project: approved cards (19) and the number of cases in each table of this file | D1–D3 |

@@ -11,6 +11,7 @@ const KEYS = {
   gate: "kottab.parentGate",
   trial: "kottab.trial",
   trialEpisodes: "kottab.trialEpisodes",
+  trialSession: "kottab.trialSession",
   letters: "kottab.letters",
   generatingSince: "kottab.generatingSince",
 };
@@ -19,8 +20,22 @@ const trial = {
   isOn() {
     try { return sessionStorage.getItem(KEYS.trial) === "on"; } catch { return false; }
   },
+  // Makes the session id before anything is generated; it goes with every generation and question,
+  // and End session sends it so the server erases everything that carries it.
   start() {
-    try { sessionStorage.setItem(KEYS.trial, "on"); return true; } catch { return false; }
+    try {
+      sessionStorage.setItem(KEYS.trialSession, crypto.randomUUID());
+      sessionStorage.setItem(KEYS.trial, "on");
+      return true;
+    } catch { return false; }
+  },
+  // A tab that started its trial before session ids existed gets one now, still before it generates.
+  sessionId() {
+    try {
+      let sid = sessionStorage.getItem(KEYS.trialSession);
+      if (!sid) { sid = crypto.randomUUID(); sessionStorage.setItem(KEYS.trialSession, sid); }
+      return sid;
+    } catch { return null; }
   },
   // Erases the session's episodes on the server, then everything in this tab.
   // Returns true only when the server confirmed; the tab is cleared only then,
@@ -31,14 +46,14 @@ const trial = {
       const res = await fetch("/api/trial/end", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ episode_ids: ids }),
+        body: JSON.stringify({ trial_session_id: trial.sessionId(), episode_ids: ids }),
       });
       if (!res.ok) return false;
     } catch {
       return false;
     }
     try {
-      [KEYS.profile, KEYS.diagnosis, KEYS.episodeId, KEYS.letters, KEYS.generatingSince, KEYS.trialEpisodes, KEYS.trial].forEach((k) => sessionStorage.removeItem(k));
+      [KEYS.profile, KEYS.diagnosis, KEYS.episodeId, KEYS.letters, KEYS.generatingSince, KEYS.trialEpisodes, KEYS.trialSession, KEYS.trial].forEach((k) => sessionStorage.removeItem(k));
     } catch { /* storage unavailable */ }
     return true;
   },

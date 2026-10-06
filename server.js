@@ -110,6 +110,11 @@ app.get("/api/quran", (req, res) => {
 app.post("/api/generate-episode", generateLimit, async (req, res) => {
   const { child, root, episode_number: episodeNumber } = req.body || {};
   const trial = req.body && req.body.trial === true;
+  // Trial: every episode and referral carries the session id made in the browser, so End session can erase
+  // it even if the episode id never reached the browser.
+  const trialSessionId = trial ? req.body.trial_session_id : undefined;
+  if (trial && !episodes.isTrialSessionId(trialSessionId)) return res.status(400).json({ error: "a trial request needs trial_session_id" });
+  if (trial && episodes.isSessionEnded(trialSessionId)) return res.status(409).json({ error: "this trial session has ended" });
 
   const profileError = validateChildProfile(child, trial);
   if (profileError) return res.status(400).json({ error: profileError });
@@ -177,6 +182,7 @@ app.post("/api/generate-episode", generateLimit, async (req, res) => {
     child: request.child,
     cards_provided: cards.map((c) => c.id),
     cards_left_out: cardsLeftOut,
+    ...(trial ? { trial_session_id: trialSessionId } : {}),
   };
   episodes.save(record);
   res.status(202).json({ id, status: record.status });
@@ -264,9 +270,10 @@ async function generateInBackground(record, request, { quran, kb, schema, system
     usage: response.usage,
     generated_in_ms: Date.now() - Date.parse(record.created_at),
   });
-  episodes.save(record);
+  // A trial session that ended while this was running: nothing is saved and no referral is logged.
+  if (!episodes.save(record)) return;
 
-  referrals.forEach((r) => logReferral({ episode_id: record.id, child_name: request.child.name, ...r, source: "engine" }));
+  referrals.forEach((r) => logReferral({ episode_id: record.id, trial_session_id: record.trial_session_id, child_name: request.child.name, ...r, source: "engine" }));
 }
 
 // ---------- serving episodes (only approved content leaves the server) ----------
@@ -390,7 +397,7 @@ app.get("/api/episodes/:id/report", (req, res) => {
 // Trial referrals stay in memory with their episode; all others go to data/referrals.jsonl.
 function logReferral(entry) {
   const full = { created_at: new Date().toISOString(), ...entry };
-  if (entry.episode_id && episodes.isTrialId(entry.episode_id)) return episodes.addTrialReferral({ ...full, trial: true });
+  if ((entry.episode_id && episodes.isTrialId(entry.episode_id)) || entry.trial_session_id) return episodes.addTrialReferral({ ...full, trial: true });
   fs.appendFileSync(REFERRALS_LOG, JSON.stringify(full) + "\n", "utf8");
 }
 
@@ -398,7 +405,7 @@ const REFERRAL_REPLY =
   "That's a great question! It's one for your teacher, so we've passed it on. You can also ask a grown-up at home.";
 
 app.post("/api/ask", askLimit, async (req, res) => {
-  const { episode_id: episodeId, question } = req.body || {};
+  const { episode_id: episodeId, question, trial_session_id: askSessionId } = req.body || {};
   if (typeof question !== "string" || !question.trim() || question.length > 300) {
     return res.status(400).json({ error: "question must be 1 to 300 characters" });
   }
@@ -406,7 +413,8 @@ app.post("/api/ask", askLimit, async (req, res) => {
   const refer = (reason) => {
     // A trial question is kept in memory even if its episode has already expired.
     const episodeRef = record ? record.id : episodes.isTrialId(episodeId) ? episodeId : null;
-    logReferral({ episode_id: episodeRef, child_name: record ? record.child.name : null, question, reason, source: "child_question" });
+    const sid = record ? record.trial_session_id : episodes.isTrialSessionId(askSessionId) ? askSessionId : undefined;
+    logReferral({ episode_id: episodeRef, trial_session_id: sid, child_name: record ? record.child.name : null, question, reason, source: "child_question" });
     return res.json({ type: "referral", text: REFERRAL_REPLY });
   };
   if (!record || record.status !== "approved") return refer("no approved episode for this question");
@@ -525,10 +533,12 @@ app.get("/api/review/referrals", (req, res) => {
   res.json(all.reverse());
 });
 
-// End a trial session: erase its episodes and referrals from memory.
+// End a trial session: mark its session id as ended and erase its episodes and referrals from memory.
+// Episode ids the browser knows are erased too (older tabs without a session id).
 app.post("/api/trial/end", (req, res) => {
+  const sid = req.body && req.body.trial_session_id;
   const ids = Array.isArray(req.body && req.body.episode_ids) ? req.body.episode_ids : [];
-  const erased = ids.filter((id) => episodes.isTrialId(id) && episodes.erase(id)).length;
+  const erased = episodes.endSession(sid) + ids.filter((id) => episodes.isTrialId(id) && episodes.erase(id)).length;
   res.json({ erased });
 });
 
@@ -541,7 +551,7 @@ app.post("/api/review/episodes/:id/decision", (req, res) => {
   const cleanNote = record.review.note;
   episodes.save(record);
   if (decision === "refer") {
-    logReferral({ episode_id: record.id, child_name: record.child.name, question: `Episode ${record.episode_number} referred by reviewer`, reason: cleanNote || "referred by reviewer", source: "reviewer" });
+    logReferral({ episode_id: record.id, trial_session_id: record.trial_session_id, child_name: record.child.name, question: `Episode ${record.episode_number} referred by reviewer`, reason: cleanNote || "referred by reviewer", source: "reviewer" });
   }
   res.json({ id: record.id, status: record.status, review: record.review });
 });
