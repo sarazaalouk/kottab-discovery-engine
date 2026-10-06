@@ -1,5 +1,5 @@
 {
-  "description": "Fixed questions written by the Kottab teacher, asked at the end of an episode before the next one opens. No model writes or changes them. Each question points to an approved card (card_id) or to the verified Quran file (source). Passing: 2 of 3.",
+  "description": "Fixed questions written by the Kottab teacher, answered with a grown-up at the end of an episode. No model writes or changes them. Each question points to an approved card (card_id) or to the verified Quran file (source). Nothing is locked: 2 of 3 right is saved as passed, otherwise retry, only as information.",
   "author": "Kottab teacher",
   "pass_mark": 2,
   "episodes": {

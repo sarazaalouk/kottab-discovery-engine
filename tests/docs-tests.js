@@ -40,7 +40,7 @@ check("D4. every test script in npm test is listed in docs/validator-tests.md", 
 
 // D5: the features of the last batch are described in CLAUDE.md and docs/content-levels.md
 const levelsDoc = read("docs/content-levels.md");
-const FEATURES = ["Reads Arabic well", "Skip the games", "Before you move on", "Your teacher answered", "What you discovered today", "U+06E1", "Why this journey"];
+const FEATURES = ["Reads Arabic well", "Skip the games", "Review with a grown-up", "Your teacher answered", "What you discovered today", "U+06E1", "Why this journey"];
 const missing = FEATURES.filter((f) => !claude.includes(f) || !levelsDoc.includes(f));
 check("D5. new features are described in CLAUDE.md and content-levels.md", missing.length === 0, missing.join(", ") || `${FEATURES.length} features`);
 

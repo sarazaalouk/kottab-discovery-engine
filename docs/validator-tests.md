@@ -90,7 +90,7 @@ Last run: 2026-10-06, all cases behaved as expected.
 |---|---|---|
 | `tests/word-tests.js` | Meaning card ↔ ayah word (case 18): kb-030 on Ar-Rahman / Ar-Raheem in 1:1 and 1:3, a wrong word, an ayah outside the card, a range ayah, the Uthmani small alif | M1–M8 |
 | `tests/levels-tests.js` | Reading level from the letter games, including stage 5 (ayah 1:1 read in full → "Reads Arabic well"), and "Skip the games" (parent's choice, reading levels only, never in a trial) | L1–L11 |
-| `tests/checks-tests.js` | "Before you move on": the teacher's questions file is refused if a card is missing or not approved, or a question has no source; 2 of 3 passes; the closing screen shows only after passing | C1–C9 |
+| `tests/checks-tests.js` | "Review with a grown-up": the teacher's questions file is refused if a card is missing or not approved, or a question has no source; 2 of 3 is saved as passed, otherwise retry (nothing is locked, the same next-discovery line either way); the closing screen shows after the review whatever the result | C1–C9 |
 | `tests/sukun-tests.js` | Quran display: U+0652 shown as U+06E1 (Madinah Mushaf sukun) in `.quran` elements only; the verified file is unchanged | K1–K4 |
 | `tests/why-tests.js` | "Why this journey": approved cards kb-002, kb-003, kb-001 only, in that order, texts and sources as in the knowledge base | V1–V3 |
 | `tests/pages-tests.js` | Page structure: "Why this journey" on the parent page is after the parent gate and filled only once the gate is passed; no next root or next episode is promised by name in the product or the docs | G1–G3 |

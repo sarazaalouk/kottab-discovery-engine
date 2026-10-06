@@ -17,7 +17,7 @@ What parents read: "We do not write trial data to disk; it is held briefly in se
 | Episode on the server | File in `data/episodes/` | Memory only, never written to disk |
 | Referrals (child questions) | `data/referrals.jsonl` | Memory only, attached to the trial episode |
 | Teacher replies to referrals | Stored with the referral in `data/referrals.jsonl` | Memory only, with the referral; erased when the session ends (`tests/replies-tests.js`, Y8) |
-| "Before you move on" result | `localStorage` (`episode_1_passed`) | `sessionStorage` only; erased when the session ends. Nothing is sent to the server |
+| "Review with a grown-up" result | `localStorage` (`episode_1_review`: passed or retry) | `sessionStorage` only; erased when the session ends. Nothing is sent to the server |
 | Teacher review | Automatic check before the child sees the episode; teacher reviews after it is shown and can withdraw it; episodes with a referral wait for the teacher | Same; trial episodes are marked "جلسة تجربة" on the reviewer page |
 | End | — | "End session" in the amber bar on every page erases the episode and its referrals on the server, then everything in the tab |
 | Safety net | — | The server forgets trial episodes after 3 hours, or when it restarts |

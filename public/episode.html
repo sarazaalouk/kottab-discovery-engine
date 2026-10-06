@@ -96,8 +96,8 @@
 
       <section class="card" id="checks" hidden aria-labelledby="checks-title">
         <span class="eyebrow">From your teacher</span>
-        <h2 id="checks-title">Before you move on</h2>
-        <p class="small muted">Three questions. Take your time.</p>
+        <h2 id="checks-title">Review with a grown-up</h2>
+        <p class="small muted">Three questions to answer together. Take your time.</p>
         <div id="checks-list" class="stack"></div>
         <p class="notice" id="checks-result" hidden aria-live="polite"></p>
         <button class="btn secondary block" id="checks-retry" hidden>Try again</button>
@@ -368,7 +368,7 @@
     show("episode");
   }
 
-  // ---------- before you move on (teacher's fixed questions, no model) ----------
+  // ---------- review with a grown-up (teacher's fixed questions, no model; nothing is locked) ----------
   let checks = null;
   async function loadChecks(episodeNumber) {
     try {
@@ -408,26 +408,22 @@
     $("checks").hidden = false;
   }
 
+  // The result is saved only as information ("passed" or "retry") and shows the same next-discovery line.
   function finishChecks(answers) {
-    const result = scoreChecks(checks.questions, answers, checks.pass_mark);
-    if (result.passed) {
-      store.set(KEYS.episode1Passed, true);
-      showClosing(true);
-      $("checks-result").className = "notice ok";
-      $("checks-result").textContent = "Your next discovery is coming after teacher review.";
-    } else {
-      $("checks-result").className = "notice";
-      $("checks-result").textContent = "Read the episode once more with a grown-up, then try again.";
-      $("checks-retry").hidden = false;
-    }
+    const result = reviewResult(checks.questions, answers, checks.pass_mark);
+    store.set(KEYS.episode1Review, result.review);
+    $("checks-result").className = result.review === "passed" ? "notice ok" : "notice";
+    $("checks-result").textContent = result.lines.join(" ");
+    $("checks-retry").hidden = result.review === "passed";
     $("checks-result").hidden = false;
+    showClosing(result.review);
   }
   $("checks-retry").addEventListener("click", () => renderChecks());
 
-  // ---------- closing screen (after "Before you move on" is passed) ----------
+  // ---------- closing screen (after the review with a grown-up, whatever its result) ----------
   let currentEpisode = null;
-  function showClosing(passed) {
-    const c = closingScreen(currentEpisode.title, passed);
+  function showClosing(review) {
+    const c = closingScreen(currentEpisode.title, review);
     if (!c) return;
     $("closing-title").textContent = c.heading;
     $("closing-ep").textContent = c.title;
@@ -451,7 +447,7 @@
     buttons[d.question.correct_index].classList.add("correct");
     $("reveal").hidden = false;
     if (!checks) loadChecks(d.episode_number);
-    showClosing(store.get(KEYS.episode1Passed) === true && d.episode_number === 1);
+    if (d.episode_number === 1) showClosing(store.get(KEYS.episode1Review));
     $("reveal").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 

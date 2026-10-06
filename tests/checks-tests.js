@@ -1,8 +1,8 @@
-// "Before you move on": the teacher's fixed questions (data/episode_checks.json). Run: npm test
+// "Review with a grown-up": the teacher's fixed questions (data/episode_checks.json). Run: npm test
 const fs = require("fs");
 const path = require("path");
 const { checkProblems, checksForEpisode } = require("../lib/checks");
-const { scoreChecks, closingScreen } = require("../public/js/checks");
+const { reviewResult, closingScreen, NEXT_LINE, RETRY_LINE } = require("../public/js/checks");
 
 const ROOT = path.join(__dirname, "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), "utf8"));
@@ -36,15 +36,19 @@ const served = checksForEpisode(data, kb, 1);
 check("C5. the page gets each card's source name", served.questions[0].source === "تفسير ابن كثير" && served.questions[2].source === "Al-Fatiha, verified Quran text");
 
 const qs = data.episodes["1"];
-check("C6. 2 of 3 right passes", scoreChecks(qs, [0, 0, 1], 2).passed === true);
-check("C7. 1 of 3 right does not pass", scoreChecks(qs, [0, 2, 1], 2).passed === false);
+const ok = reviewResult(qs, [0, 0, 1], 2);
+check("C6. 2 of 3 right: saved as passed, the next-discovery line only", ok.review === "passed" && ok.lines.join("|") === NEXT_LINE);
+const again = reviewResult(qs, [0, 2, 1], 2);
+check("C7. 1 of 3 right: saved as retry, the same line plus read once more with a grown-up",
+  again.review === "retry" && again.lines.join("|") === `${NEXT_LINE}|${RETRY_LINE}` && RETRY_LINE === "Read the episode once more with a grown-up");
 
-// C8–C9: closing screen, only after passing
-check("C8. no closing screen before the questions are passed", closingScreen("Two Names", false) === null);
-const c = closingScreen("Two Names", true);
-check("C9. after passing: today's title, the next-discovery line, and the question again (no badges)",
+// C8–C9: closing screen once the review is done, whatever the result (nothing is locked)
+check("C8. no closing screen before the review is done", closingScreen("Two Names", null) === null);
+const c = closingScreen("Two Names", "passed");
+check("C9. after the review (passed or retry): today's title, the next-discovery line, and the question again (no badges)",
+  JSON.stringify(closingScreen("Two Names", "retry")) === JSON.stringify(c) &&
   c.heading === "What you discovered today" && c.title === "Two Names" &&
-  c.next === "Your next discovery is coming after teacher review." &&
+  c.next === "Your next discovery is coming after teacher review." && NEXT_LINE === c.next &&
   c.again === "Play the discovery question again" && Object.keys(c).length === 4);
 
 console.log(failed ? `\n${failed} check case(s) failed` : "\nall check cases behaved as expected");

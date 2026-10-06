@@ -20,7 +20,7 @@ Every episode is checked automatically before it is shown: meanings must match t
 
 - **Letter games** (five stages, fixed rules, no model) set the reading level, from "Does not know the letters yet" to "Reads Arabic well". Parents of children who already read can skip them.
 - **Episode** made from teacher-approved cards, adapted to the level, with the Quran text inserted by the server (sukun shown in the Madinah Mushaf form).
-- **Before you move on**: three fixed questions from the teacher; passing opens a closing screen. No points, badges or timer.
+- **Review with a grown-up**: three fixed questions from the teacher, answered together. Nothing is locked; the result is kept only as information, then a closing screen. No points, badges or timer.
 - **Ask a question**: questions outside the cards go to the teacher, whose own reply appears under the question box.
 - **Why this journey**: approved cards about Al-Fatiha on the parent page and the report.
 

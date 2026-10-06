@@ -106,7 +106,7 @@ app.get("/api/letters/:step", (req, res) => {
 });
 
 // The verified Al-Fatiha text, read-only (used by the letter games).
-// "Before you move on": the teacher's fixed questions. The file is checked once at start-up and the
+// "Review with a grown-up": the teacher's fixed questions. The file is checked once at start-up and the
 // server refuses to run if a question points to a card that is not approved (lib/checks.js).
 const EPISODE_CHECKS = readJson(CHECKS_PATH);
 {
