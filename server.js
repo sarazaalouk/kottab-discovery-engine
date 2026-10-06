@@ -382,16 +382,33 @@ function allReferrals() {
   return [...entries, ...episodes.listTrialReferrals()].map((e) => ({ ...e, id: referralId(e) }));
 }
 
+// Trial episodes are shown only to their own session: the browser sends its trial session id
+// (header X-Trial-Session, or trial_session_id in the body of /api/ask). Missing or different → 404,
+// the same answer as for an episode that does not exist, so the id is not confirmed.
+// Returns the error body to send, or null when the request may go on. Non-trial episodes are not affected.
+function requireTrialSession(req, record, sid = req.get("X-Trial-Session")) {
+  const id = record ? record.id : req.params.id;
+  if (!episodes.isTrialId(id)) return null;
+  if (record && typeof sid === "string" && episodes.isTrialSessionId(sid) && sid === record.trial_session_id) return null;
+  return { error: "episode not found" };
+}
+
 // The teacher's replies to questions asked from this episode (shown under the question box).
 app.get("/api/episodes/:id/replies", (req, res) => {
   if (!episodes.isValidId(req.params.id)) return res.status(404).json({ error: "episode not found" });
   const record = episodes.get(req.params.id);
-  res.json(repliesForEpisode(allReferrals(), req.params.id, record ? record.trial_session_id : undefined));
+  const denied = requireTrialSession(req, record);
+  if (denied) return res.status(404).json(denied);
+  // A trial episode uses the session the request proved (checked above), not the one read from the record.
+  const sid = episodes.isTrialId(req.params.id) ? req.get("X-Trial-Session") : undefined;
+  res.json(repliesForEpisode(allReferrals(), req.params.id, sid));
 });
 
 app.get("/api/episodes/:id", (req, res) => {
   const record = episodes.get(req.params.id);
   if (!record) return res.status(404).json({ error: "episode not found" });
+  const denied = requireTrialSession(req, record);
+  if (denied) return res.status(404).json(denied);
   if (record.status !== "approved") return res.json({ id: record.id, status: record.status });
 
   const kbById = new Map(readJson(KB_PATH).entries.map((c) => [c.id, c]));
@@ -425,6 +442,8 @@ app.get("/api/episodes/:id", (req, res) => {
 app.get("/api/episodes/:id/report", (req, res) => {
   const record = episodes.get(req.params.id);
   if (!record) return res.status(404).json({ error: "episode not found" });
+  const denied = requireTrialSession(req, record);
+  if (denied) return res.status(404).json(denied);
   if (record.status !== "approved") return res.json({ id: record.id, status: record.status });
 
   const kbById = new Map(readJson(KB_PATH).entries.map((c) => [c.id, c]));
@@ -468,6 +487,11 @@ app.post("/api/ask", askLimit, async (req, res) => {
     return res.status(400).json({ error: "question must be 1 to 300 characters" });
   }
   const record = episodes.get(episodeId);
+  // A question about a trial episode must come from its own session (trial_session_id in the body).
+  if (episodes.isTrialId(episodeId)) {
+    const denied = requireTrialSession({ params: { id: episodeId } }, record, askSessionId ?? null); // null: no header fallback here
+    if (denied) return res.status(404).json(denied);
+  }
   const refer = (reason) => {
     // A trial question is kept in memory even if its episode has already expired.
     const episodeRef = record ? record.id : episodes.isTrialId(episodeId) ? episodeId : null;
@@ -622,8 +646,13 @@ app.post("/api/review/episodes/:id/decision", (req, res) => {
   res.json({ id: record.id, status: record.status, review: record.review });
 });
 
-app.listen(PORT, () => {
-  console.log(`Kottab Discovery Engine running on http://localhost:${PORT}`);
-  console.log(`PUBLISH_MODE: ${publishMode()} (auto = shown after the automatic check; review-first = every episode waits for the teacher)`);
-  if (!pinConfigured()) console.log("REVIEWER_PIN is not set: the reviewer page and /api/review/* answer 503 until it is set.");
-});
+// Started directly (npm start) it listens; required by the tests it only exports the app.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Kottab Discovery Engine running on http://localhost:${PORT}`);
+    console.log(`PUBLISH_MODE: ${publishMode()} (auto = shown after the automatic check; review-first = every episode waits for the teacher)`);
+    if (!pinConfigured()) console.log("REVIEWER_PIN is not set: the reviewer page and /api/review/* answer 503 until it is set.");
+  });
+}
+
+module.exports = app;

@@ -182,7 +182,7 @@
       await new Promise((r) => setTimeout(r, POLL_MS));
       let data;
       try {
-        const res = await fetch(`/api/episodes/${encodeURIComponent(id)}`);
+        const res = await fetch(`/api/episodes/${encodeURIComponent(id)}`, { headers: trial.headers() });
         if (res.status === 404) { stopSteps(); secondsTimer = null; store.remove(KEYS.episodeId); return init(); }
         if (!res.ok) continue;
         data = await res.json();
@@ -260,7 +260,7 @@
   async function loadEpisode(id) {
     let res;
     try {
-      res = await fetch(`/api/episodes/${encodeURIComponent(id)}`);
+      res = await fetch(`/api/episodes/${encodeURIComponent(id)}`, { headers: trial.headers() });
     } catch {
       return showError("We couldn't reach the server, so nothing was sent. Please check the connection and try again.");
     }
@@ -323,7 +323,7 @@
   function startWatching(id) {
     if (stopWatching) stopWatching();
     stopWatching = watchEpisode({
-      fetchStatus: () => fetch(`/api/episodes/${encodeURIComponent(id)}`).then((r) => (r.ok ? r.json() : null)).then((d) => d && d.status),
+      fetchStatus: () => fetch(`/api/episodes/${encodeURIComponent(id)}`, { headers: trial.headers() }).then((r) => (r.ok ? r.json() : null)).then((d) => d && d.status),
       onChange: () => { stopWatching = null; loadEpisode(id); },
     });
   }
@@ -333,7 +333,7 @@
   function startReplies(id) {
     if (stopReplies) stopReplies();
     stopReplies = watchReplies({
-      fetchReplies: () => fetch(`/api/episodes/${encodeURIComponent(id)}/replies`).then((r) => (r.ok ? r.json() : null)),
+      fetchReplies: () => fetch(`/api/episodes/${encodeURIComponent(id)}/replies`, { headers: trial.headers() }).then((r) => (r.ok ? r.json() : null)),
       // The reply is put on the page as text only (js/replies-view.js).
       onReplies: (list) => renderReplies($("teacher-replies"), list),
     });

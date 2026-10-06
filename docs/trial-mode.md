@@ -22,6 +22,7 @@ What parents read: "We do not write trial data to disk; it is held briefly in se
 | End | — | "End session" in the amber bar on every page erases the episode and its referrals on the server, then everything in the tab |
 | Safety net | — | The server forgets trial episodes after 3 hours, or when it restarts |
 | Session id | — | The browser makes a `trial_session_id` when the trial starts, before anything is generated, and sends it with every generation and question. The server attaches it to every trial episode and referral |
+| Reading a trial episode | — | Every request about a trial episode (the episode, the report, the teacher's replies) sends the session id in the header `X-Trial-Session`, and a question sends it as `trial_session_id`. The server answers 404 "episode not found" when it is missing or belongs to another session, the same as for an episode that does not exist (`tests/http-tests.js`). Non-trial episodes are not affected |
 | A generation still running at "End session" | — | "End session" sends the session id; the server marks it as ended, erases everything that carries it, and drops any later save or referral with it, even when the episode id never reached the browser (`tests/trial-tests.js`, T7–T10) |
 | "Erased" message | — | Shown only after the server confirms; if the request fails, the bar says "Not erased yet" and the tab keeps its data so the parent can try again |
 

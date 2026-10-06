@@ -118,7 +118,7 @@
     }
     let data;
     try {
-      const res = await fetch(`/api/episodes/${encodeURIComponent(id)}/report`);
+      const res = await fetch(`/api/episodes/${encodeURIComponent(id)}/report`, { headers: trial.headers() });
       if (!res.ok) throw new Error("report");
       data = await res.json();
     } catch {

@@ -30,6 +30,11 @@ const trial = {
       return true;
     } catch { return false; }
   },
+  // Header for every request about a trial episode: the server shows a trial episode only to its own session.
+  headers() {
+    const sid = trial.isOn() ? trial.sessionId() : null;
+    return sid ? { "X-Trial-Session": sid } : {};
+  },
   // A tab that started its trial before session ids existed gets one now, still before it generates.
   sessionId() {
     try {
