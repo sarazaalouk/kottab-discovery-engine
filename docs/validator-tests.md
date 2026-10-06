@@ -28,15 +28,17 @@ Each test takes the sample episode (`data/episodes/sample-episode-01.json`), bre
 | 16 | (c) a child meaning is the child sentence | A word meaning uses the card's parent text (`meaning_en`) | Rejected: `[c] a meaning for the child must be card kb-030's meaning_en_child, word for word` |
 | 17 | (options) the three options are different | Option 2 is option 1 in capitals with a space | Rejected: `[options] two options are the same text` |
 | 18 | (word) a meaning card is about the word it is attached to | kb-030 (الرحمن الرحيم) attached to 1:1 word 1 (بِسْمِ) | Rejected: `[word] meaning card kb-030 is not about 1:1 word 1`. Context cards are exempt; the comparison ignores marks, ال, a joined ل/ب/و and alif (the Uthmani small alif) |
+| 19 | (define) free text does not define words | "The word Ar-Rahman is about mercy…" added to the discovery moment | Rejected: `[define] free text uses a definition phrase` |
+| 19b | (define) same rule for the memory picture | "…because Ar-Rahman means mercy" | Rejected: `[define]` |
 
 ## Last run
 
-2026-10-06: all 18 cases (0–12, 14, 14b, 16–18) behaved as expected. The sample fixture got the `adaptation` field (Knows most letters → root) by hand when the field was added to the schema.
+2026-10-06: all 20 cases (0–12, 14, 14b, 16–19, 19b) behaved as expected. The sample fixture got the `adaptation` field (Knows most letters → root) by hand when the field was added to the schema.
 
 ## Not covered by the validator (human review)
 
 These rules cannot be checked by code and stay with the reviewer:
-- Free text (discovery moment, question, tasks, report) does not state meanings or tafsir.
+- Free text (discovery moment, question, tasks, report) does not state meanings or tafsir in words the patterns of case 19 do not catch.
 - The discovery question can be answered by looking at the ayah, and the wrong options are the same kind of answer.
 - The parent report is written as an invitation, not as something the child already did.
 - The memory picture is a memory aid, not an explanation.

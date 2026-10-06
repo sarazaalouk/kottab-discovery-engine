@@ -54,6 +54,14 @@ const cases = [
     o.words[0].word_index = 1; // بِسْمِ — kb-030 is about Ar-Rahman / Ar-Raheem
     return o;
   }],
+  ["19. (define) free text defines a word", "[define]", (o) => {
+    o.discovery_moment.text_en += " The word Ar-Rahman is about mercy for everyone.";
+    return o;
+  }],
+  ["19b. (define) memory picture says what a word means", "[define]", (o) => {
+    o.memory_picture.description_en = "A tree, because Ar-Rahman means mercy.";
+    return o;
+  }],
   // A teacher/parent-only card shown to the child. The card is approved here (in this test only) so the
   // audience rule is the one that rejects it.
   ["12. (b) teacher/parent-only card on a child screen", "[b]", (o) => {

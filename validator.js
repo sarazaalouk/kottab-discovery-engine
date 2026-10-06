@@ -4,6 +4,17 @@
 // Rules: see CLAUDE.md ("الفاحص الآلي").
 
 const MEMORY_LABEL = "memory picture, not a tafsir";
+// Phrases that state what a word means. They are not allowed in the model's free text (case 19).
+const DEFINITION_PATTERNS = [
+  /\bmeans\b/i,
+  /\bmeaning\b/i,
+  /\btranslates?\b/i,
+  /\btranslation\b/i,
+  /\brefers? to\b/i,
+  /\bis called\b/i,
+  /\btafsir says\b/i,
+  /\bthe word\b[^.!?]*?\bis\b/i,
+];
 // Reading level (letter games) → discovery mode. "Does not know the letters yet" has no episode:
 // those children follow the Bismillah letters path, which uses no model.
 const MODE_FOR_LEVEL = {
@@ -233,6 +244,22 @@ function validateEpisode(rawText, ctx) {
         const n = (normalizeArabic(o.text_en).match(/[ء-ي]/g) || []).length;
         if (n > 1) fail("adapt", `discovery_question.options[${i}]: ${n} Arabic letters in letter mode (at most 1)`);
       });
+    }
+  }
+
+  // (19) free text written by the model must not define meanings. Meanings only come from cards.
+  const freeText = {
+    title_en: out.title_en,
+    "discovery_moment.text_en": out.discovery_moment.text_en,
+    "discovery_question.question_en": out.discovery_question.question_en,
+    "mushaf_search_task.instruction_en": out.mushaf_search_task.instruction_en,
+    "salah_connection.text_en": out.salah_connection.text_en,
+    "memory_picture.description_en": out.memory_picture.description_en,
+  };
+  for (const [where, text] of Object.entries(freeText)) {
+    for (const re of DEFINITION_PATTERNS) {
+      const hit = String(text).match(re);
+      if (hit) fail("define", `${where}: free text uses a definition phrase ("${hit[0]}")`);
     }
   }
 
