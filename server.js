@@ -10,7 +10,7 @@ const Anthropic = require("@anthropic-ai/sdk");
 const { validateEpisode, normalizeArabic, MODE_FOR_LEVEL } = require("./validator");
 const episodes = require("./lib/episodes");
 const { generateLimit, askLimit } = require("./lib/limits");
-const { initialStatus, autoReview, teacherApproved, applyDecision } = require("./lib/publish");
+const { initialStatus, publishMode, autoReview, teacherApproved, applyDecision } = require("./lib/publish");
 const noor = require("./lib/noor");
 const { askCandidates, askAnswer } = require("./lib/ask");
 const { requireReviewerPin, pinConfigured } = require("./lib/reviewer-pin");
@@ -79,6 +79,7 @@ app.get("/health", (req, res) => {
     status: "ok",
     apiKeyConfigured: Boolean(process.env.ANTHROPIC_API_KEY),
     reviewerPinConfigured: pinConfigured(),
+    publishMode: publishMode(),
   });
 });
 
@@ -547,5 +548,6 @@ app.post("/api/review/episodes/:id/decision", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Kottab Discovery Engine running on http://localhost:${PORT}`);
+  console.log(`PUBLISH_MODE: ${publishMode()} (auto = shown after the automatic check; review-first = every episode waits for the teacher)`);
   if (!pinConfigured()) console.log("REVIEWER_PIN is not set: the reviewer page and /api/review/* answer 503 until it is set.");
 });

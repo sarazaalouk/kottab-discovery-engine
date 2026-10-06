@@ -62,8 +62,12 @@ Script: `tests/publish-tests.js` (also run by `npm test`). Rule in `lib/publish.
 | P7 | Withdraw an episode that is not published | Refused |
 | P8 | Teacher confirms an auto-published episode | Counted as teacher-reviewed |
 | P9 | Any decision while the episode is still being generated | Refused |
+| P10 | `PUBLISH_MODE=review-first`: passes the validator, no referrals | `pending_review` (waits for the teacher) |
+| P11 | `PUBLISH_MODE=review-first`: fails the validator | `rejected` |
+| P12 | `PUBLISH_MODE` not set (or empty, or `auto`) | `auto` |
+| P13 | `PUBLISH_MODE` with an unknown value | Treated as `review-first` |
 
-Last run: 2026-10-06, all 9 cases behaved as expected.
+Last run: 2026-10-06, all 13 cases behaved as expected.
 
 ## Bismillah letters path (case 15)
 

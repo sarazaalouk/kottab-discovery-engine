@@ -5,7 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 const { validateEpisode } = require("../validator");
-const { initialStatus, autoReview, teacherApproved, applyDecision } = require("../lib/publish");
+const { initialStatus, publishMode, autoReview, teacherApproved, applyDecision } = require("../lib/publish");
 
 const ROOT = path.join(__dirname, "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), "utf8"));
@@ -21,10 +21,10 @@ const ctx = {
 };
 
 // Same order as the server: validate, then decide the status from the result and the referrals.
-function publish(output) {
+function publish(output, mode = "auto") {
   const v = validateEpisode(JSON.stringify(output), ctx);
   const referrals = v.output && Array.isArray(v.output.referrals) ? v.output.referrals.length : 0;
-  return initialStatus(v.passed, referrals);
+  return initialStatus(v.passed, referrals, mode);
 }
 
 const copy = () => JSON.parse(JSON.stringify(sample.episode));
@@ -66,5 +66,11 @@ check("P8. teacher confirms after review -> teacher-reviewed", String(teacherApp
 const generating = { status: "generating", validation: undefined, review: null };
 check("P9. no decision while the episode is still being generated", applyDecision(generating, "refer", "x"), "the episode is still being generated");
 
-console.log(failed ? `\n${failed} publishing case(s) failed` : `\nall 9 publishing cases behaved as expected`);
+// P10–P13: PUBLISH_MODE
+check("P10. review-first: a passing episode without referrals waits for the teacher", publish(copy(), "review-first"), "pending_review");
+check("P11. review-first: a failing episode is still rejected", publish(broken, "review-first"), "rejected");
+check("P12. PUBLISH_MODE not set means auto", `${publishMode(undefined)}|${publishMode("")}|${publishMode("auto")}`, "auto|auto|auto");
+check("P13. an unknown PUBLISH_MODE is treated as review-first", `${publishMode("autoo")}|${publishMode("review-first")}`, "review-first|review-first");
+
+console.log(failed ? `\n${failed} publishing case(s) failed` : `\nall 13 publishing cases behaved as expected`);
 process.exit(failed ? 1 : 0);

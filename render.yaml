@@ -17,6 +17,9 @@ services:
       # Reviewer page PIN; given to the judges in the submission file, never in the repository.
       - key: REVIEWER_PIN
         sync: false
+      # "auto" (default) or "review-first" (every episode waits for the teacher, e.g. for a trial with a real child).
+      - key: PUBLISH_MODE
+        sync: false
       - key: NODE_VERSION
         value: "22"
       - key: GENERATIONS_PER_IP_PER_HOUR
