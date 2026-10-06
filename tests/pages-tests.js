@@ -24,6 +24,11 @@ const longRuns = arabicRuns.filter((r) => r.length > 1);
 check("G4. episode.html has no Arabic beyond single letters (no ayah typed in by hand)", longRuns.length === 0 && episodeHtml.includes('fetch("/api/quran")'),
   longRuns.join(" ") || `${arabicRuns.length} single letters`);
 
+// G5: the "While you wait" count is worked out from the verified ayah: ر appears twice in 1:1.
+const { countLetter } = require("../public/js/wait-steps");
+const quranFile = JSON.parse(read("data/quran_fatiha.json"));
+check("G5. counting ر in ayah 1:1 from the verified file gives 2", countLetter(quranFile.ayahs.find((a) => a.ayah === 1).text_ar, "ر") === 2);
+
 // G3: no next root or "Episode 2" is promised anywhere in the product or the docs.
 function files(dir) {
   return fs.readdirSync(path.join(__dirname, "..", dir), { withFileTypes: true }).flatMap((e) =>

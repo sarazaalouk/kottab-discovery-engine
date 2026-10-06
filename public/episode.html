@@ -34,13 +34,35 @@
       <li data-step="2">Checking every meaning against the source</li>
     </ol>
 
-    <!-- While you wait: ayah 1:1 from the verified file (GET /api/quran), no model, nothing sent -->
+    <!-- While you wait: four steps; ayahs 1:1 and 1:3 from the verified file (GET /api/quran), no model, nothing sent,
+         no points, stars or sounds. Each step opens after "Done" on the one before. -->
     <div class="card wait-card stack" id="while-wait" hidden aria-labelledby="wait-title">
       <span class="eyebrow" id="wait-title">While you wait</span>
-      <p>Read this with your grown-up, slowly, three times:</p>
-      <p class="ayah quran" lang="ar" dir="rtl" id="wait-ayah"></p>
-      <p class="small muted">Al-Fatiha 1:1 · verified Quran text</p>
-      <p>Can you find the letter <span class="ar-letters" lang="ar">ر</span> (r) twice in this ayah? Point to it.</p>
+
+      <div class="wait-step stack" id="wait-1">
+        <p>Read this with your grown-up, slowly, three times:</p>
+        <p class="ayah quran" lang="ar" dir="rtl" id="wait-ayah"></p>
+        <p class="small muted">Al-Fatiha 1:1 · verified Quran text</p>
+        <button class="btn secondary" type="button" id="wait-done-1">We read it 3 times</button>
+      </div>
+
+      <div class="wait-step stack" id="wait-2" hidden>
+        <p>How many times can you see the letter <span class="ar-letters" lang="ar">ر</span> (r) in this ayah?</p>
+        <div class="row" id="wait-count" role="group" aria-label="How many times"></div>
+        <p id="wait-count-reply" aria-live="polite"></p>
+      </div>
+
+      <div class="wait-step stack" id="wait-3" hidden>
+        <p>Here is another ayah, 1:3. Two words from 1:1 are here again. Can you point to them?</p>
+        <p class="ayah quran" lang="ar" dir="rtl" id="wait-ayah-3"></p>
+        <p class="small muted">Al-Fatiha 1:3 · verified Quran text</p>
+        <button class="btn secondary" type="button" id="wait-done-3">I found them</button>
+      </div>
+
+      <div class="wait-step stack" id="wait-4" hidden>
+        <p>Say the two names with your grown-up: Ar-Rahman, Ar-Raheem. In your episode you will find out why they sit together.</p>
+        <p class="muted">Your episode is almost ready…</p>
+      </div>
     </div>
   </section>
 
@@ -142,6 +164,7 @@
 <script src="js/episode-watch.js"></script>
 <script src="js/checks.js"></script>
 <script src="js/replies-view.js"></script>
+<script src="js/wait-steps.js"></script>
 <script>
   renderTopbar("episode.html");
   const $ = (id) => document.getElementById(id);
@@ -163,21 +186,41 @@
   function setStep(i, state) {
     $("steps").children[i].dataset.state = state;
   }
-  // "While you wait": ayah 1:1 comes from the verified Quran file, never typed into this page.
-  // The card sits inside the loading section, so it goes away when the episode is shown.
+  // "While you wait": ayahs 1:1 and 1:3 come from the verified Quran file, never typed into this page
+  // (the sukun is drawn by js/sukun.js like all .quran text). The card sits inside the loading section,
+  // so it goes away when the episode is shown, whichever step the child is on.
   let waitAyahLoaded = false;
   async function showWhileYouWait() {
     if (waitAyahLoaded) return;
     try {
       const res = await fetch("/api/quran");
       if (!res.ok) return;
-      const ayah = (await res.json()).ayahs.find((a) => a.ayah === 1);
-      if (!ayah) return;
-      $("wait-ayah").textContent = ayah.text_ar; // the sukun is drawn by js/sukun.js like all .quran text
+      const ayahs = (await res.json()).ayahs;
+      const a1 = ayahs.find((a) => a.ayah === 1);
+      const a3 = ayahs.find((a) => a.ayah === 3);
+      if (!a1 || !a3) return;
+      $("wait-ayah").textContent = a1.text_ar;
+      $("wait-ayah-3").textContent = a3.text_ar;
+      // Step 2: the right answer is counted from the ayah text (marks removed), not typed by hand.
+      const right = countLetter(a1.text_ar, "ر");
+      $("wait-count").innerHTML = [1, 2, 3].map((n) => `<button class="btn secondary" type="button" data-n="${n}">${n}</button>`).join("");
+      $("wait-count").querySelectorAll("button").forEach((b) =>
+        b.addEventListener("click", () => {
+          if (Number(b.dataset.n) === right) {
+            $("wait-count-reply").textContent = "Yes! Point to each one.";
+            $("wait-count").querySelectorAll("button").forEach((x) => (x.disabled = true));
+            $("wait-3").hidden = false;
+          } else {
+            $("wait-count-reply").textContent = "Look again, slowly."; // the question stays open
+          }
+        })
+      );
       $("while-wait").hidden = false;
       waitAyahLoaded = true;
     } catch { /* the card simply stays hidden */ }
   }
+  $("wait-done-1").addEventListener("click", () => { $("wait-done-1").disabled = true; $("wait-2").hidden = false; });
+  $("wait-done-3").addEventListener("click", () => { $("wait-done-3").disabled = true; $("wait-4").hidden = false; });
 
   function runSteps(startedAt = Date.now()) {
     showWhileYouWait();
