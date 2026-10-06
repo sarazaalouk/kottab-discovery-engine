@@ -7,7 +7,7 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
-    "test": "node tests/validator-tests.js && node tests/word-tests.js && node tests/levels-tests.js && node tests/checks-tests.js && node tests/sukun-tests.js && node tests/why-tests.js && node tests/pages-tests.js && node tests/publish-tests.js && node tests/letters-tests.js && node tests/ask-tests.js && node tests/trial-tests.js && node tests/http-tests.js && node tests/replies-tests.js && node tests/client-tests.js && node tests/pin-tests.js && node tests/docs-tests.js"
+    "test": "node tests/validator-tests.js && node tests/word-tests.js && node tests/levels-tests.js && node tests/checks-tests.js && node tests/sukun-tests.js && node tests/why-tests.js && node tests/pages-tests.js && node tests/publish-tests.js && node tests/letters-tests.js && node tests/ask-tests.js && node tests/trial-tests.js && node tests/http-tests.js && node tests/store-tests.js && node tests/replies-tests.js && node tests/client-tests.js && node tests/pin-tests.js && node tests/docs-tests.js"
   },
   "engines": {
     "node": ">=20"

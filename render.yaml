@@ -11,6 +11,11 @@ services:
     startCommand: npm start
     healthCheckPath: /health
     autoDeploy: true
+    # Lasting disk for generated episodes and the referral log (DATA_STORE_DIR below).
+    disk:
+      name: kottab-data
+      mountPath: /var/data
+      sizeGB: 1
     envVars:
       - key: ANTHROPIC_API_KEY
         sync: false
@@ -20,6 +25,8 @@ services:
       # "auto" (default) or "review-first" (every episode waits for the teacher, e.g. for a trial with a real child).
       - key: PUBLISH_MODE
         sync: false
+      - key: DATA_STORE_DIR
+        value: /var/data
       - key: NODE_VERSION
         value: "22"
       - key: GENERATIONS_PER_IP_PER_HOUR

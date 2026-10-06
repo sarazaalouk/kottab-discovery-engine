@@ -49,6 +49,13 @@
 - **لتجربة الطفل اليوم:** في Render ← Environment ضيفي `PUBLISH_MODE` بقيمة `review-first` واحفظي. وبعد التجربة غيّريها لـ `auto` (أو امسحيها) قبل التحكيم. للتشغيل المحلي، ضيفي `PUBLISH_MODE=review-first` في `.env`.
 - للتأكد: `/health` بيرجّع `"publishMode":"review-first"` أو `"auto"`.
 
+## مكان حفظ الحلقات: DATA_STORE_DIR
+
+- لو `DATA_STORE_DIR` مضبوط، الحلقات المولّدة بتتكتب وتتقري من `DATA_STORE_DIR/episodes/` والإحالات من `DATA_STORE_DIR/referrals.jsonl`، والسيرفر بيعمل المجلدات عند البدء. لو مش مضبوط، الحفظ جوه `data/` في المشروع زي الأول.
+- في `render.yaml`: قرص دائم `kottab-data` على `/var/data` (1 GB) و`DATA_STORE_DIR=/var/data`، عشان الحلقات والإحالات ما تتمسحش مع كل نشر أو إعادة تشغيل.
+- ملفات القراءة فقط (`quran_fatiha.json` و`kb_tafsir.json` و`noor_albayan.json` و`episode_checks.json` و`sample-episode-01.json`) فاضلة في `data/` جوه المشروع.
+- **مهم:** Render بيدّي الأقراص الدائمة للخطط المدفوعة بس، والخدمة حاليًا على الخطة المجانية (`plan: free`)، فلازم تغيّري الخطة من Render عشان القرص يشتغل.
+
 ## للجنة التحكيم
 
 - **الرابط:** https://kottab-discovery-engine.onrender.com

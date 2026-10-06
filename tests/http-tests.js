@@ -8,7 +8,7 @@ const episodes = require("../lib/episodes");
 
 const ROOT = path.join(__dirname, "..");
 const sample = JSON.parse(fs.readFileSync(path.join(ROOT, "data/episodes/sample-episode-01.json"), "utf8"));
-const REFERRALS_LOG = path.join(ROOT, "data/referrals.jsonl");
+const REFERRALS_LOG = episodes.REFERRALS_LOG;
 const MARK = "[http-tests] demo question";
 
 let failed = 0;
