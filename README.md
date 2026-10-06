@@ -16,6 +16,14 @@ Note: these files are currently stored outside this repository and will be added
 
 Every episode is checked automatically before it is shown: meanings must match teacher-approved cards word for word, and the model may not write any Quran text. An episode that passes and has no questions for the teacher is shown to the child at once; a Kottab teacher reviews it afterwards and can withdraw it. An episode with a referral waits for the teacher. An episode that fails the check is never shown.
 
+## What a family sees
+
+- **Letter games** (five stages, fixed rules, no model) set the reading level, from "Does not know the letters yet" to "Reads Arabic well". Parents of children who already read can skip them.
+- **Episode** made from teacher-approved cards, adapted to the level, with the Quran text inserted by the server (sukun shown in the Madinah Mushaf form).
+- **Before you move on**: three fixed questions from the teacher; passing opens a closing screen. No points, badges or timer.
+- **Ask a question**: questions outside the cards go to the teacher, whose own reply appears under the question box.
+- **Why this journey**: approved cards about Al-Fatiha on the parent page and the report.
+
 ## Documentation
 
 - [Sources](docs/sources.md) — Quran text, Al-Tafsir Al-Muyassar, Tafsir Ibn Kathir (edition and pages), hadith grading, English terminology; aligned with the challenge reference pack "المرجعية والحزمة العلمية".

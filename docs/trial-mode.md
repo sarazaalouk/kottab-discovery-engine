@@ -12,10 +12,12 @@ What parents read: "We do not write trial data to disk; it is held briefly in se
 | Name sent to the model | Whatever the parent typed (demo data) | A pseudonym only: Child A to Child E. The server refuses any other name. |
 | Age | Exact age 6–10 | Approximate: "6 to 7" (sent as 7) or "8 to 10" (sent as 9) |
 | Surahs known | Sent | Not collected; sent as "not shared" |
-| Reading level | Letter games, or the parent's guess | Letter games only (fixed rules, no model) |
+| Reading level | Letter games (five stages), the parent's guess, or "Skip the games" for the two reading levels | Letter games only (fixed rules, no model); "Skip the games" is not offered |
 | Browser storage | `localStorage` | `sessionStorage` only (this tab), cleared when the session ends |
 | Episode on the server | File in `data/episodes/` | Memory only, never written to disk |
 | Referrals (child questions) | `data/referrals.jsonl` | Memory only, attached to the trial episode |
+| Teacher replies to referrals | Stored with the referral in `data/referrals.jsonl` | Memory only, with the referral; erased when the session ends (`tests/replies-tests.js`, Y8) |
+| "Before you move on" result | `localStorage` (`episode_1_passed`) | `sessionStorage` only; erased when the session ends. Nothing is sent to the server |
 | Teacher review | Automatic check before the child sees the episode; teacher reviews after it is shown and can withdraw it; episodes with a referral wait for the teacher | Same; trial episodes are marked "جلسة تجربة" on the reviewer page |
 | End | — | "End session" in the amber bar on every page erases the episode and its referrals on the server, then everything in the tab |
 | Safety net | — | The server forgets trial episodes after 3 hours, or when it restarts |

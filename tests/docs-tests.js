@@ -33,5 +33,16 @@ const pubLast = plan.match(/## Publishing[\s\S]*?Last run: [^,]+, all (\d+) case
 check("D3. publishing: plan rows, test checks and 'Last run' agree", pubRows === pubChecks && pubLast && Number(pubLast[1]) === pubChecks,
   `rows ${pubRows}, tests ${pubChecks}, last run ${pubLast && pubLast[1]}`);
 
+// D4: every test script that npm test runs is listed in the plan
+const scripts = (JSON.parse(read("package.json")).scripts.test.match(/tests\/[\w-]+\.js/g) || []);
+const unlisted = scripts.filter((s) => s !== "tests/validator-tests.js" && s !== "tests/publish-tests.js" && !plan.includes("`" + s + "`"));
+check("D4. every test script in npm test is listed in docs/validator-tests.md", unlisted.length === 0, unlisted.join(", ") || `${scripts.length} scripts`);
+
+// D5: the features of the last batch are described in CLAUDE.md and docs/content-levels.md
+const levelsDoc = read("docs/content-levels.md");
+const FEATURES = ["Reads Arabic well", "Skip the games", "Before you move on", "Your teacher answered", "What you discovered today", "U+06E1", "Why this journey"];
+const missing = FEATURES.filter((f) => !claude.includes(f) || !levelsDoc.includes(f));
+check("D5. new features are described in CLAUDE.md and content-levels.md", missing.length === 0, missing.join(", ") || `${FEATURES.length} features`);
+
 console.log(failed ? `\n${failed} docs case(s) failed` : "\nall docs cases behaved as expected");
 process.exit(failed ? 1 : 0);

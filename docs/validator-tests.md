@@ -98,6 +98,6 @@ Last run: 2026-10-06, all cases behaved as expected.
 | `tests/replies-tests.js` | Teacher replies to referrals: English only (single Arabic letters allowed), stored on the referral in `referrals.jsonl` or in trial memory (erased with the session), shown only on their own episode | Y1–Y8 |
 | `tests/client-tests.js` | Episode page: a shown episode is checked every 30 seconds; a withdrawn one is reported once and the checks stop; a dropped request is retried; the teacher's replies are checked every 30 seconds | W1–W5 |
 | `tests/pin-tests.js` | Reviewer PIN: 503 when no PIN is set on the server, 401 for a wrong or missing PIN, allowed with the right PIN | R1–R4 |
-| `tests/docs-tests.js` | The numbers in the docs match the project: approved cards (19) and the number of cases in each table of this file | D1–D3 |
+| `tests/docs-tests.js` | The numbers in the docs match the project: approved cards (19), the number of cases in each table of this file, every test script listed here, and the new features described in CLAUDE.md and content-levels.md | D1–D5 |
 
 Last run: 2026-10-06, all cases behaved as expected.

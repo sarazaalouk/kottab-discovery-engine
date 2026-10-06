@@ -18,6 +18,37 @@ The challenge reference pack, **"المرجعية والحزمة العلمية"
   - نفحص صيغًا محددة لتعريف المعاني، وقد تفوت الفحص ادعاءات أخرى؛ لذلك تُراجع الحلقة بشريًا بعد العرض ويمكن سحبها.
   - We check for specific phrasings that define meanings, and other claims may get past this check; that is why a teacher reviews the episode after it is shown and can withdraw it. A withdrawn episode reaches the child's screen within about 30 seconds (the page checks every 30 seconds).
 - **ج and د — Questions.** The "Ask a question" box does not answer from the model. The model only decides whether one approved card answers the question; if not, or if it is unsure, the child sees a polite referral and the question is logged for the teacher.
+- **Teacher replies.** On the reviewer page the teacher can write an English reply to any referral. The reply is the teacher's own text: it never goes through the model and is checked only by the "no Arabic words" rule (single letters allowed). The child sees it under the question box as "Your teacher answered:" within about 30 seconds.
+
+## Fixed content (no model)
+
+These parts are written by people or copied from the sources, and the model never writes or changes them:
+
+| Part | Where | Level | Source |
+|---|---|---|---|
+| "Why this journey" | Parent page (kb-002, kb-003, kb-001) and the top of the report (kb-002, its short sentence) | ب | Approved cards only, texts as in the knowledge base (`GET /api/cards/why`) |
+| Child line before the games | Letter games page | — | Fixed sentence: "Every day you say Al-Fatiha in Salah. Let's find out what you are saying." |
+| "Before you move on" | End of episode 1 | أ and ب | Three questions written by the teacher (`data/episode_checks.json`), each tied to an approved card (kb-030, kb-034) or to the verified Quran file. The server refuses to start if a card is not approved. 2 of 3 passes; no points, badges or timer |
+| Closing screen | After passing "Before you move on" | — | Fixed text: "What you discovered today" with the episode title, "Next episode: root س-ل-م — opens when your teacher approves its cards", and "Play the discovery question again" |
+| Teacher replies | Under the question box | — | The teacher's own English text |
+
+## Reading levels
+
+The letter games have five stages (fixed rules, no model); each opens only if the one before was passed. Stage 5 shows ayah 1:1 from the verified file and the grown-up confirms the child read it in full.
+
+| Level | From the games | Episode |
+|---|---|---|
+| Does not know the letters yet | Stage 1 not passed | No episode: the Bismillah letters path |
+| Knows some letters | Stage 1 passed, stage 2 not | `letter`: one shared letter |
+| Knows most letters | Stage 2 passed, stage 3 not | `root`: the three root letters after Al- |
+| Reads short words | Stage 3 passed (stage 4 sets `reads_fatiha_words`), stage 5 not | `reading`: the child reads the two words |
+| Reads Arabic well | Stage 5 passed | `reading`: the child reads both ayahs in full, counts the root in the two ayahs together, and is invited to read the whole of Al-Fatiha to the grown-up before Salah |
+
+Parents who choose "Reads short words" or "Reads Arabic well" can press "Skip the games — go to the episode": the level is then the parent's own choice (`diagnosis_source: "parent"`). This is not offered in a trial session, where the level must come from the games. The meanings never change with the level.
+
+## Quran display
+
+Inside `.quran` elements the sukun is drawn in the Madinah Mushaf form: U+0652 is shown as U+06E1. Only the screen changes; `data/quran_fatiha.json` and everything the server checks keep U+0652.
 
 ## Example: Al-Fatiha, ayah 7
 
