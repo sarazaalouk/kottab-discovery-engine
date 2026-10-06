@@ -315,8 +315,9 @@ function cardSource(card) {
 function childMeanings(ep, kbById) {
   const seen = new Set();
   const out = [];
+  // Every word meaning and the revealed answer card is shown to the child, whatever audience the model
+  // wrote; the validator has already made sure each of them is the card's child sentence.
   for (const m of [ep.discovery_question.answer_meaning, ...ep.words.flatMap((w) => w.meanings)]) {
-    if (m.audience !== "child") continue;
     const key = `${m.card_id}|${m.text}`;
     if (seen.has(key)) continue;
     seen.add(key);

@@ -46,6 +46,12 @@ const cases = [
     m.text = ctx.kb.entries.find((c) => c.id === m.card_id).meaning_en; // exists in the card, but is not the child sentence
     return o;
   }],
+  ["16b. (c) child position checked whatever audience the model wrote", "[c]", (o) => {
+    const m = o.words[0].meanings[0];
+    m.audience = "parent"; // the model labels it for parents, but it sits in a word meaning the child sees
+    m.text = ctx.kb.entries.find((c) => c.id === m.card_id).meaning_en;
+    return o;
+  }],
   ["17. (options) two options are the same text", "[options]", (o) => {
     o.discovery_question.options[1].text_en = o.discovery_question.options[0].text_en.toUpperCase() + " ";
     return o;
