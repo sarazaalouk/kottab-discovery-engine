@@ -12,6 +12,7 @@ const episodes = require("./lib/episodes");
 const { generateLimit, askLimit } = require("./lib/limits");
 const { initialStatus, publishMode, autoReview, teacherApproved, applyDecision } = require("./lib/publish");
 const noor = require("./lib/noor");
+const { checkProblems, checksForEpisode } = require("./lib/checks");
 const { askCandidates, askAnswer } = require("./lib/ask");
 const { requireReviewerPin, pinConfigured } = require("./lib/reviewer-pin");
 
@@ -28,6 +29,7 @@ const KB_PATH = path.join(DATA_DIR, "kb_tafsir.json");
 const REFERRALS_LOG = path.join(DATA_DIR, "referrals.jsonl");
 const SYSTEM_PROMPT_PATH = path.join(__dirname, "prompts", "episode_system.md");
 const SCHEMA_PATH = path.join(__dirname, "schemas", "episode.schema.json");
+const CHECKS_PATH = path.join(DATA_DIR, "episode_checks.json");
 
 const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 
@@ -102,6 +104,20 @@ app.get("/api/letters/:step", (req, res) => {
 });
 
 // The verified Al-Fatiha text, read-only (used by the letter games).
+// "Before you move on": the teacher's fixed questions. The file is checked once at start-up and the
+// server refuses to run if a question points to a card that is not approved (lib/checks.js).
+const EPISODE_CHECKS = readJson(CHECKS_PATH);
+{
+  const problems = checkProblems(EPISODE_CHECKS, readJson(KB_PATH));
+  if (problems.length) throw new Error(`data/episode_checks.json is not valid: ${problems.join("; ")}`);
+}
+app.get("/api/checks/:episode", (req, res) => {
+  const checks = checksForEpisode(EPISODE_CHECKS, readJson(KB_PATH), req.params.episode);
+  if (!checks) return res.status(404).json({ error: "no questions for this episode" });
+  checks.questions.forEach((q) => { q.source = SOURCE_SHORT[q.source] || q.source; }); // English name on the child page
+  res.json(checks);
+});
+
 app.get("/api/quran", (req, res) => {
   const quran = readJson(QURAN_PATH);
   res.json({ surah: quran.surah, source: quran.source, ayahs: quran.ayahs });

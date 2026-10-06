@@ -12,6 +12,7 @@ const KEYS = {
   trial: "kottab.trial",
   trialEpisodes: "kottab.trialEpisodes",
   trialSession: "kottab.trialSession",
+  episode1Passed: "kottab.episode_1_passed",
   letters: "kottab.letters",
   generatingSince: "kottab.generatingSince",
 };
@@ -53,7 +54,7 @@ const trial = {
       return false;
     }
     try {
-      [KEYS.profile, KEYS.diagnosis, KEYS.episodeId, KEYS.letters, KEYS.generatingSince, KEYS.trialEpisodes, KEYS.trialSession, KEYS.trial].forEach((k) => sessionStorage.removeItem(k));
+      [KEYS.profile, KEYS.diagnosis, KEYS.episodeId, KEYS.letters, KEYS.generatingSince, KEYS.trialEpisodes, KEYS.trialSession, KEYS.episode1Passed, KEYS.trial].forEach((k) => sessionStorage.removeItem(k));
     } catch { /* storage unavailable */ }
     return true;
   },

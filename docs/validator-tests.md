@@ -90,6 +90,7 @@ Last run: 2026-10-06, all cases behaved as expected.
 |---|---|---|
 | `tests/word-tests.js` | Meaning card ↔ ayah word (case 18): kb-030 on Ar-Rahman / Ar-Raheem in 1:1 and 1:3, a wrong word, an ayah outside the card, a range ayah, the Uthmani small alif | M1–M8 |
 | `tests/levels-tests.js` | Reading level from the letter games, including stage 5 (ayah 1:1 read in full → "Reads Arabic well"), and "Skip the games" (parent's choice, reading levels only, never in a trial) | L1–L11 |
+| `tests/checks-tests.js` | "Before you move on": the teacher's questions file is refused if a card is missing or not approved, or a question has no source; 2 of 3 passes | C1–C7 |
 | `tests/ask-tests.js` | "Ask a question": only approved cards for the child (with a child sentence) can answer; a parent/teacher-only card is never offered or shown; the answer is the child sentence word for word | A1–A5 |
 | `tests/trial-tests.js` | Trial sessions: erased on "End session", and a generation that finishes later saves nothing and logs no referral; the session id (made in the browser before any generation) erases everything from the session even if the episode id never reached the browser | T1–T10 |
 | `tests/client-tests.js` | Episode page: a shown episode is checked every 30 seconds; a withdrawn one is reported once and the checks stop; a dropped request is retried | W1–W4 |

@@ -94,6 +94,15 @@
         <p id="salah-text"></p>
       </section>
 
+      <section class="card" id="checks" hidden aria-labelledby="checks-title">
+        <span class="eyebrow">From your teacher</span>
+        <h2 id="checks-title">Before you move on</h2>
+        <p class="small muted">Three questions. Take your time.</p>
+        <div id="checks-list" class="stack"></div>
+        <p class="notice" id="checks-result" hidden aria-live="polite"></p>
+        <button class="btn secondary block" id="checks-retry" hidden>Try again</button>
+      </section>
+
       <a class="btn secondary block" href="report.html">Show the report to a grown-up</a>
     </section>
 
@@ -113,6 +122,7 @@
 
 <script src="js/common.js"></script>
 <script src="js/episode-watch.js"></script>
+<script src="js/checks.js"></script>
 <script>
   renderTopbar("episode.html");
   const $ = (id) => document.getElementById(id);
@@ -333,12 +343,68 @@
     show("episode");
   }
 
+  // ---------- before you move on (teacher's fixed questions, no model) ----------
+  let checks = null;
+  async function loadChecks(episodeNumber) {
+    try {
+      const res = await fetch(`/api/checks/${episodeNumber}`);
+      if (!res.ok) return;
+      checks = await res.json();
+    } catch {
+      return;
+    }
+    renderChecks();
+  }
+
+  function renderChecks() {
+    const answers = [];
+    $("checks-result").hidden = true;
+    $("checks-retry").hidden = true;
+    // Options are shown in a new order each time; the file keeps the teacher's order.
+    $("checks-list").innerHTML = checks.questions
+      .map((q, qi) => {
+        const order = [0, 1, 2].sort(() => Math.random() - 0.5);
+        return `<fieldset class="check-q stack">
+            <legend><b>${qi + 1}.</b> ${escapeHtml(q.question_en)}</legend>
+            <div class="options">${order.map((oi) => `<button class="option" data-q="${qi}" data-o="${oi}">${escapeHtml(q.options[oi])}</button>`).join("")}</div>
+            <span class="source-chip">${escapeHtml(q.card_id ? q.card_id + " · " + q.source : q.source)}</span>
+          </fieldset>`;
+      })
+      .join("");
+    $("checks-list").querySelectorAll(".option").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const qi = Number(btn.dataset.q);
+        btn.closest(".options").querySelectorAll(".option").forEach((b) => (b.disabled = true));
+        btn.classList.add("picked");
+        answers[qi] = Number(btn.dataset.o);
+        if (answers.filter((a) => a !== undefined).length === checks.questions.length) finishChecks(answers);
+      })
+    );
+    $("checks").hidden = false;
+  }
+
+  function finishChecks(answers) {
+    const result = scoreChecks(checks.questions, answers, checks.pass_mark);
+    if (result.passed) {
+      store.set(KEYS.episode1Passed, true);
+      $("checks-result").className = "notice ok";
+      $("checks-result").textContent = "Episode 2 (root س-ل-م) opens when your teacher approves its cards.";
+    } else {
+      $("checks-result").className = "notice";
+      $("checks-result").textContent = "Read the episode once more with a grown-up, then try again.";
+      $("checks-retry").hidden = false;
+    }
+    $("checks-result").hidden = false;
+  }
+  $("checks-retry").addEventListener("click", () => renderChecks());
+
   function answer(btn, d) {
     const buttons = [...$("options").querySelectorAll(".option")];
     buttons.forEach((b) => (b.disabled = true));
     btn.classList.add("picked");
     buttons[d.question.correct_index].classList.add("correct");
     $("reveal").hidden = false;
+    if (!checks) loadChecks(d.episode_number);
     $("reveal").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 

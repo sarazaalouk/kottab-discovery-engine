@@ -1,0 +1,30 @@
+{
+  "description": "Fixed questions written by the Kottab teacher, asked at the end of an episode before the next one opens. No model writes or changes them. Each question points to an approved card (card_id) or to the verified Quran file (source). Passing: 2 of 3.",
+  "author": "Kottab teacher",
+  "pass_mark": 2,
+  "episodes": {
+    "1": [
+      {
+        "id": "e1-q1",
+        "question_en": "Ar-Rahman and Ar-Raheem both come from which word?",
+        "options": ["rahmah (mercy)", "salam (peace)", "hamd (praise)"],
+        "correct": 0,
+        "card_id": "kb-030"
+      },
+      {
+        "id": "e1-q2",
+        "question_en": "Who alone is called Ar-Rahman?",
+        "options": ["Allah", "The Prophet (peace be upon him)", "Any kind person"],
+        "correct": 0,
+        "card_id": "kb-034"
+      },
+      {
+        "id": "e1-q3",
+        "question_en": "In which two ayahs of Al-Fatiha do you see Ar-Rahman and Ar-Raheem together?",
+        "options": ["1:1 and 1:3", "1:2 and 1:4", "1:5 and 1:7"],
+        "correct": 0,
+        "source": "quran_fatiha.json"
+      }
+    ]
+  }
+}
