@@ -42,7 +42,7 @@ Each test takes the sample episode (`data/episodes/sample-episode-01.json`), bre
 ## Not covered by the validator (human review)
 
 These rules cannot be checked by code and stay with the reviewer:
-- Free text (discovery moment, question, tasks, report) does not state meanings or tafsir in words the patterns of case 19 do not catch.
+- Free text (discovery moment, question, options, tasks, report): we check for specific phrasings that define meanings (case 19), and other claims may get past this check; the teacher reviews after the episode is shown and can withdraw it.
 - The discovery question can be answered by looking at the ayah, and the wrong options are the same kind of answer.
 - The parent report is written as an invitation, not as something the child already did.
 - The memory picture is a memory aid, not an explanation.
