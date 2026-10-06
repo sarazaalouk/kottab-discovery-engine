@@ -112,6 +112,7 @@
 </main>
 
 <script src="js/common.js"></script>
+<script src="js/episode-watch.js"></script>
 <script>
   renderTopbar("episode.html");
   const $ = (id) => document.getElementById(id);
@@ -294,7 +295,18 @@
       </div>`;
   }
 
+  // While the episode is shown, check every 30 seconds whether a teacher has withdrawn it.
+  let stopWatching = null;
+  function startWatching(id) {
+    if (stopWatching) stopWatching();
+    stopWatching = watchEpisode({
+      fetchStatus: () => fetch(`/api/episodes/${encodeURIComponent(id)}`).then((r) => (r.ok ? r.json() : null)).then((d) => d && d.status),
+      onChange: () => { stopWatching = null; loadEpisode(id); },
+    });
+  }
+
   function renderEpisode(d) {
+    startWatching(d.id);
     $("ep-eyebrow").textContent = `Episode ${d.episode_number}`;
     $("ep-title").textContent = d.title;
     $("ep-moment").textContent = d.discovery_moment.text_en;
