@@ -262,6 +262,15 @@ function validateEpisode(rawText, ctx) {
         }
       });
     }
+    // The parent chose the level and skipped the games: the report must not say anything was confirmed,
+    // read aloud, or measured by the games.
+    if (ctx.diagnosisSource === "parent") {
+      walkStrings(out.parent_report, "$.parent_report", (s, p) => {
+        if (/confirmed|read ayah 1:1 aloud|the games/i.test(s)) {
+          fail("adapt", `${p}: the level is the parent's estimate (games skipped); the report must not say "confirmed", "read ayah 1:1 aloud" or "the games"`);
+        }
+      });
+    }
     if (out.adaptation.discovery_mode === "letter") {
       out.discovery_question.options.forEach((o, i) => {
         const n = (normalizeArabic(o.text_en).match(/[ء-ي]/g) || []).length;

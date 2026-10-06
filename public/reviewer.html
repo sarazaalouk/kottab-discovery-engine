@@ -70,7 +70,9 @@
   const MODE_AR = { letter: "حرف واحد مشترك", root: "الجذر الثلاثي", reading: "قراءة الكلمتين" };
   // Reading level and discovery mode at the top of each episode.
   function levelLine(e) {
-    const level = `المستوى: <bdi>${escapeHtml(e.reading_level ? levelLabel(e.reading_level) : "—")}</bdi>`;
+    const label = e.reading_level ? levelLabel(e.reading_level, e.diagnosis_source || "parent") : "—";
+    const source = e.diagnosis_source === "parent" ? "تقدير ولي الأمر — لم تُجرَ الألعاب" : e.diagnosis_source === "games" ? "من الألعاب" : "غير مسجّل (حلقة قديمة؛ يُعامل كتقدير ولي الأمر)";
+    const level = `المستوى: <bdi>${escapeHtml(label)}${label !== e.reading_level && e.reading_level ? ` (${escapeHtml(e.reading_level)})` : ""}</bdi>${source ? ` · مصدر المستوى: ${source}` : ""}`;
     const mode = e.adaptation ? `وضع الاكتشاف: ${MODE_AR[e.adaptation.discovery_mode] || escapeHtml(e.adaptation.discovery_mode)}` : "وضع الاكتشاف: — (حلقة قبل التكييف)";
     return `${level} · ${mode}`;
   }
@@ -285,7 +287,7 @@
 
       <section class="block">
         <h3>ملف الطفل (اصطناعي)</h3>
-        ${en(`<p class="small">${escapeHtml(kids.name)} · age ${kids.age} · ${escapeHtml(kids.home_language)} · recites: ${escapeHtml(kids.recites)} · reading: ${escapeHtml(levelLabel(kids.reading_level))}</p>`)}
+        ${en(`<p class="small">${escapeHtml(kids.name)} · age ${kids.age} · ${escapeHtml(kids.home_language)} · recites: ${escapeHtml(kids.recites)} · reading: ${escapeHtml(levelLabel(kids.reading_level, kids.diagnosis_source || "parent"))}</p>`)}
       </section>
 
       <section class="block">

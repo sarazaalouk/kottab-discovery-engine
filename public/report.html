@@ -45,6 +45,7 @@
     <header class="stack">
       <span class="eyebrow" id="r-eyebrow"></span>
       <h1 id="r-title"></h1>
+      <p class="small muted" id="r-level" hidden></p>
       <p class="approved-line" id="approved" hidden>Reviewed and approved by a Kottab teacher</p>
       <p class="notice small" id="auto-published" hidden>Checked automatically against the sources. A Kottab teacher reviews it after it is shown and can withdraw it.</p>
     </header>
@@ -83,6 +84,7 @@
 </main>
 
 <script src="js/common.js"></script>
+<script src="js/levels.js"></script>
 <script>
   renderTopbar("report.html");
 
@@ -132,6 +134,10 @@
     const r = data.report;
     $("r-eyebrow").textContent = `Parent report · Episode ${data.episode_number}`;
     $("r-title").textContent = `${data.child_name}: ${data.title}`;
+    if (data.reading_level) {
+      $("r-level").textContent = `Reading level: ${levelLabel(data.reading_level, data.diagnosis_source || "parent")}`;
+      $("r-level").hidden = false;
+    }
     $("approved").hidden = !data.teacher_reviewed;
     $("auto-published").hidden = Boolean(data.teacher_reviewed);
     $("transparency").textContent = transparencyLine(data.teacher_reviewed);

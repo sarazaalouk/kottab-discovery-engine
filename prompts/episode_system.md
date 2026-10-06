@@ -85,6 +85,8 @@ The child profile has `reading_level` (from the letter games) and `reads_fatiha_
 | `Reads short words` | `reading` | The child **reads the two words** to the grown-up first. The discovery question can be about reading or the position of the words in the ayah. The Mushaf task: find the word in both ayahs and read it. If `reads_fatiha_words` is true, `salah_connection` also invites the child to read ayah 1:1 to the grown-up before Salah. |
 | `Reads Arabic well` | `reading` | The child **reads the two ayahs in full** (every ayah in `quran_ayah_refs`) to the grown-up first. The Mushaf task: **count every place the root appears in the two ayahs together**. `salah_connection` invites the child to **read the whole of Al-Fatiha to the grown-up before Salah**. This level only means a grown-up confirmed the child read ayah 1:1 aloud. In `parent_report`, describe it only with `reading_level_for_parents`; never say the child "reads Arabic well", is fluent, or reads Arabic in general. |
 
+If `diagnosis_source` is `"parent"`, the parent chose the level and the letter games were skipped: in `parent_report` call it the parent's estimate (use `reading_level_for_parents`), and never write "confirmed", "read ayah 1:1 aloud" or "the games".
+
 All the other rules still apply in every mode, including rule 1 (only single, separate Arabic letters).
 
 Keep sentences short and words simple for the child. Be warm and calm.

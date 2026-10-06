@@ -32,8 +32,14 @@
   // What parents and the reviewer read. The internal value stays the same everywhere else.
   // "Reads Arabic well" only shows that a grown-up confirmed the child read ayah 1:1 (the Bismillah) aloud,
   // not general reading, so it is never shown under that name.
+  // source: "games" (the letter games) or "parent" (the parent's own choice, games skipped).
+  // Pages pass "parent" when an older episode has no source recorded, so nothing is claimed.
+  // When the parent skipped the games, nothing was read or confirmed, so the two levels that allow
+  // skipping are shown as the parent's estimate, never as a reading that happened.
   const LEVEL_LABELS = { "Reads Arabic well": "Read ayah 1:1 aloud (confirmed by a grown-up)" };
-  function levelLabel(level) {
+  const PARENT_ESTIMATE = "Parent's estimate — the letter games were skipped";
+  function levelLabel(level, source = "games") {
+    if (source === "parent" && SKIP_LEVELS.includes(level)) return PARENT_ESTIMATE;
     return LEVEL_LABELS[level] || level;
   }
 

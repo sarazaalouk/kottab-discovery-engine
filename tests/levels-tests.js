@@ -25,6 +25,10 @@ check("L9. skip offered for Reads short words", parentDiagnosis(parent("Reads sh
 check("L10. skip not offered for the letter levels", ["Does not know the letters yet", "Knows some letters", "Knows most letters"].map((l) => parentDiagnosis(parent(l))).every((x) => x === null), true);
 check("L12. Reads Arabic well is shown to parents as reading ayah 1:1 aloud; other levels keep their names",
   `${levelLabel("Reads Arabic well")}|${levelLabel("Reads short words")}`, "Read ayah 1:1 aloud (confirmed by a grown-up)|Reads short words");
+check("L13. from the games, the fifth level keeps its reading label", levelLabel("Reads Arabic well", "games"), "Read ayah 1:1 aloud (confirmed by a grown-up)");
+check("L14. from the parent (games skipped), both skip levels are shown as the parent's estimate; other levels keep their names",
+  `${levelLabel("Reads Arabic well", "parent")}|${levelLabel("Reads short words", "parent")}|${levelLabel("Knows most letters", "parent")}`,
+  "Parent's estimate — the letter games were skipped|Parent's estimate — the letter games were skipped|Knows most letters");
 check("L11. skip never offered in a trial session", parentDiagnosis(parent("Reads Arabic well", { trial: true })), null);
 
 console.log(failed ? `\n${failed} level case(s) failed` : "\nall level cases behaved as expected");

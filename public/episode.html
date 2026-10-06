@@ -226,6 +226,8 @@
         recites: isTrial ? "not shared" : profile.recites_list.join(", "),
         reading_level: readingLevel(),
         reads_fatiha_words: Boolean(diag && diag.reads_fatiha_words),
+        // "games" when the level came from the letter games, "parent" when it is the parent's choice.
+        diagnosis_source: diag ? diag.diagnosis_source || "games" : "parent",
       },
       root: SEASON_ROOTS[EPISODE_NUMBER],
       episode_number: EPISODE_NUMBER,

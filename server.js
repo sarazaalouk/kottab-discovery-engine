@@ -72,6 +72,8 @@ function validateChildProfile(p, trial) {
   if (!READING_LEVELS.includes(p.reading_level)) return `child.reading_level must be one of: ${READING_LEVELS.join(", ")}`;
   if (!MODE_FOR_LEVEL[p.reading_level]) return "this reading level has no discovery episode; use the Bismillah letters path";
   if ("reads_fatiha_words" in p && typeof p.reads_fatiha_words !== "boolean") return "child.reads_fatiha_words must be true or false";
+  if ("diagnosis_source" in p && !["games", "parent"].includes(p.diagnosis_source)) return "child.diagnosis_source must be \"games\" or \"parent\"";
+  if (trial && p.diagnosis_source === "parent") return "in a trial session the level must come from the letter games";
   return null;
 }
 
@@ -173,8 +175,10 @@ app.post("/api/generate-episode", generateLimit, async (req, res) => {
       home_language: child.home_language,
       recites: child.recites,
       reading_level: child.reading_level,
+      // Where the level came from; when it is missing it is treated as the parent's choice (nothing claimed).
+      diagnosis_source: child.diagnosis_source || "parent",
       // What parents read for this level (the model writes the report with it).
-      reading_level_for_parents: levelLabel(child.reading_level),
+      reading_level_for_parents: levelLabel(child.reading_level, child.diagnosis_source || "parent"),
       reads_fatiha_words: child.reads_fatiha_words === true,
     },
     root,
@@ -261,6 +265,7 @@ async function generateInBackground(record, request, { quran, kb, schema, system
       episodeNumber,
       rootLetters: letters,
       readingLevel: request.child.reading_level,
+      diagnosisSource: request.child.diagnosis_source,
       providedCardIds: cards.map((c) => c.id),
     });
     if (validation.output && Array.isArray(validation.output.referrals)) referrals.push(...validation.output.referrals);
@@ -432,6 +437,8 @@ app.get("/api/episodes/:id/report", (req, res) => {
     child_name: record.child.name,
     episode_number: record.episode_number,
     title: record.episode.title_en,
+    reading_level: record.child.reading_level,
+    diagnosis_source: record.child.diagnosis_source || null,
     report: pr,
     sources: usedIds.map((id) => kbById.get(id)).filter(Boolean).map(cardSource),
     quran_source: readJson(QURAN_PATH).source,
@@ -522,6 +529,7 @@ function episodeSummary(r) {
     child: { name: r.child.name, age: r.child.age },
     title: r.episode ? r.episode.title_en : null,
     reading_level: r.child.reading_level,
+    diagnosis_source: r.child.diagnosis_source || null,
     adaptation: r.episode && r.episode.adaptation ? r.episode.adaptation : null,
     validation: r.validation,
     review: r.review || null,

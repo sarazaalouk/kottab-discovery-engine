@@ -57,6 +57,13 @@ const cases = [
     o.parent_report.strengths.push("Adam reads Arabic well, so he can read the two ayahs aloud himself.");
     return o;
   }],
+  ["14f. (adapt) level from the parent (games skipped): the report says it was confirmed", "[adapt]", (o) => {
+    ctx.readingLevel = "Reads Arabic well"; // restored below
+    ctx.diagnosisSource = "parent"; // restored below
+    o.adaptation = { reading_level: "Reads Arabic well", discovery_mode: "reading" };
+    o.parent_report.strengths.push("A grown-up has confirmed that Adam read ayah 1:1 aloud.");
+    return o;
+  }],
   ["16. (c) child meaning uses the parent text of the card", "[c]", (o) => {
     const m = o.words[0].meanings[0];
     m.text = ctx.kb.entries.find((c) => c.id === m.card_id).meaning_en; // exists in the card, but is not the child sentence
@@ -119,6 +126,7 @@ for (const [name, expected, mutate] of cases) {
   const raw = typeof result === "string" ? result : JSON.stringify(result);
   const v = validateEpisode(raw, ctx);
   ctx.readingLevel = "Knows most letters";
+  delete ctx.diagnosisSource;
   const ok = expected === null ? v.passed : !v.passed && v.errors.some((e) => e.startsWith(expected));
   if (!ok) failed++;
   console.log(`${ok ? "ok  " : "FAIL"} ${name} -> ${v.passed ? "passed" : v.errors[0]}`);

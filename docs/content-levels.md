@@ -46,7 +46,7 @@ The letter games have five stages (fixed rules, no model); each opens only if th
 
 **What the fifth level proves.** "Reads Arabic well" is only the internal value. This level shows that a grown-up confirmed the child read the Bismillah (ayah 1:1) aloud; it does not prove general reading. Parents, the report and the reviewer page therefore show it as "Read ayah 1:1 aloud (confirmed by a grown-up)", the model gets this wording for the parent report, and the validator rejects a parent report that claims general reading (case 14e).
 
-Parents who choose "Reads short words" or "Read ayah 1:1 aloud (confirmed by a grown-up)" can press "Skip the games — go to the episode": the level is then the parent's own choice (`diagnosis_source: "parent"`). This is not offered in a trial session, where the level must come from the games. The meanings never change with the level.
+Parents who choose "Reads short words" or "Read ayah 1:1 aloud (confirmed by a grown-up)" can press "Skip the games — go to the episode": the level is then the parent's own choice (`diagnosis_source: "parent"`). This is not offered in a trial session, where the level must come from the games. The page sends where the level came from (`diagnosis_source`: `games` or `parent`). When it is the parent's choice, nothing was read or confirmed, so the parent page, the report, the reviewer page and the model all show it as "Parent's estimate — the letter games were skipped" (on the reviewer page: "تقدير ولي الأمر — لم تُجرَ الألعاب"), and the validator rejects a parent report that says "confirmed", "read ayah 1:1 aloud" or "the games" (case 14f). The meanings never change with the level.
 
 ## Quran display
 
