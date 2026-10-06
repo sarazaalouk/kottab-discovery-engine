@@ -12,6 +12,7 @@ const episodes = require("./lib/episodes");
 const { generateLimit, askLimit } = require("./lib/limits");
 const { initialStatus, autoReview, teacherApproved, applyDecision } = require("./lib/publish");
 const noor = require("./lib/noor");
+const { askCandidates, askAnswer } = require("./lib/ask");
 const { requireReviewerPin, pinConfigured } = require("./lib/reviewer-pin");
 
 const app = express();
@@ -409,7 +410,8 @@ app.post("/api/ask", askLimit, async (req, res) => {
   if (!record || record.status !== "approved") return refer("no approved episode for this question");
 
   const kb = readJson(KB_PATH);
-  const cards = kb.entries.filter((c) => c.status === "approved" && record.cards_provided.includes(c.id) && c.meaning_en_child);
+  const cards = askCandidates(kb.entries, record);
+  if (!cards.length) return refer("no cards for children in this episode");
   const client = new Anthropic();
   let response;
   try {
@@ -438,11 +440,12 @@ app.post("/api/ask", askLimit, async (req, res) => {
   } catch {
     return refer("routing failed: invalid JSON");
   }
-  const card = decision.in_scope ? cards.find((c) => c.id === decision.card_id) : null;
+  const answer = askAnswer(cards, decision);
+  const card = answer ? cards.find((c) => c.id === answer.card_id) : null;
   if (!card) return refer(decision.reason || "out of scope");
 
   // In scope: the answer is the approved card text itself, never model-written text.
-  res.json({ type: "card", card_id: card.id, text: card.meaning_en_child, source: SOURCE_SHORT[card.source] || card.source });
+  res.json({ type: "card", card_id: card.id, text: answer.text, source: SOURCE_SHORT[card.source] || card.source });
 });
 
 // ---------- reviewer ----------
