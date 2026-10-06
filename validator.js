@@ -144,7 +144,9 @@ function validateEpisode(rawText, ctx) {
     if (childFacing && !(Array.isArray(card.audience) && card.audience.includes("child"))) {
       fail("b", `${where}: card ${m.card_id} is not for children (audience: ${(card.audience || []).join(", ")})`);
     }
-    if (m.audience === "child" && m.text !== card.meaning_en_child) warnings.push(`${where}: child meaning is not the card's meaning_en_child`);
+    // A meaning for the child (marked child, or on a child screen) must be the card's child sentence exactly.
+    const forChild = m.audience === "child" || where.startsWith("words[") || where.startsWith("discovery_question");
+    if (forChild && m.text !== card.meaning_en_child) fail("c", `${where}: a meaning for the child must be card ${m.card_id}'s meaning_en_child, word for word`);
     if (m.audience === "parent" && m.text !== card.meaning_en) warnings.push(`${where}: parent meaning is not the card's meaning_en`);
   }
 

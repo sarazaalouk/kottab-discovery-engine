@@ -41,6 +41,11 @@ const cases = [
     o.discovery_question.options[0].text_en = "They share ر ح م (r, h, m)";
     return o;
   }],
+  ["16. (c) child meaning uses the parent text of the card", "[c]", (o) => {
+    const m = o.words[0].meanings[0];
+    m.text = ctx.kb.entries.find((c) => c.id === m.card_id).meaning_en; // exists in the card, but is not the child sentence
+    return o;
+  }],
   // A teacher/parent-only card shown to the child. The card is approved here (in this test only) so the
   // audience rule is the one that rejects it.
   ["12. (b) teacher/parent-only card on a child screen", "[b]", (o) => {

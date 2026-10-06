@@ -25,10 +25,11 @@ Each test takes the sample episode (`data/episodes/sample-episode-01.json`), bre
 | 12 | (b) child screens use child cards only | Teacher/parent-only card kb-020 (approved for this test) put in a word meaning | Rejected: `[b] card kb-020 is not for children` |
 | 14 | (adapt) discovery mode matches the reading level | `discovery_mode` set to `letter` for a child at "Knows most letters" | Rejected: `[adapt] discovery_mode is "letter", expected "root"` |
 | 14b | (adapt) letter mode compares one letter only | Child at "Knows some letters", an option names ر ح م | Rejected: `[adapt] 3 Arabic letters in letter mode (at most 1)` |
+| 16 | (c) a child meaning is the child sentence | A word meaning uses the card's parent text (`meaning_en`) | Rejected: `[c] a meaning for the child must be card kb-030's meaning_en_child, word for word` |
 
 ## Last run
 
-2026-10-05: all 15 cases (0–12, 14, 14b) behaved as expected. The sample fixture got the `adaptation` field (Knows most letters → root) by hand when the field was added to the schema.
+2026-10-06: all 16 cases (0–12, 14, 14b, 16) behaved as expected. The sample fixture got the `adaptation` field (Knows most letters → root) by hand when the field was added to the schema.
 
 ## Not covered by the validator (human review)
 
