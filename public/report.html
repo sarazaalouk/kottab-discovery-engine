@@ -125,7 +125,7 @@
     $("r-sources").innerHTML = data.sources
       .map(
         (s) => `<li>
-          <b>${escapeHtml(s.card_id)} · ${escapeHtml(s.source)}</b>
+          <b>${escapeHtml(s.source_en || s.source)}</b> <span class="small muted">${escapeHtml(s.card_id)}</span>
           <span class="loc" lang="ar">${escapeHtml(s.location)}${s.page_ref && s.page_ref !== "يُستكمل" ? ` · ${escapeHtml(s.page_ref)}` : ""}</span>
           ${s.edition ? `<span class="loc" lang="ar">${escapeHtml(s.edition)}</span>` : ""}
           ${"hadith_grade" in s ? `<span class="small">Hadith grade: ${s.hadith_grade ? escapeHtml(s.hadith_grade) : "to be added"}${s.hadith_ref ? ` · ${escapeHtml(s.hadith_ref)}` : ""}${s.grade_source_url && s.grade_source_url.startsWith("https://") ? ` · <a href="${escapeHtml(s.grade_source_url)}" target="_blank" rel="noopener">Dorar</a>` : ""}</span>` : ""}

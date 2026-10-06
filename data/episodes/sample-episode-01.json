@@ -1,6 +1,6 @@
 {
   "id": "sample-episode-01",
-  "sample_note": "Synthetic sample (child: Adam). Generated on 2026-10-04 with the first version of prompts/episode_system.md, before Sara's review of Episode 1. Used as the fixture for npm test. On 2026-10-05 the field adaptation (Knows most letters → root) was added by hand so the fixture matches the current schema; the rest of the model output is unchanged.",
+  "sample_note": "Synthetic sample (child: Adam). Generated on 2026-10-04 with the first version of prompts/episode_system.md, before Sara's review of Episode 1. Used as the fixture for npm test. On 2026-10-05 the field adaptation (Knows most letters → root) was added by hand so the fixture matches the current schema; the rest of the model output is unchanged. On 2026-10-06 the child meaning(s) words[1] kb-035 were removed by hand because Sara made those cards parent/teacher only; the other meanings of the same words remain.",
   "status": "pending_review",
   "created_at": "2026-10-04T09:39:26.616Z",
   "model": "claude-sonnet-5-5",
@@ -67,11 +67,6 @@
             "card_id": "kb-030",
             "audience": "child",
             "text": "Ar-Rahman and Ar-Raheem both come from rahmah (mercy), and Ar-Rahman means even more mercy."
-          },
-          {
-            "card_id": "kb-035",
-            "audience": "child",
-            "text": "Allah also used the word Raheem (merciful) to describe others."
           }
         ]
       },

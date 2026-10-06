@@ -32,7 +32,6 @@
       "id": "kb-001",
       "type": "context",
       "audience": [
-        "child",
         "parent",
         "teacher"
       ],
@@ -50,9 +49,9 @@
       "grade_source_url": "https://dorar.net/h/GfVZWaHt",
       "hadith_ref": "صحيح مسلم 395",
       "meaning_ar": "قال الله عز وجل : قسمت الصلاة بيني وبين عبدي نصفين ، ولعبدي ما سأل فإذا قال العبد : ( الحمد لله رب العالمين ) [ الفاتحة : 2 ] ، قال الله : حمدني عبدي ، وإذا قال : ( الرحمن الرحيم [ الفاتحة : 3 ] ، قال الله : أثنى علي عبدي ، فإذا قال : ( مالك يوم الدين ) [ الفاتحة : 4 ] ، قال مجدني عبدي - وقال مرة : فوض إلي عبدي - فإذا قال : ( إياك نعبد وإياك نستعين ) [ الفاتحة : 5 ] ، قال : هذا بيني وبين عبدي ، ولعبدي ما سأل ، فإذا قال : ( اهدنا الصراط المستقيم صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين ) [ الفاتحة : 6 ، 7 ] ، قال هذا لعبدي ولعبدي ما سأل .",
-      "meaning_en": "Allah, the Mighty and Majestic, said: \"I have divided the prayer between Me and My servant into two halves, and My servant will have what he asks for.\" When the servant says \"All praise is for Allah, Lord of all the worlds,\" Allah says: \"My servant has praised Me.\" When he says \"Ar-Rahman, Ar-Raheem (the Most Merciful, the Especially Merciful),\" Allah says: \"My servant has honoured Me.\" When he says \"Master of the Day of Judgment,\" He says: \"My servant has glorified Me\" (and once He said: \"My servant has placed his trust in Me\"). When he says \"You alone we worship and You alone we ask for help,\" He says: \"This is between Me and My servant, and My servant will have what he asks for.\" When he says \"Guide us to the straight path, the path of those You have blessed, not of those who earned anger, nor of those who went astray,\" He says: \"This is for My servant, and My servant will have what he asks for.\"",
+      "meaning_en": "Allah, the Mighty and Majestic, said: \"I have divided the prayer between Me and My worshipper into two halves, and My worshipper will have what he asks for.\" When the worshipper says \"All praise is for Allah, Lord of all the worlds,\" Allah says: \"My worshipper has praised Me.\" When he says \"Ar-Rahman, Ar-Raheem (the Most Merciful, the Especially Merciful),\" Allah says: \"My worshipper has honoured Me.\" When he says \"Master of the Day of Judgment,\" He says: \"My worshipper has glorified Me\" (and once He said: \"My worshipper has placed his trust in Me\"). When he says \"You alone we worship and You alone we ask for help,\" He says: \"This is between Me and My worshipper, and My worshipper will have what he asks for.\" When he says \"Guide us to the straight path, the path of those You have blessed, not of those who earned anger, nor of those who went astray,\" He says: \"This is for My worshipper, and My worshipper will have what he asks for.\"",
       "meaning_en_status": "approved",
-      "meaning_en_child": "Allah said: I divided the Salah (prayer) between Me and My servant, and My servant will get what he asks.",
+      "meaning_en_child": "Allah said: I divided the Salah (prayer) between Me and My worshipper, and My worshipper will get what he asks.",
       "meaning_en_child_status": "approved",
       "pedagogy_note": "الحوار الذي يبنى عليه الموسم كله: الله يرد على الطفل آية آية في الصلاة. كل حلقة تأخذ منه سطرها.",
       "status": "approved",
@@ -63,7 +62,6 @@
       "id": "kb-002",
       "type": "context",
       "audience": [
-        "child",
         "parent",
         "teacher"
       ],
@@ -85,7 +83,7 @@
       "meaning_en_status": "approved",
       "meaning_en_child": "The Prophet (peace be upon him) said Al-Fatiha is the greatest Surah (chapter) in the Quran.",
       "meaning_en_child_status": "approved",
-      "pedagogy_note": "مقتطفان من حديث واحد (الفاصل ... يدل على حذف وسط الحديث). الطفل يقول أعظم سورة في القرآن كل يوم.",
+      "pedagogy_note": "مقتطفان من حديث واحد (الفاصل ... يدل على حذف وسط الحديث). الطفل يقول أعظم سورة في القرآن كل يوم. سؤال اكتشاف مقترح للطفل: خمّن لماذا هي أعظم سورة؟ (بأسلوب يناسب عمره).",
       "status": "approved",
       "approved_by": "Sara Zaalouk",
       "approved_on": "2026-10-04"
@@ -94,7 +92,6 @@
       "id": "kb-003",
       "type": "context",
       "audience": [
-        "child",
         "parent",
         "teacher"
       ],
@@ -122,7 +119,6 @@
       "id": "kb-004",
       "type": "context",
       "audience": [
-        "child",
         "parent",
         "teacher"
       ],
@@ -153,7 +149,6 @@
       "id": "kb-005",
       "type": "context",
       "audience": [
-        "child",
         "parent",
         "teacher"
       ],
@@ -175,7 +170,7 @@
       "meaning_en_status": "approved",
       "meaning_en_child": "The Prophet (peace be upon him) recited slowly, stretching the sounds of Bismillah, Ar-Rahman and Ar-Raheem.",
       "meaning_en_child_status": "approved",
-      "pedagogy_note": "ربط المعنى بالصوت والمد الذي يتدرب عليه الطفل في التجويد.",
+      "pedagogy_note": "ربط المعنى بالصوت والمد الذي يتدرب عليه الطفل في التجويد. أقرب لتأسيس التجويد؛ تُستخدم في مسار الحروف/التلاوة لا في حلقة المعاني.",
       "status": "approved",
       "approved_by": "Sara Zaalouk",
       "approved_on": "2026-10-04"
@@ -740,8 +735,6 @@
       "id": "kb-029",
       "type": "context",
       "audience": [
-        "child",
-        "parent",
         "teacher"
       ],
       "root": "د-ي-ن",
@@ -754,9 +747,9 @@
       "location": "الفاتحة 4 (حديث وقول عمر كما ساقهما ابن كثير)",
       "edition": "تفسير القرآن العظيم، ابن كثير، تحقيق سامي سلامة، دار طيبة، 1420هـ، نسخة المكتبة الشاملة shamela.ws",
       "page_ref": "ج1 ص134",
-      "hadith_grade": "not_found",
-      "grade_source_url": "",
-      "hadith_ref": "",
+      "hadith_grade": "مختلف فيه: حسّنه الترمذي وضعّفه الألباني (سنن الترمذي 2459)",
+      "grade_source_url": "https://dorar.net/h/lCt1RrgN",
+      "hadith_ref": "سنن الترمذي 2459 — ضعيف الترمذي 2459 (https://dorar.net/h/czt7Nold)",
       "meaning_ar": "وفي الحديث : الكيس من دان نفسه وعمل لما بعد الموت أي حاسب نفسه لنفسه ؛ كما قال عمر رضي الله عنه : حاسبوا أنفسكم قبل أن تحاسبوا ، وزنوا أنفسكم قبل أن توزنوا",
       "meaning_en": "In the hadith: \"The wise person is the one who holds himself to account (dana nafsahu) and works for what comes after death,\" meaning he checks on himself. As Umar (may Allah be pleased with him) said: \"Hold yourselves to account before you are held to account, and weigh yourselves before you are weighed.\"",
       "meaning_en_status": "translation_for_review",
@@ -820,7 +813,7 @@
       "meaning_en_status": "approved",
       "meaning_en_child": "Ar-Rahman (the Most Merciful) means every kind of mercy; Ar-Raheem (the Especially Merciful) is mercy for the believers.",
       "meaning_en_child_status": "approved",
-      "pedagogy_note": "الفرق بين الاسمين في سطر واحد: رحمة لكل شيء، ورحمة خاصة بالمؤمنين.",
+      "pedagogy_note": "الفرق بين الاسمين في سطر واحد: رحمة لكل شيء، ورحمة خاصة بالمؤمنين. صورة ذاكرة مقترحة (ليست تفسيرًا): الرحمن كالشمس تصل للجميع، والرحيم كحضن الأم للمؤمنين خاصة.",
       "status": "approved",
       "approved_by": "Sara Zaalouk",
       "approved_on": "2026-10-04"
@@ -847,9 +840,9 @@
       "edition": "تفسير القرآن العظيم، ابن كثير، تحقيق سامي سلامة، دار طيبة، 1420هـ، نسخة المكتبة الشاملة shamela.ws",
       "page_ref": "ج1 ص125",
       "meaning_ar": "وقال ابن عباس : هما اسمان رقيقان ، أحدهما أرق من الآخر ، أي أكثر رحمة",
-      "meaning_en": "Ibn Abbas said: They are two gentle, tender names, one more tender than the other — that is, with more mercy.",
+      "meaning_en": "The scholar Ibn Abbas, a Companion of the Prophet (peace be upon him), said: They are two gentle, tender names, one more tender than the other — that is, with more mercy.",
       "meaning_en_status": "approved",
-      "meaning_en_child": "Ibn Abbas said they are two gentle names, and one is gentler, with more mercy.",
+      "meaning_en_child": "They are two gentle names, and one is gentler, with more mercy.",
       "meaning_en_child_status": "approved",
       "pedagogy_note": "\"اسمان رقيقان\" كلمة يحسها الطفل ويحفظها.",
       "status": "approved",
@@ -925,7 +918,6 @@
       "id": "kb-035",
       "type": "context",
       "audience": [
-        "child",
         "parent",
         "teacher"
       ],
@@ -956,7 +948,6 @@
       "id": "kb-036",
       "type": "context",
       "audience": [
-        "child",
         "parent",
         "teacher"
       ],
@@ -987,7 +978,6 @@
       "id": "kb-037",
       "type": "context",
       "audience": [
-        "child",
         "parent",
         "teacher"
       ],
@@ -1032,12 +1022,12 @@
       "episode": 1,
       "source": "تفسير ابن كثير",
       "source_url": "https://quran-tafsir.net/katheer/sura1-aya1.html",
-      "location": "تفسير البسملة، صحيح مسلم",
+      "location": "تفسير البسملة، الصحيحان: «إن الله رفيق يحب الرفق في الأمر كله» في صحيح البخاري 6927 وصحيح مسلم 2165، و«يعطي على الرفق ما لا يعطي على العنف» في صحيح مسلم 2593",
       "edition": "تفسير القرآن العظيم، ابن كثير، تحقيق سامي سلامة، دار طيبة، 1420هـ، نسخة المكتبة الشاملة shamela.ws",
       "page_ref": "ج1 ص125",
-      "hadith_grade": "[صحيح] (مسلم)",
-      "grade_source_url": "https://dorar.net/h/N3oe6VCE",
-      "hadith_ref": "صحيح مسلم 2593",
+      "hadith_grade": "[صحيح] (البخاري)",
+      "grade_source_url": "https://dorar.net/h/zeW4mElV",
+      "hadith_ref": "صحيح البخاري 6927 ومسلم 2165 (اللفظ الأول)؛ صحيح مسلم 2593 (اللفظ الثاني، https://dorar.net/h/N3oe6VCE)",
       "meaning_ar": "إن الله رفيق يحب الرفق في الأمر كله وإنه يعطي على الرفق ما لا يعطي على العنف",
       "meaning_en": "Allah is gentle and loves gentleness in every matter, and He gives for gentleness what He does not give for harshness.",
       "meaning_en_status": "approved",
@@ -1052,7 +1042,6 @@
       "id": "kb-039",
       "type": "context",
       "audience": [
-        "child",
         "parent",
         "teacher"
       ],
@@ -1083,7 +1072,6 @@
       "id": "kb-040",
       "type": "meaning",
       "audience": [
-        "child",
         "parent",
         "teacher"
       ],
@@ -1111,7 +1099,6 @@
       "id": "kb-041",
       "type": "context",
       "audience": [
-        "child",
         "parent",
         "teacher"
       ],
@@ -1196,7 +1183,7 @@
       "meaning_en_child": "Saying 'May Shaytan perish!' makes him as big as a house; Bismillah makes him as small as a fly.",
       "meaning_en_child_status": "approved",
       "pedagogy_note": "تكملة البطاقة 6: \"قدر البيت\" مقابل \"قدر الذبابة\".",
-      "status": "approved",
+      "status": "draft",
       "approved_by": "Sara Zaalouk",
       "approved_on": "2026-10-04"
     },
@@ -1655,9 +1642,9 @@
       "location": "الفاتحة 7 (كلام ابن كثير)، وحديث عدي بن حاتم رواه الترمذي وقال: حسن غريب",
       "edition": "تفسير القرآن العظيم، ابن كثير، تحقيق سامي سلامة، دار طيبة، 1420هـ، نسخة المكتبة الشاملة shamela.ws",
       "page_ref": "ج1 ص141–142",
-      "hadith_grade": "not_found",
-      "grade_source_url": "",
-      "hadith_ref": "",
+      "hadith_grade": "حسن/صحيح (الألباني) — سنن الترمذي 2953 و2954",
+      "grade_source_url": "https://dorar.net/h/54HHMjWa",
+      "hadith_ref": "صحيح الترمذي 2953 (حسن) و2954 (صحيح، https://dorar.net/h/T1zJ7QSI)",
       "meaning_ar": "فإن طريقة أهل الإيمان مشتملة على العلم بالحق والعمل به ، واليهود فقدوا العمل ، والنصارى فقدوا العلم ؛ ولهذا كان الغضب لليهود ، والضلال للنصارى ، لأن من علم وترك استحق الغضب ، بخلاف من لم يعلم ... المغضوب عليهم اليهود ، وإن الضالين النصارى .",
       "meaning_en": "The way of the people of faith includes both knowing the truth and acting on it. The Jews lost the acting, and the Christians lost the knowing. That is why anger was for the Jews and going astray for the Christians, because whoever knows and abandons the truth deserves anger, unlike one who does not know ... \"Those who earned anger are the Jews, and those who went astray are the Christians.\"",
       "meaning_en_status": "translation_for_review",

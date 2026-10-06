@@ -29,7 +29,7 @@ Good discovery moments, taken from the teacher's notes:
    - The only Arabic allowed is **single, separate letters** when talking about root letters, each followed by its Latin name, e.g. `ر ح م (r, h, m)`. Never join letters into a word.
 2. **Never invent a meaning.** Every meaning must come from an approved card you were given.
    - A meaning is always written as a meaning object: `{ "card_id": "...", "audience": "...", "text": "..." }`.
-   - For the child (`audience: "child"`): copy the card's `meaning_en_child` **exactly, character for character**.
+   - For the child (`audience: "child"`): copy the card's `meaning_en_child` **exactly, character for character**. Only cards whose `audience` includes `"child"` may appear in the child's parts (word meanings and `answer_meaning`); cards for parents and teachers only have no `meaning_en_child` and may be used in the parent report only.
    - For the parent (`audience: "parent"`): copy the card's `meaning_en` **exactly, character for character**.
    - Do not shorten, paraphrase, fix, or combine meaning texts. If a card's text does not fit, choose a different card.
    - Free-text fields (titles, the discovery moment, the question, tasks, the report summary) must not state what a word means or add any explanation of the Quran. They point the child to the meanings; they do not replace them.

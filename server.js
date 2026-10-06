@@ -150,7 +150,9 @@ app.post("/api/generate-episode", generateLimit, async (req, res) => {
       type: c.type,
       word_ar: c.word_ar,
       ayah: c.ayah,
-      meaning_en_child: c.meaning_en_child,
+      audience: c.audience,
+      // A child sentence is only offered for cards the child may see.
+      meaning_en_child: c.audience.includes("child") ? c.meaning_en_child : undefined,
       meaning_en: c.meaning_en,
       pedagogy_note: c.pedagogy_note,
     })),
@@ -269,7 +271,7 @@ async function generateInBackground(record, request, { quran, kb, schema, system
 
 const SOURCE_SHORT = {
   "تفسير ابن كثير": "Tafsir Ibn Kathir",
-  "التفسير الميسر، مجمع الملك فهد لطباعة المصحف الشريف": "Al-Tafsir Al-Muyassar (King Fahd Complex)",
+  "التفسير الميسر، مجمع الملك فهد لطباعة المصحف الشريف": "Al-Tafsir Al-Muyassar, King Fahd Complex",
 };
 
 // Edition, page and hadith grading fields, when the card has them.
@@ -279,10 +281,28 @@ function cardRefs(card) {
   return out;
 }
 
+// "ج1 ص124" → "vol. 1 p. 124"; "ج1 ص122–123" → "vol. 1 pp. 122–123"
+function pageRefEn(ref) {
+  const m = /^ج(\d+)\s*ص(\d+)(?:[–-](\d+))?$/.exec(String(ref || "").trim());
+  if (!m) return "";
+  return m[3] ? `vol. ${m[1]} pp. ${m[2]}–${m[3]}` : `vol. ${m[1]} p. ${m[2]}`;
+}
+
+// Source line for parents: English first, Arabic in brackets.
+function sourceForParents(card) {
+  const en = SOURCE_SHORT[card.source] || card.source;
+  if (card.source === "تفسير ابن كثير") {
+    const page = pageRefEn(card.page_ref);
+    return `${page ? `${en}, ${page}` : en} (${card.source}${card.page_ref && card.page_ref !== "يُستكمل" ? `، ${card.page_ref}` : ""})`;
+  }
+  return `${en} (${card.source})`;
+}
+
 function cardSource(card) {
   return {
     card_id: card.id,
     source: SOURCE_SHORT[card.source] || card.source,
+    source_en: sourceForParents(card),
     source_ar: card.source,
     location: card.location,
     source_url: card.source_url,
