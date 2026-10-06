@@ -33,6 +33,15 @@
       <li data-step="1">Choosing today's root</li>
       <li data-step="2">Checking every meaning against the source</li>
     </ol>
+
+    <!-- While you wait: ayah 1:1 from the verified file (GET /api/quran), no model, nothing sent -->
+    <div class="card wait-card stack" id="while-wait" hidden aria-labelledby="wait-title">
+      <span class="eyebrow" id="wait-title">While you wait</span>
+      <p>Read this with your grown-up, slowly, three times:</p>
+      <p class="ayah quran" lang="ar" dir="rtl" id="wait-ayah"></p>
+      <p class="small muted">Al-Fatiha 1:1 · verified Quran text</p>
+      <p>Can you find the letter <span class="ar-letters" lang="ar">ر</span> (r) twice in this ayah? Point to it.</p>
+    </div>
   </section>
 
   <!-- Waiting for review / rejected / returned -->
@@ -154,7 +163,24 @@
   function setStep(i, state) {
     $("steps").children[i].dataset.state = state;
   }
+  // "While you wait": ayah 1:1 comes from the verified Quran file, never typed into this page.
+  // The card sits inside the loading section, so it goes away when the episode is shown.
+  let waitAyahLoaded = false;
+  async function showWhileYouWait() {
+    if (waitAyahLoaded) return;
+    try {
+      const res = await fetch("/api/quran");
+      if (!res.ok) return;
+      const ayah = (await res.json()).ayahs.find((a) => a.ayah === 1);
+      if (!ayah) return;
+      $("wait-ayah").textContent = ayah.text_ar; // the sukun is drawn by js/sukun.js like all .quran text
+      $("while-wait").hidden = false;
+      waitAyahLoaded = true;
+    } catch { /* the card simply stays hidden */ }
+  }
+
   function runSteps(startedAt = Date.now()) {
+    showWhileYouWait();
     [...$("steps").children].forEach((li) => li.removeAttribute("data-state"));
     setStep(0, "active");
     stepTimers = [

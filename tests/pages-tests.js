@@ -16,6 +16,14 @@ const calls = index.match(/loadWhy\(false\)/g) || [];
 const parentArea = (index.match(/function showParentArea\(\) \{[\s\S]*?\n  \}/) || [""])[0];
 check("G2. the box is filled only once the gate is passed", calls.length === 1 && parentArea.includes("loadWhy(false)"));
 
+// G4: the episode page never has Quran text typed into it: any Arabic in episode.html is a single, separate letter
+// (the "While you wait" ayah comes from GET /api/quran).
+const episodeHtml = read("public/episode.html");
+const arabicRuns = episodeHtml.replace(/[\u064B-\u0652\u0670\u06E1]/g, "").match(/[\u0621-\u064A\u0671]+/g) || [];
+const longRuns = arabicRuns.filter((r) => r.length > 1);
+check("G4. episode.html has no Arabic beyond single letters (no ayah typed in by hand)", longRuns.length === 0 && episodeHtml.includes('fetch("/api/quran")'),
+  longRuns.join(" ") || `${arabicRuns.length} single letters`);
+
 // G3: no next root or "Episode 2" is promised anywhere in the product or the docs.
 function files(dir) {
   return fs.readdirSync(path.join(__dirname, "..", dir), { withFileTypes: true }).flatMap((e) =>

@@ -45,6 +45,8 @@
 /* Question options */
 .options { display: grid; gap: 10px; }
 .check-q { border: 0; padding: 0; margin: 0; }
+.wait-card { margin-top: 16px; }
+.wait-card .ayah { font-size: 1.9rem; }
 .closing .closing-title { font-size: 1.25rem; font-weight: 700; color: var(--maroon); margin: 0; }
 .check-q legend { margin-bottom: 8px; }
 .option {
