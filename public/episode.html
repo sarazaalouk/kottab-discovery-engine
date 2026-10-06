@@ -103,6 +103,13 @@
         <button class="btn secondary block" id="checks-retry" hidden>Try again</button>
       </section>
 
+      <section class="card closing" id="closing" hidden aria-labelledby="closing-title">
+        <h2 id="closing-title"></h2>
+        <p class="closing-title" id="closing-ep"></p>
+        <p id="closing-next"></p>
+        <button class="btn secondary block" id="play-again"></button>
+      </section>
+
       <a class="btn secondary block" href="report.html">Show the report to a grown-up</a>
     </section>
 
@@ -332,6 +339,7 @@
   }
 
   function renderEpisode(d) {
+    currentEpisode = d;
     startWatching(d.id);
     startReplies(d.id);
     $("ep-eyebrow").textContent = `Episode ${d.episode_number}`;
@@ -403,6 +411,7 @@
     const result = scoreChecks(checks.questions, answers, checks.pass_mark);
     if (result.passed) {
       store.set(KEYS.episode1Passed, true);
+      showClosing(true);
       $("checks-result").className = "notice ok";
       $("checks-result").textContent = "Episode 2 (root س-ل-م) opens when your teacher approves its cards.";
     } else {
@@ -414,6 +423,26 @@
   }
   $("checks-retry").addEventListener("click", () => renderChecks());
 
+  // ---------- closing screen (after "Before you move on" is passed) ----------
+  let currentEpisode = null;
+  function showClosing(passed) {
+    const c = closingScreen(currentEpisode.title, passed);
+    if (!c) return;
+    $("closing-title").textContent = c.heading;
+    $("closing-ep").textContent = c.title;
+    $("closing-next").innerHTML = formatLetters(c.next);
+    $("play-again").textContent = c.again;
+    $("closing").hidden = false;
+  }
+  // Shows the discovery question again, ready to answer; the rest of the episode stays as it is.
+  $("play-again").addEventListener("click", () => {
+    $("options").querySelectorAll(".option").forEach((b) => {
+      b.disabled = false;
+      b.classList.remove("picked", "correct");
+    });
+    $("q-title").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
   function answer(btn, d) {
     const buttons = [...$("options").querySelectorAll(".option")];
     buttons.forEach((b) => (b.disabled = true));
@@ -421,6 +450,7 @@
     buttons[d.question.correct_index].classList.add("correct");
     $("reveal").hidden = false;
     if (!checks) loadChecks(d.episode_number);
+    showClosing(store.get(KEYS.episode1Passed) === true && d.episode_number === 1);
     $("reveal").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 

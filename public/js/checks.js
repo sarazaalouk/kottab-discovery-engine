@@ -7,6 +7,18 @@
     return { right, passed: right >= passMark };
   }
 
-  if (typeof module !== "undefined" && module.exports) module.exports = { scoreChecks };
-  else root.scoreChecks = scoreChecks;
+  // Closing screen, shown only after "Before you move on" was passed. Fixed text (no model), no badges.
+  // The episode title is the one the page already shows (checked by the validator).
+  function closingScreen(titleEn, passed) {
+    if (!passed) return null;
+    return {
+      heading: "What you discovered today",
+      title: titleEn,
+      next: "Next episode: root س-ل-م — opens when your teacher approves its cards",
+      again: "Play the discovery question again",
+    };
+  }
+
+  if (typeof module !== "undefined" && module.exports) module.exports = { scoreChecks, closingScreen };
+  else Object.assign(root, { scoreChecks, closingScreen });
 })(typeof window !== "undefined" ? window : globalThis);

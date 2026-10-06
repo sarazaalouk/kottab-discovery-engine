@@ -2,7 +2,7 @@
 const fs = require("fs");
 const path = require("path");
 const { checkProblems, checksForEpisode } = require("../lib/checks");
-const { scoreChecks } = require("../public/js/checks");
+const { scoreChecks, closingScreen } = require("../public/js/checks");
 
 const ROOT = path.join(__dirname, "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), "utf8"));
@@ -38,6 +38,14 @@ check("C5. the page gets each card's source name", served.questions[0].source ==
 const qs = data.episodes["1"];
 check("C6. 2 of 3 right passes", scoreChecks(qs, [0, 0, 1], 2).passed === true);
 check("C7. 1 of 3 right does not pass", scoreChecks(qs, [0, 2, 1], 2).passed === false);
+
+// C8–C9: closing screen, only after passing
+check("C8. no closing screen before the questions are passed", closingScreen("Two Names", false) === null);
+const c = closingScreen("Two Names", true);
+check("C9. after passing: today's title, the next root, and the question again (no badges)",
+  c.heading === "What you discovered today" && c.title === "Two Names" &&
+  c.next === "Next episode: root س-ل-م — opens when your teacher approves its cards" &&
+  c.again === "Play the discovery question again" && Object.keys(c).length === 4);
 
 console.log(failed ? `\n${failed} check case(s) failed` : "\nall check cases behaved as expected");
 process.exit(failed ? 1 : 0);
