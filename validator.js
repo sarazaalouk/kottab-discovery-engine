@@ -252,6 +252,7 @@ function validateEpisode(rawText, ctx) {
     title_en: out.title_en,
     "discovery_moment.text_en": out.discovery_moment.text_en,
     "discovery_question.question_en": out.discovery_question.question_en,
+    ...Object.fromEntries(out.discovery_question.options.map((o, i) => [`discovery_question.options[${i}].text_en`, o.text_en])),
     "mushaf_search_task.instruction_en": out.mushaf_search_task.instruction_en,
     "salah_connection.text_en": out.salah_connection.text_en,
     "memory_picture.description_en": out.memory_picture.description_en,

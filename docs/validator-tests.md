@@ -30,10 +30,11 @@ Each test takes the sample episode (`data/episodes/sample-episode-01.json`), bre
 | 18 | (word) a meaning card is about the word it is attached to | kb-030 (الرحمن الرحيم) attached to 1:1 word 1 (بِسْمِ) | Rejected: `[word] meaning card kb-030 is not about 1:1 word 1`. Context cards are exempt; the comparison ignores marks, ال, a joined ل/ب/و and alif (the Uthmani small alif) |
 | 19 | (define) free text does not define words | "The word Ar-Rahman is about mercy…" added to the discovery moment | Rejected: `[define] free text uses a definition phrase` |
 | 19b | (define) same rule for the memory picture | "…because Ar-Rahman means mercy" | Rejected: `[define]` |
+| 19c | (define) same rule for the three options | "Ar-Rahman means the Most Merciful" as an option | Rejected: `[define]` |
 
 ## Last run
 
-2026-10-06: all 20 cases (0–12, 14, 14b, 16–19, 19b) behaved as expected. The sample fixture got the `adaptation` field (Knows most letters → root) by hand when the field was added to the schema.
+2026-10-06: all 21 cases (0–12, 14, 14b, 16–19, 19b, 19c) behaved as expected. The sample fixture got the `adaptation` field (Knows most letters → root) by hand when the field was added to the schema.
 
 ## Not covered by the validator (human review)
 

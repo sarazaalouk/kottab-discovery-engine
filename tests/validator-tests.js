@@ -62,6 +62,10 @@ const cases = [
     o.memory_picture.description_en = "A tree, because Ar-Rahman means mercy.";
     return o;
   }],
+  ["19c. (define) an option defines a word", "[define]", (o) => {
+    o.discovery_question.options[0].text_en = "Ar-Rahman means the Most Merciful";
+    return o;
+  }],
   // A teacher/parent-only card shown to the child. The card is approved here (in this test only) so the
   // audience rule is the one that rejects it.
   ["12. (b) teacher/parent-only card on a child screen", "[b]", (o) => {

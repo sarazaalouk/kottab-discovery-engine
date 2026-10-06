@@ -20,8 +20,8 @@ check("D1. CLAUDE.md states the real number of approved cards", m && Number(m[1]
 
 // D2: validator cases in the plan = cases in tests/validator-tests.js
 const plan = read("docs/validator-tests.md");
-const validatorRows = (plan.split("## Last run")[0].match(/^\| (\d+b?) \|/gm) || []).length;
-const validatorCases = (read("tests/validator-tests.js").match(/^\s*\["\d+b?\. /gm) || []).length;
+const validatorRows = (plan.split("## Last run")[0].match(/^\| (\d+[a-z]?) \|/gm) || []).length;
+const validatorCases = (read("tests/validator-tests.js").match(/^\s*\["\d+[a-z]?\. /gm) || []).length;
 const lastRun = plan.match(/all (\d+) cases \(0–/);
 check("D2. validator: plan rows, test cases and 'Last run' agree", validatorRows === validatorCases && lastRun && Number(lastRun[1]) === validatorCases,
   `rows ${validatorRows}, tests ${validatorCases}, last run ${lastRun && lastRun[1]}`);
