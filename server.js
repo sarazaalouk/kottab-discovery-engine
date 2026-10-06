@@ -380,7 +380,8 @@ function allReferrals() {
 // The teacher's replies to questions asked from this episode (shown under the question box).
 app.get("/api/episodes/:id/replies", (req, res) => {
   if (!episodes.isValidId(req.params.id)) return res.status(404).json({ error: "episode not found" });
-  res.json(repliesForEpisode(allReferrals(), req.params.id));
+  const record = episodes.get(req.params.id);
+  res.json(repliesForEpisode(allReferrals(), req.params.id, record ? record.trial_session_id : undefined));
 });
 
 app.get("/api/episodes/:id", (req, res) => {

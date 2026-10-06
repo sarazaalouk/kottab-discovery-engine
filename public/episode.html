@@ -132,6 +132,7 @@
 <script src="js/sukun.js"></script>
 <script src="js/episode-watch.js"></script>
 <script src="js/checks.js"></script>
+<script src="js/replies-view.js"></script>
 <script>
   renderTopbar("episode.html");
   const $ = (id) => document.getElementById(id);
@@ -331,11 +332,8 @@
     if (stopReplies) stopReplies();
     stopReplies = watchReplies({
       fetchReplies: () => fetch(`/api/episodes/${encodeURIComponent(id)}/replies`).then((r) => (r.ok ? r.json() : null)),
-      onReplies: (list) => {
-        $("teacher-replies").innerHTML = list
-          .map((r) => `<div class="notice ok">${r.question ? `<p class="small muted">You asked: ${escapeHtml(r.question)}</p>` : ""}<p><b>Your teacher answered:</b> ${formatLetters(r.reply)}</p></div>`)
-          .join("");
-      },
+      // The reply is put on the page as text only (js/replies-view.js).
+      onReplies: (list) => renderReplies($("teacher-replies"), list),
     });
   }
 

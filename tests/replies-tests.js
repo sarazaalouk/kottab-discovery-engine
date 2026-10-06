@@ -2,6 +2,7 @@
 // and in trial memory, and what the episode page may show. Run: npm test
 const { referralId, replyProblem, setReplyInLines, repliesForEpisode } = require("../lib/referrals");
 const episodes = require("../lib/episodes");
+const { renderReplies } = require("../public/js/replies-view");
 
 let failed = 0;
 const check = (name, ok, detail = "") => {
@@ -34,6 +35,49 @@ const kept = episodes.setTrialReply("ref-trial1", "A teacher's answer.", "2026-1
   episodes.listTrialReferrals().find((r) => r.id === "ref-trial1").teacher_reply === "A teacher's answer.";
 episodes.endSession(sid);
 check("Y8. a trial reply is kept in memory and erased when the session ends", kept && !episodes.listTrialReferrals().some((r) => r.id === "ref-trial1"));
+
+// Y9 (a): a reply reaches only the episode, and the trial session, that the referral belongs to.
+const sidA = "11111111-2222-4333-8444-555555555555";
+const sidB = "66666666-7777-4888-9999-aaaaaaaaaaaa";
+const trialEp = "trial-01-2026-10-06T11-00-00-000Z";
+const trialRef = { id: "ref-a", created_at: "t", trial_session_id: sidA, episode_id: trialEp, question: "Q", source: "child_question", teacher_reply: "R", replied_at: "2026-10-06T11:05:00.000Z" };
+check("Y9. a reply is shown only to its own episode and its own trial session",
+  repliesForEpisode([trialRef], trialEp, sidA).length === 1 &&
+  repliesForEpisode([trialRef], trialEp, sidB).length === 0 &&
+  repliesForEpisode([trialRef], "trial-01-2026-10-06T12-00-00-000Z", sidA).length === 0 &&
+  repliesForEpisode([saved], "episode-01-y", undefined).length === 0);
+
+// Y10 (b): after End session, a late reply to a referral of that session is dropped.
+const sidC = "bbbbbbbb-cccc-4ddd-8eee-ffffffffffff";
+episodes.addTrialReferral({ id: "ref-late", created_at: "2026-10-06T12:00:00.000Z", trial_session_id: sidC, episode_id: null, question: "Late?", source: "child_question" });
+episodes.endSession(sidC);
+check("Y10. after End session, a late reply to that session's referral saves nothing",
+  episodes.setTrialReply("ref-late", "Too late.", "2026-10-06T12:10:00.000Z") === false && !episodes.listTrialReferrals().some((r) => r.id === "ref-late"));
+
+// Y11 (c): the reply goes on the page as text (textContent), never as HTML.
+function fakeDoc() {
+  let usedInnerHTML = false;
+  const el = (tag) => {
+    const node = {
+      tag, className: "", childNodes: [], _text: "",
+      get firstChild() { return this.childNodes[0] || null; },
+      appendChild(c) { this.childNodes.push(c); return c; },
+      removeChild(c) { this.childNodes.splice(this.childNodes.indexOf(c), 1); return c; },
+      set textContent(v) { this._text = String(v); this.childNodes = []; },
+      get textContent() { return this._text + this.childNodes.map((c) => c.textContent).join(""); },
+      set innerHTML(v) { usedInnerHTML = true; },
+    };
+    return node;
+  };
+  return { createElement: el, createTextNode: (t) => ({ textContent: t }), usedInnerHTML: () => usedInnerHTML, el };
+}
+const doc = fakeDoc();
+const container = doc.el("div");
+renderReplies(container, [{ question: "Why <i>two</i>?", reply: "<b>Mercy</b> twice" }], doc);
+const answerP = container.childNodes[0].childNodes[1];
+check("Y11. the reply is inserted with textContent: <b> stays plain text",
+  !doc.usedInnerHTML() && answerP.childNodes[1].textContent === " <b>Mercy</b> twice" &&
+  container.textContent === "You asked: Why <i>two</i>?Your teacher answered: <b>Mercy</b> twice");
 
 console.log(failed ? `\n${failed} reply case(s) failed` : "\nall reply cases behaved as expected");
 process.exit(failed ? 1 : 0);
